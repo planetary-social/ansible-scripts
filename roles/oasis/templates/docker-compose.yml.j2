@@ -1,0 +1,63 @@
+version: "3.5"
+services:
+   oasis:
+      image: oasis
+      restart: unless-stopped
+      expose:
+         - 3000
+      ports:
+         - "8008:8008"
+      volumes:
+         - type: bind
+           source: ./oasis-config.json
+           target: /home/node/.config/oasis/default.json
+         - ssb:/home/node/.ssb
+      environment:
+        - "VIRTUAL_HOST={{ inventory_hostname }}"
+        - "LETSENCRYPT_HOST={{ inventory_hostname }}"
+        - "VIRTUAL_PORT=3000"
+      networks:
+         - proxy-net
+         
+   nginx-proxy:
+      image: nginxproxy/nginx-proxy
+      container_name: nginx-proxy
+      ports:
+         - "80:80"
+         - "443:443"
+      volumes:
+         - conf:/etc/nginx/conf.d
+         - vhost:/etc/nginx/vhost.d
+         - html:/usr/share/nginx/html
+         - certs:/etc/nginx/certs:ro
+         - /var/run/docker.sock:/tmp/docker.sock:ro
+         - type: bind
+           source: ./htpasswd
+           target: /etc/nginx/htpasswd/{{ inventory_hostname }}
+      networks:
+         - proxy-net
+
+   acme-companion:
+      image: nginxproxy/acme-companion
+      container_name: nginx-proxy-acme
+      volumes_from:
+         - nginx-proxy
+      volumes:
+         - certs:/etc/nginx/certs:rw
+         - acme:/etc/acme.sh
+         - /var/run/docker.sock:/var/run/docker.sock:ro
+      networks:
+         - proxy-net
+          
+         
+
+networks:
+   proxy-net:
+
+volumes:
+   conf:
+   vhost:
+   html:
+   certs:
+   acme:
+   ssb:

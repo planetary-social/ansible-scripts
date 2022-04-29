@@ -1,0 +1,49 @@
+all:
+  hosts:
+      poetry.planetary.pub:
+      gardening.planetary.pub:
+      fungi.planetary.pub:
+      cooking.planetary.pub:
+      floss.planetary.pub:
+      crypto.planetary.pub:
+
+      espanol.planetary.pub:
+      russian-language.planetary.pub:
+      ukrainian-language.planetary.pub:
+
+      one.planetary.pub:
+      two.planetary.pub:
+      three.planetary.pub:
+      four.planetary.pub:
+
+      planetary.rocks:
+  vars:
+    ansible_user: root
+
+  children:
+    pubs:
+      children:
+        system:
+          hosts:
+            one.planetary.pub:
+            two.planetary.pub:
+            three.planetary.pub:
+            four.planetary.pub:
+        topical:
+          hosts:
+            poetry.planetary.pub:
+            gardening.planetary.pub:
+            fungi.planetary.pub:
+            cooking.planetary.pub:
+            floss.planetary.pub:
+            crypto.planetary.pub:
+          vars:
+            hops: 1
+        language:
+          hosts:
+            espanol.planetary.pub:
+            russian-language.planetary.pub:
+            ukrainian-language.planetary.pub:
+    oasis:
+      hosts:
+        planetary.rocks

@@ -1,0 +1,18 @@
+---
+# Tasks that should be run on all Digital Ocean droplets
+
+- name: Add Digital Ocean Repo Key 
+  apt_key:
+    url: https://repos.insights.digitalocean.com/sonar-agent.asc
+    state: present
+
+- name: Add Digital Ocean Repository
+  apt_repository:
+    repo: deb https://repos.insights.digitalocean.com/apt/do-agent/ main main
+    state: present
+
+- name: Install Metrics Agent
+  apt:
+    name: do-agent
+    state: present
+    update_cache: yes

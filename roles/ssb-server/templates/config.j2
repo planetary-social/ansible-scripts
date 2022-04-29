@@ -1,0 +1,36 @@
+{
+   "pub": false,
+   "local": false,
+   "friends": {
+      "hops": {{ hops }}
+   },
+   "connections": {
+      "incoming": {
+         "net": [
+         {
+            "scope": "public",
+            "host": "0.0.0.0",
+            "external": "{{ inventory_hostname }}",
+            "transform": "shs",
+            "port": 8008
+         }
+         ]
+      },
+      "outgoing": {
+         "net": [
+         {
+            "transform": "shs"
+         }
+         ]
+      }
+   },
+   "caps": {
+      "shs": "{{ caps.shs | default("1KHLiKZvAvjbY1ziZEHMXawbCEIM6qwjCDm3VYRan/s=", true) }}",
+      {% if caps.sign|default(none, true) is not none %}
+"sign": "{{ caps.sign }}",
+      {% else %}
+"sign": null,
+      {% endif %}
+"invite": "HT0wIYuk3OWc2FtaCfHNnakV68jSGRrjRMP9Kos7IQc="
+   }
+}

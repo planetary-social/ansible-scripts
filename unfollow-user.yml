@@ -1,0 +1,9 @@
+---
+# Unfollows the given user id on all Planetary pubs
+# Usage: ansible-playbook unfollow-user.yml -i {inventory} --extra-vars "user_to_unfollow='{feedID}'"
+- name: Unfollow User
+  hosts: pubs
+  tasks:
+    - name: Publish unfollow message
+      command: "./sbot publish --type contact --no-following --contact '{{ user_to_unfollow }}'"
+

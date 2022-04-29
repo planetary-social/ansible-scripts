@@ -1,0 +1,35 @@
+---
+# Tasks for the server hosting the planetary identity
+
+- name: Build Oasis Docker image
+  command: "docker build https://github.com/planetary-social/oasis.git -t oasis"
+
+- name: Bring down Docker containers
+  docker_compose:
+    project_src: /root/oasis
+    state: absent
+  ignore_errors: yes
+
+- name: Create app directory
+  ansible.builtin.file:
+    path: /root/oasis
+    state: directory
+
+- name: Create oasis config file
+  template: 
+    src: oasis-config.json.j2
+    dest: /root/oasis/oasis-config.json
+      
+- name: Create htpasswd
+  template:
+    src: htpasswd
+    dest: /root/oasis/htpasswd
+
+- name: Create docker-compose.yml
+  template: 
+    src: docker-compose.yml.j2
+    dest: /root/oasis/docker-compose.yml
+
+- name: Bring up Docker containers
+  docker_compose:
+    project_src: /root/oasis

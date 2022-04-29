@@ -1,0 +1,23 @@
+all:
+   hosts:
+      198.199.90.207:
+      167.99.36.26:
+   vars:
+      ansible_user: root
+   children:
+      pubs:
+         hosts:
+            198.199.90.207:
+               hostname: dev.planetary.pub
+               hops: 2
+               caps:
+                  shs: "AHSrRkNQlQbJP3FyKxvBUI02LI0OdixEl0pYFTUHrMw="
+                  sign: "d8mXyv5OAjxTLnPIAnXUk7TjjALroyfdJn+0RUGHxY4="
+                  invite: "HT0wIYuk3OWc2FtaCfHNnakV68jSGRrjRMP9Kos7IQc="
+            167.99.36.26:
+               hostname: 167.99.36.26
+               hops: 2
+               caps:
+                  shs: "AHSrRkNQlQbJP3FyKxvBUI02LI0OdixEl0pYFTUHrMw="
+                  sign: "d8mXyv5OAjxTLnPIAnXUk7TjjALroyfdJn+0RUGHxY4="
+                  invite: "HT0wIYuk3OWc2FtaCfHNnakV68jSGRrjRMP9Kos7IQc="
