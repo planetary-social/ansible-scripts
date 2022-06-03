@@ -1,4 +1,4 @@
 #!/bin/sh
 
 # A convenience script to run commands on the ssb-server running in Docker.
-docker exec -it sbot sbot "$@"
+docker exec -it sbot node bin.js "$@"

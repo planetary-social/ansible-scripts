@@ -4,7 +4,7 @@
 - name: Create sbot convenience script
   template: src=sbot dest=sbot mode=u+x
 - name: Build ssb-server container
-  command: "docker build https://github.com/planetary-social/ssb-pub.git -t planetary-social/ssb-pub"
+  command: "docker build https://github.com/planetary-social/ssb-server.git#main -t planetary-social/ssb-pub"
 
 # Start by shutting down running services
 - name: Stop sbot container
@@ -34,4 +34,4 @@
 
 # Test
 - name: Ensure container is running
-  command: "docker exec -it sbot sbot whoami"
+  command: "./sbot whoami"
