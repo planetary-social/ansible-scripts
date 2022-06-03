@@ -1,0 +1,23 @@
+---
+# Prints some information about the given SSB identity from the perspective of each pub.
+# Usage: ansible-playbook stats-for-identity.yml -i {inventory} --extra-vars "feed_id='{feedID}'"
+- name: Stats For Identity
+  hosts: pubs
+  tasks:
+    - name: Get Pub ID
+      shell: "./sbot whoami | grep id | cut -d '\"' -f 4"
+      register: pub_id
+    - name: Query isFollowing
+      command: "./sbot friends.isFollowing --source '{{ pub_id.stdout }}' --dest '{{ feed_id }}'"
+      register: is_following
+    - name: Query isBlocking
+      command: "./sbot friends.isBlocking --source '{{ pub_id.stdout }}' --dest '{{ feed_id }}'"
+      register: is_blocking
+    - name: Query post count
+      shell: "(./sbot latestSequence '{{ feed_id }}' || echo null) | tail -n 1"
+      register: post_count
+    - debug:
+        var: post_count
+
+    - debug:
+        msg: "isFollowing: {{ is_following.stdout }} | isBlocking: {{ is_blocking.stdout }} | post count: {{ post_count.stdout }}"
