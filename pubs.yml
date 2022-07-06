@@ -1,6 +1,17 @@
 ---
 # A playbook to deploy all of Planetary's pub infrastructure on existing DigitalOcean droplets.
 
+- name: Create temp intall path for gcloud-cli role
+  hosts: localhost
+  connection: local
+  gather_facts: no
+  tasks:
+    - name: Create a tmp path
+      file:
+        path: "/tmp/install_gcloud"
+        state: directory
+        mode: 0777
+
 - name: Pub Servers
   hosts: pubs
   gather_facts: no
@@ -25,4 +36,6 @@
     - common
     - digital-ocean
     - docker
+    - gcloud-cli
+    - blob-reporter
     - ssb-server

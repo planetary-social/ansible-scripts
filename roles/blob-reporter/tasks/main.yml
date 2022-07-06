@@ -1,0 +1,7 @@
+# Sets up a cron job to sync blobs to google cloud storage
+- name: Schedule gsutil rsync
+  ansible.builtin.cron:
+    name: "sync blobs"
+    minute: "0"
+    hour: "*"
+    job: "perl -le 'sleep rand 3600' && /root/google-cloud-sdk/bin/gsutil -m rsync -r ssb-pub-data/blobs/sha256/ gs://mainnet-blobs/"
