@@ -17,6 +17,7 @@ all:
       four.planetary.pub:
 
       planetary.rocks:
+      queer.family:
   vars:
     ansible_user: root
 
@@ -37,6 +38,7 @@ all:
             cooking.planetary.pub:
             floss.planetary.pub:
             crypto.planetary.pub:
+            queer.family:
           vars:
             hops: 1
         language:
