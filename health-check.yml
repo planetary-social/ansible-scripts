@@ -1,0 +1,10 @@
+---
+# Asks each pub to print its ID to check if it is responsive.
+- name: Health Check
+  hosts: pubs
+  tasks:
+    - name: Print Pub ID
+      shell: "./sbot whoami"
+      register: pub_id
+    - debug:
+        msg: "pub_id: {{pub_id.stdout}}"
