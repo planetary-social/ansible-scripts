@@ -1,0 +1,4 @@
+docker stop sbot
+docker rm sbot
+docker stop healer
+docker rm healer

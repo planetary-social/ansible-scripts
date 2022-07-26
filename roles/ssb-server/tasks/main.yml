@@ -6,15 +6,22 @@
 - name: Build ssb-server container
   command: "docker build https://github.com/planetary-social/ssb-server.git#main -t planetary-social/ssb-pub"
 
+- name: Create start script
+  template: 
+    src: start-sbot 
+    dest: ~/start-sbot
+    mode: 700
+
+- name: Create stop script
+  template: 
+    src: stop-sbot 
+    dest: ~/stop-sbot
+    mode: 700
+
 # Start by shutting down running services
-- name: Stop sbot container
-  docker_container:
-    name: sbot
-    state: absent
-- name: Stop healer container
-  docker_container:
-    name: healer
-    state: absent
+- name: Stop sbot containers
+  shell: ~/stop-sbot
+  ignore_errors: true # container may not be running
 
 - name: Create ssb-server configuration directory
   ansible.builtin.file:
@@ -28,9 +35,7 @@
 
 # Run
 - name: Start ssb-server
-  command: "docker run -d --name sbot -v ~/ssb-pub-data/:/home/node/.ssb/ -p 8008:8008 --restart unless-stopped --memory 3948060160 planetary-social/ssb-pub"
-- name: Start healer
-  command: "docker run -d --name healer -v /var/run/docker.sock:/tmp/docker.sock --restart unless-stopped ahdinosaur/healer"
+  shell: ~/start-sbot
 
 # Test
 - name: Ensure container is running

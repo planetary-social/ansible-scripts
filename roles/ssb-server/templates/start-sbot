@@ -1,0 +1,2 @@
+docker run -d --name sbot -v ~/ssb-pub-data/:/home/node/.ssb/ -p 8008:8008 --restart unless-stopped --memory 3948060160 planetary-social/ssb-pub
+docker run -d --name healer -v /var/run/docker.sock:/tmp/docker.sock --restart unless-stopped ahdinosaur/healer

@@ -1,0 +1,37 @@
+---
+# Deletes the feed of the given user id on all Planetary pubs
+#
+# Note: this does not publish a block message for the feed, so it could be resynced. 
+# To block a user see the block-user.yml playbook.
+#
+# Usage: ansible-playbook delete-feed.yml -i {inventory} --extra-vars "id='{feedID}'"
+- name: Delete feed
+  hosts: pubs
+  roles:
+   - flumedb-delete
+  tasks:
+    - name: Stop ssb-server
+      shell: /root/stop-sbot
+      ignore_errors: true # container may not be running
+
+    - name:  Run delete script
+      shell: 
+        cmd: source /root/.profile && node ssb.js --id='{{ id }}' --dir ~/ssb-pub-data
+        chdir: flumedb-delete
+      args:
+        executable: /bin/bash
+
+    - name: Clear flume views
+      shell: 
+        cmd: source /root/.profile && node delete-views --dir ~/ssb-pub-data
+        chdir: flumedb-delete
+      args:
+        executable: /bin/bash
+
+    # The deletion script messes up the permissions that Docker needs
+    - name: Chown ssb-pub-data
+      command: chown -R 1000:1000 ~/ssb-pub-data/flume
+
+    - name: Start ssb-server
+      shell: ./start-sbot
+

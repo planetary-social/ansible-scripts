@@ -1,0 +1,43 @@
+# This role installs the flumedb-delete tool used for purging feeds from pub databases.
+---
+- name: Install nvm
+  git: repo=https://github.com/creationix/nvm.git dest=~/.nvm version=v0.33.11
+  tags: nvm
+
+- name: Source nvm in ~/.{{ item }}
+  lineinfile: >
+      dest=~/.{{ item }}
+      line="source ~/.nvm/nvm.sh"
+      create=yes
+  tags: nvm
+  with_items:
+    - bashrc
+    - profile
+
+      
+- name: Install build tools
+  apt: pkg={{ item }}
+  with_items:
+    - curl
+    - autotools-dev
+    - automake
+
+- name: Check out flumedb-delete repo
+  git:
+    repo: https://github.com/planetary-social/flumedb-delete
+    dest: flumedb-delete
+
+- name: Install node
+  shell: 
+    cmd: source /root/.profile && nvm install
+    chdir: flumedb-delete
+  args:
+    executable: /bin/bash
+
+- name: npm install
+  shell: 
+    cmd: source /root/.profile && npm install
+    chdir: flumedb-delete
+  args:
+    executable: /bin/bash
+  
