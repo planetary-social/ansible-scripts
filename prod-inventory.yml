@@ -31,6 +31,13 @@ all:
             two.planetary.pub:
             three.planetary.pub:
             four.planetary.pub:
+        language:
+          hosts:
+            espanol.planetary.pub:
+            russian-language.planetary.pub:
+            ukrainian-language.planetary.pub:
+            french-langauge.planetary.pub:
+            chinese-language.planetary.pub:
         topical:
           hosts:
             poetry.planetary.pub:
@@ -42,13 +49,6 @@ all:
             queer.family:
           vars:
             hops: 1
-        language:
-          hosts:
-            espanol.planetary.pub:
-            russian-language.planetary.pub:
-            ukrainian-language.planetary.pub:
-            chinese-language.planetary.pub:
-            french-language.planetary.pub:
     oasis:
       hosts:
         planetary.rocks

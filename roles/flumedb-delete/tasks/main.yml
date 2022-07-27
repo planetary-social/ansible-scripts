@@ -13,7 +13,6 @@
   with_items:
     - bashrc
     - profile
-
       
 - name: Install build tools
   apt: pkg={{ item }}
@@ -27,16 +26,17 @@
     repo: https://github.com/planetary-social/flumedb-delete
     dest: flumedb-delete
 
-- name: Install node
-  shell: 
-    cmd: source /root/.profile && nvm install
-    chdir: flumedb-delete
+- name: Install node and set version
+  become: yes
+  become_user: root
+  shell:
+    cmd: "source /root/.nvm/nvm.sh && nvm install 14.19.3" 
   args:
     executable: /bin/bash
 
 - name: npm install
   shell: 
-    cmd: source /root/.profile && npm install
+    cmd: source /root/.nvm/nvm.sh && npm install
     chdir: flumedb-delete
   args:
     executable: /bin/bash

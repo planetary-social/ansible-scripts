@@ -1,5 +1,7 @@
 ---
-# Deletes the feed of the given user id on all Planetary pubs
+# Deletes the feed of the given user id on all Planetary pubs. This is very innefficient
+# as it rewrites the entire db. It also will cause the pub to be unresponsive for ~15
+# minutes after the playbook ends while the flume views are rebuilt.
 #
 # Note: this does not publish a block message for the feed, so it could be resynced. 
 # To block a user see the block-user.yml playbook.
@@ -7,12 +9,12 @@
 # Usage: ansible-playbook delete-feed.yml -i {inventory} --extra-vars "id='{feedID}'"
 - name: Delete feed
   hosts: pubs
+  serial: 1 # rolling update, don't bring all pubs down at once
   roles:
    - flumedb-delete
   tasks:
     - name: Stop ssb-server
       shell: /root/stop-sbot
-      ignore_errors: true # container may not be running
 
     - name:  Run delete script
       shell: 
