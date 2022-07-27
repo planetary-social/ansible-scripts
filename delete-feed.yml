@@ -6,19 +6,25 @@
 # Note: this does not publish a block message for the feed, so it could be resynced. 
 # To block a user see the block-user.yml playbook.
 #
-# Usage: ansible-playbook delete-feed.yml -i {inventory} --extra-vars "id='{feedID}'"
+# Usage: ansible-playbook delete-feed.yml -i {inventory} --extra-vars "feed_id='{feedID}'"
 - name: Delete feed
   hosts: pubs
   serial: 1 # rolling update, don't bring all pubs down at once
   roles:
    - flumedb-delete
   tasks:
-    - name: Stop ssb-server
-      shell: /root/stop-sbot
+    - name: Stop sbot container
+      docker_container:
+        name: sbot
+        state: absent
+    - name: Stop healer container
+      docker_container:
+        name: healer
+        state: absent
 
     - name:  Run delete script
       shell: 
-        cmd: source /root/.profile && node ssb.js --id='{{ id }}' --dir ~/ssb-pub-data
+        cmd: source /root/.profile && node ssb.js --id='{{ feed_id }}' --dir ~/ssb-pub-data
         chdir: flumedb-delete
       args:
         executable: /bin/bash

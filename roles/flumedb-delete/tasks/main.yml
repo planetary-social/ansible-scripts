@@ -25,6 +25,7 @@
   git:
     repo: https://github.com/planetary-social/flumedb-delete
     dest: flumedb-delete
+    force: yes
 
 - name: Install node and set version
   become: yes

@@ -1,9 +1,9 @@
 ---
 # Blocks the given user id on all Planetary pubs
-# Usage: ansible-playbook block-user.yml -i {inventory} --extra-vars "user_to_block='{feedID}'"
+# Usage: ansible-playbook block-user.yml -i {inventory} --extra-vars "feed_id='{insert feed id}'"
 - name: Block User
   hosts: pubs
   tasks:
     - name: Publish block message
-      command: "./sbot publish --type contact --blocking --contact '{{ user_to_block }}'"
+      command: "./sbot publish --type contact --blocking --contact '{{ feed_id }}'"
 
