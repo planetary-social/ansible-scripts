@@ -19,9 +19,14 @@
     mode: 700
 
 # Start by shutting down running services
-- name: Stop sbot containers
-  shell: ~/stop-sbot
-  ignore_errors: true # container may not be running
+- name: Stop sbot container
+  docker_container:
+    name: sbot
+    state: absent
+- name: Stop healer container
+  docker_container:
+    name: healer
+    state: absent
 
 - name: Create ssb-server configuration directory
   ansible.builtin.file:

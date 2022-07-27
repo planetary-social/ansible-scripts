@@ -6,6 +6,7 @@ all:
       cooking.planetary.pub:
       floss.planetary.pub:
       crypto.planetary.pub:
+      queer.family:
 
       espanol.planetary.pub:
       russian-language.planetary.pub:
@@ -18,7 +19,9 @@ all:
       four.planetary.pub:
 
       planetary.rocks:
-      queer.family:
+
+      # planetary.link
+      159.203.117.239:
   vars:
     ansible_user: root
 
@@ -31,6 +34,7 @@ all:
             two.planetary.pub:
             three.planetary.pub:
             four.planetary.pub:
+            159.203.117.239:
         language:
           hosts:
             espanol.planetary.pub:
@@ -52,3 +56,7 @@ all:
     oasis:
       hosts:
         planetary.rocks
+    viewer:
+      hosts:
+        # planetary.link
+        159.203.117.239
