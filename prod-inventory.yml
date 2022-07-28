@@ -12,6 +12,7 @@ all:
       russian-language.planetary.pub:
       ukrainian-language.planetary.pub:
       chinese-language.planetary.pub:
+      french-language.planetary.pub:
 
       one.planetary.pub:
       two.planetary.pub:
@@ -40,7 +41,7 @@ all:
             espanol.planetary.pub:
             russian-language.planetary.pub:
             ukrainian-language.planetary.pub:
-            french-langauge.planetary.pub:
+            french-language.planetary.pub:
             chinese-language.planetary.pub:
         topical:
           hosts:

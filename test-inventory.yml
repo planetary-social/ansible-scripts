@@ -7,7 +7,7 @@ all:
    children:
       pubs:
          hosts:
-            198.199.90.207:
+            dev.planetary.pub:
                hostname: dev.planetary.pub
                hops: 2
                caps:
