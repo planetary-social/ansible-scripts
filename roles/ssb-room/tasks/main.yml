@@ -1,0 +1,21 @@
+
+---
+# This role installs go-ssb-room on a Debian/Ubuntu server
+#
+- name: Check out go-ssb-room repo
+  git:
+    repo: https://github.com/ssbc/go-ssb-room
+    dest: go-ssb-room
+    force: yes
+
+- name: Create room configuration file
+  template: src=env dest=go-ssb-room/env
+
+- name: Copy custom docker-compose.yml 
+  template: src=docker-compose.yml dest=go-ssb-room/docker-compose.yml
+
+- name: Bring up docker containers
+  docker_compose:
+    project_src: go-ssb-room
+    # build:  yes
+    state: present
