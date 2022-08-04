@@ -2,6 +2,7 @@ all:
    hosts:
       198.199.90.207:
       167.99.36.26:
+      test-room2.lorentz.is: # test room
    vars:
       ansible_user: root
    children:

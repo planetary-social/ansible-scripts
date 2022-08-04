@@ -61,3 +61,6 @@ all:
       hosts:
         # planetary.link
         159.203.117.239
+    rooms:
+      hosts:
+        civic.love:
