@@ -5,3 +5,4 @@
     minute: "0"
     hour: "*"
     job: "perl -le 'sleep rand 3600' && /root/google-cloud-sdk/bin/gsutil -m rsync -r ssb-pub-data/blobs/sha256/ gs://mainnet-blobs/"
+    disabled: yes
