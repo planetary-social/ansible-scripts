@@ -24,6 +24,7 @@ services:
       - conf:/etc/nginx/conf.d
       - html:/usr/share/nginx/html
       - certs:/etc/nginx/certs:ro
+      - vhost:/etc/nginx/vhost.d
       - /var/run/docker.sock:/tmp/docker.sock:ro
     environment:
       - RESOLVERS=8.8.8.8
