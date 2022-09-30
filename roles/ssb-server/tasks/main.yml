@@ -4,7 +4,7 @@
 - name: Create sbot convenience script
   template: src=sbot dest=sbot mode=u+x
 - name: Build ssb-server container
-  command: "docker build https://github.com/planetary-social/ssb-server.git#main -t planetary-social/ssb-pub"
+  command: "docker build https://github.com/planetary-social/ssb-server.git#{{ ssb_server_branch | default('main') }} -t planetary-social/ssb-pub"
 
 - name: Create start script
   template: 

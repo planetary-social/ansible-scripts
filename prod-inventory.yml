@@ -15,14 +15,16 @@ all:
       french-language.planetary.pub:
 
       one.planetary.pub:
+        ssb-server-branch: disable-ebt
       two.planetary.pub:
+        ssb-server-branch: disable-ebt
       three.planetary.pub:
       four.planetary.pub:
 
       planetary.rocks:
 
-      # planetary.link
-      159.203.117.239:
+      civic.love:
+      planetary.name:
   vars:
     ansible_user: root
 
@@ -35,7 +37,6 @@ all:
             two.planetary.pub:
             three.planetary.pub:
             four.planetary.pub:
-            159.203.117.239:
         language:
           hosts:
             espanol.planetary.pub:
@@ -54,6 +55,7 @@ all:
             queer.family:
           vars:
             hops: 1
+
     oasis:
       hosts:
         planetary.rocks
@@ -64,3 +66,4 @@ all:
     rooms:
       hosts:
         civic.love:
+        planetary.name:
