@@ -1,3 +1,4 @@
 secrets
+feeds
 *.DS_Store
 *htpasswd

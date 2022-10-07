@@ -1,0 +1,30 @@
+---
+# Downloads a given user's feed 
+# Usage: ansible-playbook download-feed.yml -i {inventory} -l {server} --extra-vars "feed_id='{insert feed id}'"
+- name: Download Feed
+  hosts: pubs
+  gather_facts: no
+  pre_tasks:
+    # SSH Host key checking
+    # https://stackoverflow.com/a/54735937/982195
+    - name: Check known_hosts for {{ inventory_hostname }}
+      local_action: shell ssh-keygen -F {{ inventory_hostname }}
+      register: has_entry_in_known_hosts_file
+      failed_when: false
+      changed_when: false
+      ignore_errors: yes
+    - name: Ignore host key for {{ inventory_hostname }} on first run
+      when: has_entry_in_known_hosts_file.rc == 1
+      set_fact:
+        ansible_ssh_common_args: '-o StrictHostKeyChecking=no'
+    - name: Gather Facts
+      setup:
+
+  tasks:
+    - name: Retrieve feed from bot
+      shell: "./sbot createUserStream --id '{{ feed_id }}' > /tmp/ansible_download_feed"
+    - name: Save feed on local machine
+      fetch:
+        src: /tmp/ansible_download_feed
+        dest: "feeds/{{ inventory_hostname }}_{{ feed_id }}_feed.json"
+        flat: yes
