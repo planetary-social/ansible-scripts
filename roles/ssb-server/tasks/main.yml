@@ -45,3 +45,7 @@
 # Test
 - name: Ensure container is running
   command: "./sbot whoami"
+  register: whoami
+  until: whoami.rc == 0
+  retries: 5
+  delay: 2

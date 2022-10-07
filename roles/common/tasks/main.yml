@@ -1,5 +1,10 @@
 - name: Install aptitude using apt
-  apt: name=aptitude state=latest update_cache=yes force_apt_get=yes
+  apt: name=aptitude state=latest update_cache=no force_apt_get=no
+
+- name: Remove old Digital Ocean Repository
+  file:
+    path: /etc/apt/sources.list.d/droplet-agent.list
+    state: absent
 
 - name: Perform a dist-upgrade.
   ansible.builtin.apt:
