@@ -1,0 +1,38 @@
+---
+# This role installs planetary-graphql server with SSL
+
+# Pre-steps
+# 1. spin up a droplet, adding SSH keys
+# 2. assign a "reserved IP address" (static address)
+# 3. add the Droplet to /prod-inventory.yml
+
+- name: Clone planetary-graphql
+  git:
+    repo: https://github.com/planetary-social/planetary-graphql.git
+    dest: planetary-graphql
+    force: yes
+
+- name: Install planetary-graphql
+  shell:
+    cmd: "source ~/.nvm/nvm.sh && cd ~/planetary-graphql && npm install"
+  args:
+    executable: /bin/bash
+  # NOTE:
+  # - "command" module doesn't have source, so use "shell"
+  # - "shell" uses "sh" by default (which doesn't have "source"), so tell it to use "bash"
+
+- name: Kill Daemon (if exists)
+  shell:
+    cmd: "source ~/.nvm/nvm.sh && pm2 del graphql"
+  args:
+    executable: /bin/bash
+  ignore_errors: True
+  # NOTE:
+  # - we have to delete the old daeomon otherwise starting a new daemon means
+  #   multiple concurrent daeomons running!
+
+- name: Start Daemon
+  shell:
+    cmd: "source ~/.nvm/nvm.sh && cd ~/planetary-graphql && pm2 start index.js --name graphql"
+  args:
+    executable: /bin/bash
