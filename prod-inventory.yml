@@ -25,6 +25,9 @@ all:
 
       civic.love:
       planetary.name:
+
+      157.230.72.191:
+
   vars:
     ansible_user: root
 
@@ -67,3 +70,8 @@ all:
       hosts:
         civic.love:
         planetary.name:
+
+    graphql:
+      # used by the rooms UI
+      hosts:
+        157.230.72.191:

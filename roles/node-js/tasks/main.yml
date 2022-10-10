@@ -1,0 +1,40 @@
+
+- name: Install nvm
+  git:
+    repo: https://github.com/nvm-sh/nvm.git
+    dest: ~/.nvm
+    version: v0.39.1
+  tags: nvm
+
+- name: Source nvm in ~/.{{ item }}
+  lineinfile: >
+      dest=~/.{{ item }}
+      line="source ~/.nvm/nvm.sh"
+      create=yes
+  tags: nvm
+  with_items:
+    - bashrc
+    - profile
+
+- name: Install Node and set version
+  become: yes
+  become_user: root
+  shell:
+    cmd: "source /root/.nvm/nvm.sh && nvm install 14 && nvm alias default 14" 
+  args:
+    executable: /bin/bash
+
+- name: Install NPM
+  become: yes
+  become_user: root
+  shell:
+    cmd: "source /root/.nvm/nvm.sh && npm i -g npm@8" 
+  args:
+    executable: /bin/bash
+
+- name: Install pm2
+  shell:
+    cmd: "source ~/.nvm/nvm.sh && npm install -g pm2 && pm2 startup"
+  args:
+    executable: /bin/bash
+
