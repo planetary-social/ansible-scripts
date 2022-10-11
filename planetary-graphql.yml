@@ -26,4 +26,5 @@
   #  - digital-ocean
   #  - node-js
   #  NOTE node-js is only needed first time we run this playbook
+    - nginx
     - planetary-graphql

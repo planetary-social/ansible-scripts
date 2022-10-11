@@ -1,0 +1,3 @@
+---
+server_url: http://localhost:4000/graphql
+domain_name: graphql.planetary.pub
