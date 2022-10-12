@@ -26,7 +26,8 @@ all:
       civic.love:
       planetary.name:
 
-      157.230.72.191:
+      graphql.planetary.pub:
+
 
   vars:
     ansible_user: root
@@ -74,4 +75,8 @@ all:
     graphql:
       # used by the rooms UI
       hosts:
-        157.230.72.191:
+        graphql.planetary.pub
+
+    letsencrypt:
+      hosts:
+        graphql.planetary.pub
