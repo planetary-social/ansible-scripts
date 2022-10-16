@@ -62,6 +62,9 @@
               proxy_set_header Authorization "";
               proxy_read_timeout 90s;
             }
+
+            # WARNING: changing the line below may affect ansible roles using it to append additional config below
+            # <!-- INSERT ADDITIONAL CONFIG BELOW -->
           }
   
   - name: Make Sure NGINX Service Is Running

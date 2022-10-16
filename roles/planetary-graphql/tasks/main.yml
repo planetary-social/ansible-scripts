@@ -33,6 +33,6 @@
 
 - name: Start Daemon
   shell:
-    cmd: "source ~/.nvm/nvm.sh && cd ~/planetary-graphql && pm2 start index.js --name graphql"
+    cmd: "source ~/.nvm/nvm.sh && cd ~/planetary-graphql && pm2 start index.js --name graphql --env staging"
   args:
     executable: /bin/bash
