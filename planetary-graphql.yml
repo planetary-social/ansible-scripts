@@ -27,5 +27,4 @@
   #  - node-js
   #  NOTE node-js is only needed first time we run this playbook
     - letsencrypt-nginx
-    - planetary-graphql-blobs
     - planetary-graphql

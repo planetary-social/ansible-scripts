@@ -63,8 +63,8 @@
               proxy_read_timeout 90s;
             }
 
-            # WARNING: changing the line below may affect ansible roles using it to append additional config below
-            # <!-- INSERT ADDITIONAL CONFIG BELOW -->
+            # NOTE - do not change line below, it is used by ansible to inset config
+            # <!-- ANSIBLE: INSERT AFTER -->
           }
   
   - name: Make Sure NGINX Service Is Running
