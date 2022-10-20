@@ -6,6 +6,13 @@
 # 2. assign a "reserved IP address" (static address)
 # 3. add the Droplet to /prod-inventory.yml
 
+- name: Setup blob server nginx config
+  ansible.builtin.import_tasks: tasks/nginx-blob-config.yml
+# - name: Test TCP connectivity
+#   become: true
+#   become_user: root
+#   import_tasks: 'tasks/nginx-blob-config.yml'
+
 - name: Clone planetary-graphql
   git:
     repo: https://github.com/planetary-social/planetary-graphql.git
@@ -33,6 +40,6 @@
 
 - name: Start Daemon
   shell:
-    cmd: "source ~/.nvm/nvm.sh && cd ~/planetary-graphql && pm2 start index.js --name graphql"
+    cmd: "source ~/.nvm/nvm.sh && cd ~/planetary-graphql && pm2 start index.js --name graphql --env staging"
   args:
     executable: /bin/bash

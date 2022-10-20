@@ -1,0 +1,23 @@
+
+
+
+- name: Insert Blob server setup to NGINX config file
+  ansible.builtin.blockinfile:
+    path: /etc/nginx/conf.d/graphql.planetary.pub.conf
+    marker: "# {mark} ANSIBLE MANAGED BLOCK FOR BLOB SERVER NGINX CONFIG"
+    insertafter: "# <!-- ANSIBLE: INSERT AFTER -->"
+    block: |
+        # map `/blob` to `/get` so the uri is /get/:blobId
+        location /blob {
+          rewrite    ^  $request_uri;              # get original URI
+          rewrite    ^/blob(/.*)  /get$1  break;   # drop /blob, put /get
+          return     400;                          # if the second rewrite won't match
+          proxy_pass http://127.0.0.1:26835$uri;
+        }
+
+- name: Make Sure NGINX Service Is Running
+  become: yes
+  service:
+    name: nginx
+    state: restarted
+    enabled: yes

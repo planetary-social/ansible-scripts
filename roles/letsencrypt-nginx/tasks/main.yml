@@ -62,6 +62,9 @@
               proxy_set_header Authorization "";
               proxy_read_timeout 90s;
             }
+
+            # NOTE - do not change line below, it is used by ansible to inset config
+            # <!-- ANSIBLE: INSERT AFTER -->
           }
   
   - name: Make Sure NGINX Service Is Running
