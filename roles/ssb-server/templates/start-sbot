@@ -1,2 +1,4 @@
-docker run -d --name sbot -v ~/ssb-pub-data/:/home/node/.ssb/ -p 8008:8008 --restart unless-stopped --memory 3948060160 planetary-social/ssb-pub
+TOTAL_MEMORY=$(free -b --si | awk '/Mem:/ { print $2 }')
+MEMORY_LIMIT=$(expr $TOTAL_MEMORY - 200000000) # total memory less 200mb
+docker run -d --name sbot -v ~/ssb-pub-data/:/home/node/.ssb/ -p 8008:8008 --restart unless-stopped --memory $MEMORY_LIMIT planetary-social/ssb-pub
 docker run -d --name healer -v /var/run/docker.sock:/tmp/docker.sock --restart unless-stopped ahdinosaur/healer
