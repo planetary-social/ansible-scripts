@@ -15,10 +15,8 @@ all:
       french-language.planetary.pub:
 
       one.planetary.pub:
-        ssb_server_branch: disable-ebt
       two.planetary.pub:
       three.planetary.pub:
-        ssb_server_branch: disable-ebt
       four.planetary.pub:
 
       planetary.rocks:
