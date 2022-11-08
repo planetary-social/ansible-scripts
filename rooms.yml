@@ -1,5 +1,15 @@
 ---
 # A playbook to deploy all of Planetary's rooms servers on existing DigitalOcean droplets.
+#
+#
+# NOTE: Planetary.name should not be deployed using this playbook as some custom changes were made
+# to it to support a wildcard SSL cert for aliases.
+# To change the code running on planetary.name you should:
+# 1. `cd go-ssb-room`
+# 2. `git stash`
+# 3. check out the branch you want to deploy
+# 4. `git stash pop`
+# 5. `docker-compose down && docker-compose build . && docker-compose up -d`
 
 - name: Room Servers 
   hosts: rooms
