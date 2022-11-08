@@ -22,7 +22,10 @@ all:
       planetary.rocks:
 
       civic.love:
-      planetary.name:
+
+      # commented out because this server has had some manual changes made that would be overwritten if the ansible role is run.
+      # Talk to @boreq if you need to make changes. See also: https://github.com/planetary-social/infrastructure/issues/28
+      #planetary.name:
 
       graphql.planetary.pub:
 
