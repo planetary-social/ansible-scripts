@@ -1,0 +1,50 @@
+version: '3'
+services:
+  room:
+    build: .
+    restart: unless-stopped
+    command: 'sh start.sh'
+    env_file: env
+    expose:
+      - 3000
+    ports:
+      - 0.0.0.0:8008:8008
+    volumes:
+      - ./ssb-go-room-secrets:/ssb-go-room-secrets
+    network_mode: bridge
+  nginx-proxy:
+    image: nginxproxy/nginx-proxy
+    restart: unless-stopped
+    container_name: nginx-proxy
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - conf:/etc/nginx/conf.d
+      - html:/usr/share/nginx/html
+      - certs:/etc/nginx/certs:ro
+      - vhost:/etc/nginx/vhost.d
+      - /var/run/docker.sock:/tmp/docker.sock:ro
+    environment:
+      - RESOLVERS=8.8.8.8
+    network_mode: bridge
+  acme-companion:
+    image: nginxproxy/acme-companion
+    restart: unless-stopped
+    container_name: nginx-proxy-acme
+    environment:
+      - DEFAULT_EMAIL=ops@planetary.social
+    volumes_from:
+      - nginx-proxy
+    volumes:
+      - certs:/etc/nginx/certs:rw
+      - acme:/etc/acme.sh
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    network_mode: bridge
+
+volumes:
+  conf:
+  vhost:
+  html:
+  certs:
+  acme:

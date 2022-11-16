@@ -1,0 +1,4 @@
+NODE_ENV=production
+VITE_GRAPHQL_API={{ graphql_endpoint }}
+VITE_BLOB_URL={{ blobs_endpoint }}{{ blobs_dir }}
+VITE_BASE_DIR=/

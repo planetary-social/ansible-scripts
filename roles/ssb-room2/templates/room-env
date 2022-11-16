@@ -1,0 +1,8 @@
+HTTPS_DOMAIN={{ inventory_hostname }}
+ALIASES_AS_SUBDOMAINS=true
+REPO=/ssb-go-room-secrets
+EXTERNAL_CONTENT_SRC={{ graphql_endpoint }} {{ blobs_endpoint }}
+
+VIRTUAL_HOST={{ inventory_hostname }}
+VIRTUAL_PORT=3000
+LETSENCRYPT_HOST={{ inventory_hostname }}

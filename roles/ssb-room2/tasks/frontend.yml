@@ -1,0 +1,22 @@
+- name: Clone rooms-frontend
+  git:
+    repo: https://github.com/planetary-social/rooms-frontend.git
+    dest: rooms-frontend
+    force: yes
+
+- name: Create rooms frontend environment variable file
+  template:
+    src: frontend-env
+    dest: rooms-frontend/.env.production
+
+- name: Install rooms-frontend
+  shell:
+    cmd: "source ~/.nvm/nvm.sh && cd ~/rooms-frontend && npm install"
+  args:
+    executable: /bin/bash
+
+- name: Create a production build of rooms-frontend
+  shell:
+    cmd: "source ~/.nvm/nvm.sh && cd ~/rooms-frontend && NODE_OPTIONS=--max_old_space_size=4096 npm run build:production"
+  args:
+    executable: /bin/bash

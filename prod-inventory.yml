@@ -70,9 +70,11 @@ all:
         159.203.117.239
     rooms:
       hosts:
-        civic.love:
-        planetary.name:
-
+        # civic.love:
+        # planetary.name:
+    rooms2:
+      hosts:
+        24.199.82.80
     graphql:
       # used by the rooms UI
       hosts:
