@@ -1,3 +1,4 @@
 ROOM_KEY={{ room_key }}
 ROOM_URL=http://localhost:3000
 BLOBS_URL=http:localhost:26835/get
+ROOM_HOST=localhost

@@ -1,0 +1,31 @@
+---
+
+# This task handles adding the graphql server as a room member
+
+- name: Get the graphql servers key
+  shell: |
+    source ~/.nvm/nvm.sh
+    cd ~/planetary-graphql
+    KEY_LOCATION=./db/secret node print-key.js
+  args:
+    executable: /bin/bash
+  register: graphql_secret
+
+- name: Print Graphql Server Key
+  ansible.builtin.set_fact:
+    graphql_key: "{{ graphql_secret.stdout }}"
+
+- debug: msg="{{ graphql_key }}"
+
+- name: Add graphql key as a room member
+  shell: |
+    docker exec go-ssb-room cmd/insert-user/insert-user -repo {{ room_repo_location }} -role member -password {{ member_password }} {{ graphql_key }}
+  ignore_errors: yes
+
+# docker-compose exec -T go-ssb-room cmd/insert-user/insert-user -repo {{ room_repo_location }} -role member -password {{ member_password }} {{ graphql_key }}
+
+- name: Restart the graphql server
+  shell:
+    cmd: "source ~/.nvm/nvm.sh && cd ~/planetary-graphql && pm2 restart graphql"
+  args:
+    executable: /bin/bash

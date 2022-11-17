@@ -1,6 +1,6 @@
 HTTPS_DOMAIN={{ inventory_hostname }}
 ALIASES_AS_SUBDOMAINS=true
-REPO=/ssb-go-room-secrets
+REPO={{ room_repo_location }}
 EXTERNAL_CONTENT_SRC={{ graphql_endpoint }} {{ blobs_endpoint }}
 
 VIRTUAL_HOST={{ inventory_hostname }}

@@ -74,7 +74,7 @@ all:
         # planetary.name:
     rooms2:
       hosts:
-        24.199.82.80
+        scuttle.im
     graphql:
       # used by the rooms UI
       hosts:

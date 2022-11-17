@@ -1,3 +1,5 @@
 graphql_endpoint: http://localhost:4000/graphql
 blobs_endpoint: http://localhost:26835
 blobs_dir: /get
+room_repo_location: /ssb-go-room-secrets
+member_password: admin

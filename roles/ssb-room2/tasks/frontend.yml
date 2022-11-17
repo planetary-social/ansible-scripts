@@ -20,3 +20,7 @@
     cmd: "source ~/.nvm/nvm.sh && cd ~/rooms-frontend && NODE_OPTIONS=--max_old_space_size=4096 npm run build:production"
   args:
     executable: /bin/bash
+
+
+# TODO: copy dist over to go-ssb-room/web/assets
+# - [ ] this will need to handle files that have name changes...

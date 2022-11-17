@@ -1,6 +1,7 @@
 version: '3'
 services:
   room:
+    container_name: go-ssb-room
     build: .
     restart: unless-stopped
     command: 'sh start.sh'

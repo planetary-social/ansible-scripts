@@ -9,13 +9,17 @@
     version: vue
 
 - name: Create room configuration file
-  template: src=room-env dest=go-ssb-room/env
+  template:
+    src: room-env
+    dest: go-ssb-room/env
 
 - name: Copy custom docker-compose.yml
-  template: src=docker-compose.yml dest=go-ssb-room/docker-compose.yml
+  template:
+    src: docker-compose.yml
+    dest: go-ssb-room/docker-compose.yml
 
 - name: Bring up docker containers
   docker_compose:
     project_src: go-ssb-room
-    # build:  yes
+    build:  yes
     state: present

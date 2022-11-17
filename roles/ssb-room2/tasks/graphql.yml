@@ -26,8 +26,43 @@
   # - we have to delete the old daeomon otherwise starting a new daemon means
   #   multiple concurrent daeomons running!
 
+- name: Copy the room secret from the docker container
+  shell: |
+    sudo docker cp go-ssb-room:/{{ room_repo_location }}/secret planetary-graphql/tmp
+
+- name: Get the room key
+  shell: |
+    source ~/.nvm/nvm.sh
+    cd ~/planetary-graphql
+    KEY_LOCATION=./tmp node print-key.js
+  args:
+    executable: /bin/bash
+  register: secret
+
+- name: Add environment variable for the room key
+  ansible.builtin.set_fact:
+    room_key: "{{ secret.stdout }}"
+
+- debug: msg="{{ room_key }}"
+
+- name: Create the graphql configuration file
+  template:
+    src: graphql-env
+    dest: planetary-graphql/.env
+
+- name: Check for the tmp file
+  stat:
+    path: planetary-graphql/tmp
+  register: tmp
+
+- name: Delete the tmp file if it exists
+  become: yes
+  command:
+    cmd: rm -f planetary-graphql/tmp
+  when: tmp.stat.exists
+
 - name: Start Daemon
   shell:
-    cmd: "source ~/.nvm/nvm.sh && cd ~/planetary-graphql && pm2 start index.js --name graphql --env staging"
+    cmd: "source ~/.nvm/nvm.sh && cd ~/planetary-graphql && NODE_OPTIONS=--max_old_space_size=4096 pm2 start index.js --name graphql --env staging"
   args:
     executable: /bin/bash
