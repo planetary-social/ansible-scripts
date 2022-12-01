@@ -1,7 +1,8 @@
 HTTPS_DOMAIN={{ inventory_hostname }}
 ALIASES_AS_SUBDOMAINS=true
 REPO={{ room_repo_location }}
-EXTERNAL_CONTENT_SRC={{ graphql_endpoint }} {{ blobs_endpoint }}
+EXTERNAL_CONTENT_SRC="{{ graphql_endpoint }} {{ blobs_endpoint }}"
+MAGIC_TOKEN={{ magic_token }}
 
 VIRTUAL_HOST={{ inventory_hostname }}
 VIRTUAL_PORT=3000
