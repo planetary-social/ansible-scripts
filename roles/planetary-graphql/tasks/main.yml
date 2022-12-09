@@ -6,40 +6,56 @@
 # 2. assign a "reserved IP address" (static address)
 # 3. add the Droplet to /prod-inventory.yml
 
-- name: Setup blob server nginx config
-  ansible.builtin.import_tasks: tasks/nginx-blob-config.yml
-# - name: Test TCP connectivity
-#   become: true
-#   become_user: root
-#   import_tasks: 'tasks/nginx-blob-config.yml'
+# This role depends on go-ssb-room being run first
+- name: Ensure planetary-graphql dir exists
+  ansible.builtin.file:
+    path: /root/planetary-graphql
+    state: directory
+    mode: '0755'
 
-- name: Clone planetary-graphql
-  git:
-    repo: https://github.com/planetary-social/planetary-graphql.git
-    dest: planetary-graphql
-    force: yes
 
-- name: Install planetary-graphql
-  shell:
-    cmd: "source ~/.nvm/nvm.sh && cd ~/planetary-graphql && npm install"
+- name: Get room key from go-ssb-room
+  ansible.builtin.shell: "cat secret | jq .id"
   args:
-    executable: /bin/bash
-  # NOTE:
-  # - "command" module doesn't have source, so use "shell"
-  # - "shell" uses "sh" by default (which doesn't have "source"), so tell it to use "bash"
+    chdir: /root/go-ssb-room/ssb-go-room-secrets
+  register: get_admin_room_key
 
-- name: Kill Daemon (if exists)
-  shell:
-    cmd: "source ~/.nvm/nvm.sh && pm2 del graphql"
-  args:
-    executable: /bin/bash
-  ignore_errors: True
-  # NOTE:
-  # - we have to delete the old daeomon otherwise starting a new daemon means
-  #   multiple concurrent daeomons running!
 
-- name: Start Daemon
-  shell:
-    cmd: "source ~/.nvm/nvm.sh && cd ~/planetary-graphql && pm2 start index.js --name graphql --env staging"
+- set_fact:
+    admin_room_key: "{{ get_admin_room_key.stdout|replace('\"','') }}"
+
+
+- name: Copy docker-compose.yml to planetary-graphql dir
+  ansible.builtin.template:
+    src: docker-compose.yml.tpl
+    dest: /root/planetary-graphql/docker-compose.yml
+    mode: 0644
+
+
+- name: Start up planetary-graphql
+  community.docker.docker_compose:
+    project_src: /root/planetary-graphql
+    build: false
+    restarted: true
+  register: output
+
+
+- name: Get graphql key
+  ansible.builtin.command:
   args:
-    executable: /bin/bash
+    cmd: docker-compose exec -T -e "KEY_LOCATION=/tmp/planetary-graphql/secret" graphql node print-key.js
+    chdir: /root/planetary-graphql
+  register: get_graphql_key
+
+
+- set_fact:
+    graphql_key: "{{ get_graphql_key.stdout|replace('\"','') }}"
+
+- ansible.builtin.debug:
+    var: graphql_key
+
+- name: Add graphql as member to room
+  ansible.builtin.command:
+  args:
+    cmd: docker-compose exec -T room /app/cmd/insert-user/insert-user -repo /ssb-go-room-secrets -role admin -password admin {{ graphql_key }}
+    chdir: /root/go-ssb-room
