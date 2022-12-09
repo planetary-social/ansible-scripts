@@ -1,0 +1,8 @@
+- name: Install niceties for working on server
+  ansible.builtin.apt:
+    pkg:
+      - curl
+      - rsync
+      - tmux
+      - jq
+    state: latest
