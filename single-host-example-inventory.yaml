@@ -1,0 +1,23 @@
+# An example inventory for use with the single-host playbook
+lab:
+  hosts:
+    ansible.fun:
+  vars:
+    ansible_user: root
+    cert_email: ops@planetary.social
+    frontend_port: 3000
+    frontend_docker_image: zachboyofdestiny/rooms-frontend
+    frontend_docker_tag: 1.2
+    room_port: 5000
+    room_docker_image: zachboyofdestiny/go-ssb-room
+    room_docker_tag: 1.1
+    room_aliases_as_subdomains: false
+    room_add_admin: true
+    room_admin_ssb_key: "@SOME_SSB_KEY=.ed25519"
+    room_admin_password: admin
+    graphql_docker_image: zachboyofdestiny/planetary-graphql
+    graphql_docker_tag: dev
+    graphql_port: 4000
+    graphql_blobs_port: 26835
+    graphql_password: admin
+    magic_token: 3vdWyLACyrKtzdveenWq9wbbPXh1Aq-Ds7VcUMX6kE27mW9K4k4a3tPFjE_Cjz_9rYA=
