@@ -1,0 +1,5 @@
+---
+room_docker_image: zachboyofdestiny/go-ssb-room
+room_docker_tag: 1.1
+room_port: 5000
+room_aliases_as_subdomains: false
