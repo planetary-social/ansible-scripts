@@ -2,7 +2,7 @@
 version: '3'
 services:
   graphql:
-    image: zachboyofdestiny/planetary-graphql:1.0
+    image: {{ graphql_docker_image }}:{{ graphql_docker_tag }}
     environment:
       - DB_PATH=/tmp/planetary-graphql
       - ROOM_HOST={{ inventory_hostname }}
@@ -11,9 +11,9 @@ services:
       - ROOM_KEY={{ admin_room_key }}
       - MAGIC_TOKEN={{ magic_token }}
       - LOGGING=true
-      - BLOBS_URL=http://0.0.0.0:26835
+      - BLOBS_URL=http://0.0.0.0:{{graphql_blobs_port }}
     ports:
-      - "4000:4000" # the graphql endpoint
-      - "0.0.0.0:26835:26835" # the blob server
+      - "{{ graphql_port }}:4000" # the graphql endpoint
+      - "0.0.0.0:{{ graphql_blobs_port }}:26835" # the blob server
     volumes:
       - ./db:/tmp/planetary-graphql

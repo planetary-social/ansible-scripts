@@ -1,15 +1,11 @@
 ---
 # This role installs planetary-graphql server with SSL
 
-# Pre-steps
-# 1. spin up a droplet, adding SSH keys
-# 2. assign a "reserved IP address" (static address)
-# 3. add the Droplet to /prod-inventory.yml
-
-# This role depends on go-ssb-room being run first
+# NOTE! This role depends on go-ssb-room being run first
+#
 - name: Ensure planetary-graphql dir exists
   ansible.builtin.file:
-    path: /root/planetary-graphql
+    path: /root/graphql # we name it this to avoid confusion with the planetary-graphql repo
     state: directory
     mode: '0755'
 
@@ -17,7 +13,7 @@
 - name: Get room key from go-ssb-room
   ansible.builtin.shell: "cat secret | jq .id"
   args:
-    chdir: /root/go-ssb-room/ssb-go-room-secrets
+    chdir: /root/room/ssb-go-room-secrets
   register: get_admin_room_key
 
 
@@ -25,18 +21,17 @@
     admin_room_key: "{{ get_admin_room_key.stdout|replace('\"','') }}"
 
 
-- name: Copy docker-compose.yml to planetary-graphql dir
+- name: Copy docker-compose.yml to graphql dir
   ansible.builtin.template:
     src: docker-compose.yml.tpl
-    dest: /root/planetary-graphql/docker-compose.yml
+    dest: /root/graphql/docker-compose.yml
     mode: 0644
 
 
 - name: Start up planetary-graphql
   community.docker.docker_compose:
-    project_src: /root/planetary-graphql
+    project_src: /root/graphql
     build: false
-    restarted: true
   register: output
 
 
@@ -44,7 +39,7 @@
   ansible.builtin.command:
   args:
     cmd: docker-compose exec -T -e "KEY_LOCATION=/tmp/planetary-graphql/secret" graphql node print-key.js
-    chdir: /root/planetary-graphql
+    chdir: /root/graphql
   register: get_graphql_key
 
 
@@ -57,5 +52,12 @@
 - name: Add graphql as member to room
   ansible.builtin.command:
   args:
-    cmd: docker-compose exec -T room /app/cmd/insert-user/insert-user -repo /ssb-go-room-secrets -role admin -password admin {{ graphql_key }}
-    chdir: /root/go-ssb-room
+    cmd: docker-compose exec -T room /app/cmd/insert-user/insert-user -repo /ssb-go-room-secrets -role admin -password {{graphql_password}} {{ graphql_key }}
+    chdir: /root/room
+
+- name: Retart up planetary-graphql
+  community.docker.docker_compose:
+    project_src: /root/graphql
+    build: false
+    restarted: true
+  register: output
