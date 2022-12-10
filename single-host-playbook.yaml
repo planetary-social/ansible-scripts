@@ -1,0 +1,11 @@
+- name:  Creating a room instance on a single host and domain.
+  hosts: lab
+  roles:
+    - common
+    - debugging
+    - digital-ocean
+    - docker
+    - rooms-frontend
+    - go-ssb-room
+    - planetary-graphql
+    - nginx-single-host
