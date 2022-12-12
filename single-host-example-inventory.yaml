@@ -13,10 +13,10 @@ lab:
     room_docker_tag: 1.1
     room_aliases_as_subdomains: false
     room_add_admin: true
-    room_admin_ssb_key: "@SOME_SSB_KEY=.ed25519"
+    room_admin_ssb_key: "yrssbkey.ed25519"
     room_admin_password: admin
     graphql_docker_image: zachboyofdestiny/planetary-graphql
-    graphql_docker_tag: dev
+    graphql_docker_tag: dev2
     graphql_port: 4000
     graphql_blobs_port: 26835
     graphql_password: admin
