@@ -62,15 +62,23 @@
 
 - name: "Print out certbot instructions"
   ansible.builtin.debug:
-    msg: >
+    msg: "Successfully set up the host!  There are some manual steps to be done on the server. SSH in and read /root/success.txt"
+
+- name: success to file
+  ansible.builtin.copy:
+    dest: /root/success.txt
+    content: |
       Congratulations! You've got everything set up and are almost done.
       The only thing left is to run certbot so your site is actually up.
       This is best done manually on the host server.
       First, ensure you have your DNS set up with following records:
-        A Record: {{inventory_hostname}}-> pointing to the IP of yr host
-        A Record: *.{{inventory_hostname}}->pointing to same ip "
-      Then, after ssh'ing into the host, run this command:
+        A Record: {{inventory_hostname}}-> pointing to the IP of yr host\n
+        A Record: *.{{inventory_hostname}}->pointing to same ip "\n
+      Then, after ssh'ing into the host, run this command:\n
           certbot certonly --manual \
           --server https://acme-v02.api.letsencrypt.org/directory \
           --preferred-challenges dns-01 \
-          -d '{{ inventory_hostname }}' -d '*.{{ inventory_hostname }}'
+          -d '{{ inventory_hostname }}' -d '*.{{ inventory_hostname }}'\
+      After htis is done run:
+        sudo certbot (and follow its steps)
+        sudo systemctl restart nginx
