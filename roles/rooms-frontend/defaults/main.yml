@@ -1,0 +1,4 @@
+---
+frontend_docker_image: zachboyofdestiny/rooms-frontend
+frontend_docker_tag: 1.2
+frontend_docker_port: 3000

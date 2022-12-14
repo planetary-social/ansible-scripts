@@ -1,0 +1,37 @@
+# Creates an instance of planetary-social/go-ssb-room running
+# as a docker image.  Intended for deployment where room,graphql,
+# and frontend are all on same host and domain, with an nginx proxy
+# in the front, on the droplet, handling the routes.
+
+---
+- name: Ensure room dir exists
+  ansible.builtin.file:
+    path: /root/room
+    state: directory
+    mode: '0755'
+
+
+- name: Copy docker-compose.yml to room dir
+  ansible.builtin.template:
+    src: docker-compose.yml.tpl
+    dest: /root/room/docker-compose.yml
+    mode: 0644
+
+
+- name: Start up room
+  community.docker.docker_compose:
+    project_src: /root/room
+    build: false
+    restarted: true
+  register: output
+
+
+- ansible.builtin.debug:
+    var: output
+
+- name: Add admin  to room
+  ansible.builtin.command:
+  args:
+    cmd: docker-compose exec -T room  /app/cmd/insert-user/insert-user -repo /ssb-go-room-secrets -role admin -password {{room_admin_password}} {{ room_admin_ssb_key }}
+    chdir: /root/room
+  when: room_add_admin == true

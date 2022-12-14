@@ -1,0 +1,29 @@
+---
+# This role starts up a rooms-frontend docker image It is intended for a setup
+# with a single host running the room, graphql, and frontend all behind a single
+# domain proxied by an external nginx proxy
+
+- name: Ensure frontend dir exists
+  ansible.builtin.file:
+    path: /root/frontend
+    state: directory
+    mode: '0755'
+
+
+- name: Copy docker-compose.yml to room dir
+  ansible.builtin.template:
+    src: docker-compose.yml.tpl
+    dest: /root/frontend/docker-compose.yml
+    mode: 0644
+
+
+- name: Start up rooms-frontend
+  community.docker.docker_compose:
+    project_src: /root/frontend
+    build: false
+    restarted: true
+  register: docker_compose_status
+
+
+- ansible.builtin.debug:
+    var: docker_compose_status
