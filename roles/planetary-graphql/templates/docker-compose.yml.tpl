@@ -1,5 +1,5 @@
 ---
-version: '3'
+version: '2.2'
 services:
   graphql:
     image: {{ graphql_docker_image }}:{{ graphql_docker_tag }}
@@ -11,7 +11,8 @@ services:
       - ROOM_KEY={{ admin_room_key }}
       - MAGIC_TOKEN={{ magic_token }}
       - LOGGING=true
-      - BLOBS_URL=http://0.0.0.0:{{graphql_blobs_port }}
+      - BLOBS_URL=/blob/
+      - NODE_ENV=production
     ports:
       - "{{ graphql_port }}:4000" # the graphql endpoint
       - "0.0.0.0:{{ graphql_blobs_port }}:26835" # the blob server
