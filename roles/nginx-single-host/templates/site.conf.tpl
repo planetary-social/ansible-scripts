@@ -15,6 +15,10 @@ upstream graphql {
   server localhost:{{ graphql_port }};
 }
 
+upstream blob {
+  server localhost:{{ graphql_blob_port }};
+}
+
 server {
     server_name {{ inventory_hostname }};
 
@@ -90,7 +94,7 @@ server {
        proxy_set_header Connection $connection_upgrade;
     }
 
-## all graphql paths go to the graphql server
+    ## all graphql paths go to the graphql server
     location  /graphql/ {
        proxy_pass http://graphql/graphql/;
        proxy_set_header Host $host;
@@ -102,7 +106,19 @@ server {
        proxy_set_header Connection $connection_upgrade;
     }
 
-## For any other path not yet specified, use the room server.
+    ## Any blob request redirects to /blob/get/$request (this is due to how ssb-blob-server is set up)
+    location  ~ /blob/(.*) {
+       proxy_pass http://blob/get/$1;
+       proxy_set_header Host $host;
+       proxy_set_header X-Forwarded-Host $host;
+       proxy_set_header X-Forwarded-For $remote_addr:$remote_port;
+       proxy_set_header X-Forwarded-Proto $scheme;
+       proxy_http_version 1.1;
+       proxy_set_header Upgrade $http_upgrade;
+       proxy_set_header Connection $connection_upgrade;
+    }
+
+    ## For any other path not yet specified, use the room server.
     location  / {
        proxy_pass http://room;
        proxy_set_header Host $host;
@@ -135,7 +151,6 @@ server {
 ## this server uses the (same) wildcard cert as the one above but uses a regular expression on the hostname
 ## which extracts the first subdomain which holds the alias and forwards that to the prox_pass server
 ## This isn't quite working yet, mostly cos we need to know the right place to redirect.
-
 server {
     server_name "~^(?<profile>\w+)\.{{ inventory_hostname|replace(".","\.") }}$";
 
