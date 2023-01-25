@@ -17,6 +17,7 @@ lab:
     room_admin_password: admin
     graphql_docker_image: zachboyofdestiny/planetary-graphql
     graphql_docker_tag: dev2
+    room_bypass_invite_token: someexampleinvitetoken
     graphql_port: 4000
     graphql_blobs_port: 26835
     graphql_password: admin
