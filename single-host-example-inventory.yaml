@@ -21,4 +21,4 @@ lab:
     graphql_port: 4000
     graphql_blobs_port: 26835
     graphql_password: admin
-    magic_token: 3vdWyLACyrKtzdveenWq9wbbPXh1Aq-Ds7VcUMX6kE27mW9K4k4a3tPFjE_Cjz_9rYA=
+    magic_token: someexampleinvitetoken
