@@ -23,6 +23,20 @@
     autoremove: yes
 
 
+- name: Install common packages
+  apt:
+    pkg:
+      - curl
+      - vim
+      - git
+      - ufw
+      - rsync
+      - jq
+      - tmux
+    state: latest
+    update_cache: true
+
+
 - name: Update and upgrade all installed packages
   become: true
   apt:
