@@ -25,7 +25,8 @@
   ansible.posix.authorized_key:
     user: "{{ admin_username }}"
     state: present
-    key: "{{ lookup('file', lookup('env','HOME') + '/.ssh/' + admin_ssh_key) }}"
+    key: "{{ lookup('file', admin_ssh_pubkey) }}"
+  register: admin_added
 
 
 - name: Disable password login for everyone
