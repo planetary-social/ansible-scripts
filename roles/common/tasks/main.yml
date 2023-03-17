@@ -1,21 +1,16 @@
 - name: Install aptitude using apt
-  apt:
+  ansible.builtin.apt:
     name: aptitude
     state: latest
     update_cache: no
     force_apt_get: no
 
 
-- name: Remove old Digital Ocean Repository
-  file:
-    path: /etc/apt/sources.list.d/droplet-agent.list
-    state: absent
-
-
 - name: Perform a dist-upgrade.
   ansible.builtin.apt:
     upgrade: dist
     update_cache: yes
+    cache_valid_time: 3600
 
 
 - name: Remove dependencies that are no longer required.
@@ -23,8 +18,27 @@
     autoremove: yes
 
 
+- name: "Disable Snapd Service"
+  ansible.builtin.service:
+    name: snapd
+    state: stopped
+    enabled: false
+
+
+- name: "Uninstall Snapd"
+  ansible.builtin.apt:
+    pkg: snapd
+    state: absent
+
+
+- name: "Remove Snapd directory"
+  ansible.builtin.file:
+    path: /root/snap
+    state: absent
+
+
 - name: Install common packages
-  apt:
+  ansible.builtin.apt:
     pkg:
       - curl
       - vim
@@ -33,15 +47,18 @@
       - rsync
       - jq
       - tmux
+      - mosh
     state: latest
     update_cache: true
+    cache_valid_time: 3600
 
 
 - name: Update and upgrade all installed packages
   become: true
-  apt:
+  ansible.builtin.apt:
     upgrade: yes
     update_cache: yes
+    cache_valid_time: 3600
 
 
 - name: Check if a reboot is required.
