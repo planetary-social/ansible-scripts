@@ -1,18 +1,34 @@
 ---
 # Tasks that should be run on all Digital Ocean droplets
 
-- name: Add Digital Ocean Repo Key 
-  apt_key:
+- name: Remove old Digital Ocean Repository
+  become: true
+  ansibile.builtin.file:
+    path: "{{ item }}"
+    state: absent
+  with_items:
+    - /etc/apt/sources.list.d/droplet-agent.list
+    - /etc/apt/sources.list.d/digitalocean-agent.list
+
+
+- name: Add Digital Ocean Repo Key
+  become: true
+  ansible.builtin.apt_key:
     url: https://repos.insights.digitalocean.com/sonar-agent.asc
     state: present
 
+
 - name: Add Digital Ocean Repository
-  apt_repository:
+  become: true
+  ansible.builtin.apt_repository:
     repo: deb https://repos.insights.digitalocean.com/apt/do-agent/ main main
     state: present
 
+
 - name: Install Metrics Agent
-  apt:
+  become: true
+  ansible.builtin.apt:
     name: do-agent
     state: present
     update_cache: yes
+    cache_valid_time: 3600
