@@ -1,25 +1,37 @@
 ---
-# This role sets up nginx, and the proper config, for
-# a planetary room instance where all the services are on a
-# single host and share a domain. For example: the host planet.fun
-# has go-ssb-room, planetary-graphql, and rooms-frontend all running
-# on it and they are accessible via planet.name/login, planet.name, and
-# planet.name/graphql respectively
 
 - name: Update and upgrade apt packages
-  apt:
+  become: true
+  ansible.builtin.apt:
     upgrade: yes
     update_cache: yes
     cache_valid_time: 86400
 
 
-- name: Install nginx and certbot
-  apt:
+- name: Install nginx
+  become: true
+  ansible.builtin.apt:
     pkg:
       - nginx
-      - certbot
-      - python3-certbot-nginx
     state: latest
+
+
+- name: etc/hosts - Prevent nameclashes with hostname
+  become: true
+  ansible.builtin.lineinfile:
+    path: /etc/hosts
+    state: present
+    regex: "^127.0.1.1 {{ domain }}.*$"
+    line: "127.0.1.1 {{ domain | replace('.','') }}"
+
+
+- name: etc/hosts template - Prevent nameclashes with hostname
+  become: true
+  ansible.builtin.lineinfile:
+    path: /etc/cloud/templates/hosts.debian.tmpl
+    state: present
+    regex: "^127.0.1.1 \\{\\{fqdn\\}\\}.*$"
+    line: "127.0.1.1 {{ domain | replace('.','') }}"
 
 
 - name: Confirm nginx conf folder exists
@@ -27,8 +39,18 @@
     path: "/etc/nginx/conf.d"
   register: conf_d
 
-# This sets the connection_upgrade var used in our site config
+
+- name: Add our custom config with extended gzip settings
+  become: true
+  ansible.builtin.copy:
+    src: nginx.conf
+    dest: "/etc/nginx/conf.d/nginx.conf"
+  when: conf_d.stat.exists
+
+
+  # This sets the connection_upgrade var used in our site config
 - name: Copy websocket_upgrade.conf to conf.d
+  become: true
   ansible.builtin.copy:
     src: websocket_upgrade.conf
     dest: "/etc/nginx/conf.d/websocket_upgrade.conf"
@@ -36,49 +58,42 @@
 
 
 - name: Build and copy over site config
+  become: true
   ansible.builtin.template:
     src: site.conf.tpl
-    dest: "/etc/nginx/sites-available/{{ inventory_hostname }}"
+    dest: "/etc/nginx/sites-available/{{ domain }}"
 
 
-- name: remove default site config
-  file:
+- name: Remove default site config from sites-enabled
+  become: true
+  ansible.builtin.file:
     path: /etc/nginx/sites-enabled/default
     state: absent
 
 
-- name: symlink site config to sites-enabled
-  file:
-    src: "/etc/nginx/sites-available/{{ inventory_hostname }}"
-    dest: "/etc/nginx/sites-enabled/{{ inventory_hostname }}"
+- name: Symlink site config to sites-enabled
+  become: true
+  ansible.builtin.file:
+    src: "/etc/nginx/sites-available/{{ domain }}"
+    dest: "/etc/nginx/sites-enabled/{{ domain }}"
     state: link
 
 
+- name: UFW - Allow http/https connections
+  become: true
+  community.general.ufw:
+    rule: allow
+    name: "Nginx Full"
+
+
 - name: Ensure config is valid
+  become: true
   ansible.builtin.command: nginx -t
   changed_when: false
-  notify: restart nginx
 
 
-- name: "Print out certbot instructions"
-  ansible.builtin.debug:
-    msg: "Successfully set up the host!  There are some manual steps to be done on the server. SSH in and read /root/success.txt"
-
-- name: success to file
-  ansible.builtin.copy:
-    dest: /root/success.txt
-    content: |
-      Congratulations! You've got everything set up and are almost done.
-      The only thing left is to run certbot so your site is actually up.
-      This is best done manually on the host server.
-      First, ensure you have your DNS set up with following records:
-        A Record: {{inventory_hostname}}-> pointing to the IP of yr host\n
-        A Record: *.{{inventory_hostname}}->pointing to same ip "\n
-      Then, after ssh'ing into the host, run this command:\n
-          certbot certonly --manual \
-          --server https://acme-v02.api.letsencrypt.org/directory \
-          --preferred-challenges dns-01 \
-          -d '{{ inventory_hostname }}' -d '*.{{ inventory_hostname }}'\
-      After htis is done run:
-        sudo certbot (and follow its steps)
-        sudo systemctl restart nginx
+- name: Restart nginx
+  become: true
+  ansible.builtin.service:
+    name: nginx
+    state: restarted
