@@ -16,8 +16,3 @@
     name: do-agent
     state: present
     update_cache: yes
-
-- name: Install Mosh shell
-  apt:
-    name: mosh
-    state: present
