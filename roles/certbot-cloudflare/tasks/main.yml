@@ -1,0 +1,59 @@
+# Setup certificates for https using certbot and a cloudflare dns plugin
+---
+- name: Install certbot and plugins
+  become: true
+  ansible.builtin.package:
+    pkg:
+      - certbot
+      - python3-certbot-nginx
+      - python3-certbot-dns-cloudflare
+    state: latest
+    update_cache: yes
+    cache_valid_time: 3600
+
+
+- name: Create config directory
+  ansible.builtin.file:
+    path: /home/{{ admin_username }}/.config/certbot
+    state: directory
+    mode: 0755
+
+
+- name: Upload cloudflare credentials
+  ansible.builtin.template:
+    src: cloudflare.ini.tpl
+    dest: /home/{{ admin_username }}/.config/certbot/cloudflare.ini
+    mode: 0600
+
+
+- set_fact:
+    domains_list: "{{ domain + ',' + '*.' + domain if wildcard_needed == true else domain }}"
+
+
+- name: Add certificates for host
+  become: true
+  ansible.builtin.shell:
+    cmd: |
+      certbot certonly \
+      --non-interactive \
+      --agree-tos  \
+      --dns-cloudflare \
+      --dns-cloudflare-credentials /home/{{ admin_username }}/.config/certbot/cloudflare.ini \
+      --email {{ cert_email }} \
+      -d {{ domains_list }}
+
+
+- name: Get latest options ssl conf
+  become: true
+  ansible.builtin.uri:
+    url: 'https://raw.githubusercontent.com/certbot/certbot/master/certbot-nginx/certbot_nginx/_internal/tls_configs/options-ssl-nginx.conf'
+    method: GET
+    dest: /etc/letsencrypt/options-ssl-nginx.conf
+
+
+- name: Get latest ssl-dhparams
+  become: true
+  ansible.builtin.uri:
+    url: 'https://raw.githubusercontent.com/certbot/certbot/master/certbot/certbot/ssl-dhparams.pem'
+    method: GET
+    dest: /etc/letsencrypt/ssl-dhparams.pem
