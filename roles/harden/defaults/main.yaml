@@ -1,0 +1,3 @@
+admin_username: admin
+admin_password: "use bcrypt to set this as an encrypted password"
+admin_ssh_pubkey: /Home/coolperson/.ssh/id_ed25519.pub
