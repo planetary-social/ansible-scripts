@@ -53,6 +53,13 @@ server {
        try_files $uri $uri/ /index.html;
     }
 
+    location ~ /(thread/.*) {
+       proxy_pass http://frontend/$1;
+       index  index.html index.htm;
+       include  /etc/nginx/mime.types;
+       try_files $uri $uri/ /index.html;
+    }
+
     location ~ /(follow/.*) {
        add_header X-Proxy-Cache $upstream_cache_status;
        proxy_pass http://frontend/$1;
