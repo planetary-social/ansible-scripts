@@ -5,15 +5,16 @@
 #
 - name: Ensure planetary-graphql dir exists
   ansible.builtin.file:
-    path: /root/graphql # we name it this to avoid confusion with the planetary-graphql repo
+    path: /home/{{ admin_username }}/graphql # we name it this to avoid confusion with the planetary-graphql repo
     state: directory
     mode: '0755'
 
 
 - name: Get room key from go-ssb-room
+  become: true
   ansible.builtin.shell: "cat secret | jq .id"
   args:
-    chdir: /root/room/ssb-go-room-secrets
+    chdir: /home/{{ admin_username }}/room/ssb-go-room-secrets
   register: get_admin_room_key
 
 
@@ -24,22 +25,24 @@
 - name: Copy docker-compose.yml to graphql dir
   ansible.builtin.template:
     src: docker-compose.yml.tpl
-    dest: /root/graphql/docker-compose.yml
+    dest: /home/{{ admin_username }}/graphql/docker-compose.yml
     mode: 0644
 
 
 - name: Start up planetary-graphql
+  become: true
   community.docker.docker_compose:
-    project_src: /root/graphql
+    project_src: /home/{{ admin_username }}/graphql
     build: false
   register: output
 
 
 - name: Get graphql key
+  become: true
   ansible.builtin.command:
   args:
     cmd: docker-compose exec -T -e "KEY_LOCATION=/tmp/planetary-graphql/secret" graphql node print-key.js
-    chdir: /root/graphql
+    chdir: /home/{{ admin_username }}/graphql
   register: get_graphql_key
 
 
@@ -53,11 +56,12 @@
   ansible.builtin.command:
   args:
     cmd: docker-compose exec -T room /app/cmd/insert-user/insert-user -repo /ssb-go-room-secrets -role admin -password {{graphql_password}} {{ graphql_key }}
-    chdir: /root/room
+    chdir: /home/{{ admin_username }}/room
 
-- name: Retart up planetary-graphql
+- name: Restart planetary-graphql
+  become: true
   community.docker.docker_compose:
-    project_src: /root/graphql
+    project_src: /home/{{ admin_username }}/graphql
     build: false
     restarted: true
   register: output

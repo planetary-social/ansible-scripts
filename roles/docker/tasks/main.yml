@@ -1,31 +1,78 @@
 - name: Remove old docker packages
-  apt:
-    name: docker docker-engine docker.io containerd runc
+  become: true
+  ansible.builtin.apt:
+    pkg:
+      - docker
+      - docker-engine
+      - docker.io
+      - containerd
+      - runc
     state: absent    
 
+
 - name: Install required system packages
-  apt: name={{ item }} state=latest update_cache=yes
-  loop: [ 'apt-transport-https', 'ca-certificates', 'curl', 'software-properties-common', 'python3-pip', 'virtualenv', 'python3-setuptools']
+  become: true
+  ansible.builtin.apt:
+    pkg:
+      - apt-transport-https
+      - ca-certificates
+      - curl
+      - software-properties-common
+      - python3-pip
+      - virtualenv
+      - python3-setuptools
+    state: latest
+    update_cache: true
+    cache_valid_time: 3600
+
 
 - name: Add Docker GPG apt Key
-  apt_key:
+  become: true
+  ansible.builtin.apt_key:
     url: https://download.docker.com/linux/{{ ansible_distribution | lower }}/gpg
     state: present
 
+
 - name: Add Docker Repository
-  apt_repository:
+  become: true
+  ansible.builtin.apt_repository:
     repo: deb https://download.docker.com/linux/{{ ansible_distribution | lower }} {{ ansible_lsb.codename }} stable
     state: present
 
+
 - name: Update apt and install docker-ce
-  apt: update_cache=yes name=docker-ce state=latest
+  become: true
+  ansible.builtin.apt:
+    pkg: docker-ce
+    state: latest
+    update_cache: yes
+    cache_valid_time: 3600
+
 
 - name: Install Docker Module for Python/Ansible
-  pip:
+  become: true
+  ansible.builtin.pip:
     executable: pip3
     name: 
       - docker
       - docker-compose
-    
+
+
 - name: Use Python 3
-  command: "update-alternatives --install /usr/bin/python python /usr/bin/python3 1"
+  become: true
+  ansible.builtin.command: "update-alternatives --install /usr/bin/python python /usr/bin/python3 1"
+
+
+- name: Ensure group "docker" exists
+  become: true
+  ansible.builtin.group:
+    name: docker
+    state: present
+
+
+- name: Add admin user to Docker
+  become: true
+  ansible.builtin.user:
+    name: "{{ admin_username }}"
+    groups: docker
+    append: yes

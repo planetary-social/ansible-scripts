@@ -15,6 +15,6 @@ services:
       - NODE_ENV=production
     ports:
       - "{{ graphql_port }}:4000" # the graphql endpoint
-      - "0.0.0.0:{{ graphql_blobs_port }}:26835" # the blob server
+      - "0.0.0.0:{{ graphql_blob_port }}:26835" # the blob server
     volumes:
       - ./db:/tmp/planetary-graphql

@@ -6,7 +6,7 @@
 ---
 - name: Ensure room dir exists
   ansible.builtin.file:
-    path: /root/room
+    path: /home/{{ admin_username }}/room
     state: directory
     mode: '0755'
 
@@ -14,13 +14,14 @@
 - name: Copy docker-compose.yml to room dir
   ansible.builtin.template:
     src: docker-compose.yml.tpl
-    dest: /root/room/docker-compose.yml
+    dest: /home/{{ admin_username }}/room/docker-compose.yml
     mode: 0644
 
 
 - name: Start up room
+  become: true
   community.docker.docker_compose:
-    project_src: /root/room
+    project_src: /home/{{  admin_username }}/room
     build: false
     restarted: true
   register: output
@@ -29,9 +30,18 @@
 - ansible.builtin.debug:
     var: output
 
+
 - name: Add admin  to room
   ansible.builtin.command:
   args:
-    cmd: docker-compose exec -T room  /app/cmd/insert-user/insert-user -repo /ssb-go-room-secrets -role admin -password {{room_admin_password}} {{ room_admin_ssb_key }}
-    chdir: /root/room
+    chdir: /home/{{ admin_username }}/room
+    cmd: docker-compose exec -T room /app/cmd/insert-user/insert-user -repo /ssb-go-room-secrets -role admin -password {{ room_admin_password }} {{ room_admin_ssb_key }}
   when: room_add_admin == true
+
+
+- name: UFW - Allow SSB connections
+  become: true
+  community.general.ufw:
+    rule: allow
+    port: '8008'
+    proto: tcp

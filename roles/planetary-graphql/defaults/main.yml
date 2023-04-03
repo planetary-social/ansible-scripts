@@ -2,5 +2,5 @@
 graphql_docker_image: zachboyofdestiny/planetary-graphql
 graphql_docker_tag: 1.0
 graphql_port: 4000
-graphql_blobs_port: 26835
+graphql_blob_port: 26835
 graphql_password: admin
