@@ -1,11 +1,14 @@
 - name:  Creating a room instance on a single host and domain.
-  hosts: lab
+  hosts: staging
+  vars:
+    ansible_user: admin
+  vars_file:
+    - vars/main.yaml
   roles:
-    - common
-    - debugging
     - digital-ocean
     - docker
     - rooms-frontend
     - go-ssb-room
     - planetary-graphql
+    - certbot-cloudflare
     - nginx-single-host
