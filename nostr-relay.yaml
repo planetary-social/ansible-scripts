@@ -1,0 +1,14 @@
+- name:  Creating a nostr relay server
+  hosts: staging
+  vars:
+    ansible_user: admin
+  vars_files:
+    - vars/main.yaml
+  roles:
+    # - common
+    # - harden
+    # - digital-ocean
+    # - docker
+    # - nostr-relay
+    - certbot-cloudflare
+    - nginx-nostr-relay

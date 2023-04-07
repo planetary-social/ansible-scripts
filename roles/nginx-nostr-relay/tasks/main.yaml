@@ -1,0 +1,90 @@
+---
+- name: Update and upgrade apt packages
+  become: true
+  ansible.builtin.apt:
+    upgrade: yes
+    update_cache: yes
+    cache_valid_time: 86400
+
+
+- name: Install nginx
+  become: true
+  ansible.builtin.apt:
+    pkg:
+      - nginx
+    state: latest
+
+
+- name: etc/hosts - Prevent nameclashes with hostname
+  become: true
+  ansible.builtin.lineinfile:
+    path: /etc/hosts
+    state: present
+    regex: "^127.0.1.1 {{ domain }}.*$"
+    line: "127.0.1.1 {{ domain | replace('.','') }}"
+
+
+- name: etc/hosts template - Prevent nameclashes with hostname
+  become: true
+  ansible.builtin.lineinfile:
+    path: /etc/cloud/templates/hosts.debian.tmpl
+    state: present
+    regex: "^127.0.1.1 \\{\\{fqdn\\}\\}.*$"
+    line: "127.0.1.1 {{ domain | replace('.','') }}"
+
+
+- name: Confirm nginx conf folder exists
+  ansible.builtin.stat:
+    path: "/etc/nginx/conf.d"
+  register: conf_d
+
+
+  # This sets the connection_upgrade var used in our site config
+- name: Copy websocket_upgrade.conf to conf.d
+  become: true
+  ansible.builtin.copy:
+    src: websocket_upgrade.conf
+    dest: "/etc/nginx/conf.d/websocket_upgrade.conf"
+  when: conf_d.stat.exists
+
+
+- name: Build and copy over site config
+  become: true
+  ansible.builtin.template:
+    src: site.conf.tpl
+    dest: "/etc/nginx/sites-available/{{ domain }}"
+
+
+- name: Remove default site config from sites-enabled
+  become: true
+  ansible.builtin.file:
+    path: /etc/nginx/sites-enabled/default
+    state: absent
+
+
+- name: Symlink site config to sites-enabled
+  become: true
+  ansible.builtin.file:
+    src: "/etc/nginx/sites-available/{{ domain }}"
+    dest: "/etc/nginx/sites-enabled/{{ domain }}"
+    state: link
+
+
+- name: UFW - Allow http/https connections
+  become: true
+  community.general.ufw:
+    rule: allow
+    name: "Nginx Full"
+
+
+- name: Ensure config is valid
+  become: true
+  ansible.builtin.command: nginx -t
+  changed_when: false
+
+
+- name: Restart nginx
+  become: true
+  ansible.builtin.service:
+    name: nginx
+    state: restarted

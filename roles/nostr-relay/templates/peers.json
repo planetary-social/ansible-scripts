@@ -1,0 +1,5 @@
+{
+  {% for peer in relay_peers %}
+  "{{ peer }}": true{% if not loop.last -%},{% endif -%}{{'\n'}}
+  {% endfor %}
+}

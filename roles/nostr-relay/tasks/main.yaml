@@ -1,0 +1,68 @@
+# Creates a nostr relay following this guide: https://write.bz/jascha/run-your-own-private-strfry-nostr-relay
+---
+- name: Ensure relay dir exists
+  ansible.builtin.file:
+    path: /home/{{ admin_username }}/relay
+    state: directory
+    mode: '0755'
+
+
+- name: Ensure relay plugin dir exists
+  ansible.builtin.file:
+    path: /home/{{ admin_username }}/relay/plugins
+    state: directory
+    mode: '0755'
+
+
+- name: Ensure other relay dirs exists
+  ansible.builtin.file:
+    path: /home/{{ admin_username }}/relay/{{ item }}
+    state: directory
+    mode: '0755'
+  loop:
+    - etc
+    - plugins
+    - stirfry-db
+
+
+- name: Copy docker-compose.yml to room dir
+  ansible.builtin.template:
+    src: docker-compose.yml.tpl
+    dest: /home/{{ admin_username }}/relay/docker-compose.yml
+    mode: 0644
+
+
+- name: add peers.json to plugins
+  ansible.builtin.template:
+    src: peers.json
+    dest: /home/{{ admin_username }}/relay/plugins/peers.json
+
+
+- name: Add whitelist.js to plugins
+  ansible.builtin.copy:
+    src: allowlist.js
+    dest: /home/{{ admin_username }}/relay/plugins/allowlist.js
+    mode: 0700
+
+
+- name: Add strfry.conf
+  ansible.builtin.template:
+    src: strfry.conf.tpl
+    dest: /home/{{ admin_username }}/relay/etc/strfry.conf
+
+
+- name: UFW - Allow nostr connections
+  become: true
+  community.general.ufw:
+    rule: allow
+    port: '7777'
+    proto: tcp
+
+
+- name: Start up relay
+  become: true
+  community.docker.docker_compose:
+    project_src: /home/{{  admin_username }}/relay
+    build: false
+    restarted: true
+  register: output

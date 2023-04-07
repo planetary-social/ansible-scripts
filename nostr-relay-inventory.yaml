@@ -1,0 +1,8 @@
+# An example inventory for use with the nostr-relay playbook
+# We use a var file in vars/main.yaml, that is edited for these particular servers.
+staging:
+  vars:
+    wildcard_needed: false
+  hosts:
+    cooltesting.space:
+      domain: "cooltesting.space"
