@@ -1,0 +1,26 @@
+---
+# Adds cronjob that deletes blobs that have not been accessed in 120 days or more.
+# Usage: ansible-playbook -i {inventory} delete-old-blobs.yml
+- name: Setup "Delete Old Blobs" cronjob
+  hosts: pubs
+  tasks:
+    - name: Copy delete-old-blobs script
+      ansible.builtin.copy:
+       src: files/scripts/delete-old-blobs.sh
+       dest: /usr/local/bin/delete-old-blobs.sh
+       mode: '0644'
+
+
+    - name: Create delete-old-blobs.log
+      ansible.builtin.file:
+        path: /var/log/delete-old-blobs.log
+        state: touch
+        mode: '0600'
+
+
+    - name: Set up cronjob
+      ansible.builtin.cron:
+        name: "delete old blobs"
+        minute: "1"
+        hour: "0"
+        job: "delete-old-blobs.sh >> /var/log/delete-old-blobs.log"
