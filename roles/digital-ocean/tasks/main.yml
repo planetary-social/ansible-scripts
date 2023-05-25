@@ -3,7 +3,7 @@
 
 - name: Remove old Digital Ocean Repository
   become: true
-  ansibile.builtin.file:
+  ansible.builtin.file:
     path: "{{ item }}"
     state: absent
   with_items:
