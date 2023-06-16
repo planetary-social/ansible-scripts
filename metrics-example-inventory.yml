@@ -1,0 +1,21 @@
+# An example inventory for use with the metrics playbook
+
+all:
+  vars:
+    admin_username: admin
+    admin_password: bcrypthashed_password
+    admin_ssh_pubkey: /path/to/your/key
+    cert_email: ops@planetary.social
+    cloudflare_api_token: token_from_cloudflare_profile
+    gf_admin: admin
+    gf_admin_pass: zachiscool
+  hosts:
+    ansible.fun:
+      domains:
+        - prometheus.ansible.fun
+        - grafana.ansible.fun
+        - alertmanager.ansible.fun
+      gf_domain: grafana.ansible.fun
+      am_domain: alertmanager.ansible.fun
+      prom_domain: prometheus.ansible.fun
+      am_slack_url: https://hooks.slack.com/services/someapitokengivenbyslack
