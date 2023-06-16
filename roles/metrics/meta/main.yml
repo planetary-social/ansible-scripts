@@ -1,0 +1,6 @@
+---
+dependencies:
+  - role: digital-ocean
+  - role: docker
+  - role: certbot-cloudflare
+  - role: nginx

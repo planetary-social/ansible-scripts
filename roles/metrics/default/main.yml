@@ -1,0 +1,5 @@
+gf_admin: admin
+gf_admin_pass: grafana
+gf_domain: grafana.your.site
+am_domain: alertmanager.your.site
+am_slack_url: https://slackwebhook.url
