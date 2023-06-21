@@ -37,31 +37,24 @@
     var: output
 
 
-- name: Set up prometheus nginx config
+- name: Set nginx config for all services
   become: true
   ansible.builtin.template:
-    src: nginx/prometheus.conf.tpl
-    dest: /etc/nginx/sites-available/{{ prom_domain }}
+    src: nginx.conf
+    dest: /etc/nginx/sites-available/{{ service.domain }}
     mode: 0644
+  loop:
+    - name: "grafana"
+      domain: "{{ gf_domain }}"
+    - name: "prometheus"
+      domain: "{{ prom_domain }}"
+    - name: "alertmanager"
+      domain: "{{ am_domain }}"
+  loop_control:
+    loop_var: service
 
 
-- name: Set up grafana nginx config
-  become: true
-  ansible.builtin.template:
-    src: nginx/grafana.conf.tpl
-    dest: /etc/nginx/sites-available/{{ gf_domain }}
-    mode: 0644
-
-
-- name: Set up alertmanager nginx config
-  become: true
-  ansible.builtin.template:
-    src: nginx/alertmanager.conf.tpl
-    dest: /etc/nginx/sites-available/{{ am_domain }}
-    mode: 0644
-
-
-- name: Symlink site config to sites-enabled
+- name: Symlink site configs to sites-enabled
   become: true
   ansible.builtin.file:
     src: "/etc/nginx/sites-available/{{ domain }}"
