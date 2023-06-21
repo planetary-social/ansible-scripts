@@ -1,0 +1,88 @@
+# Setup our metrics services via docker-compose
+
+- name: Clone our metrics repo
+  ansible.builtin.git:
+    repo: https://github.com/planetary-social/metrics.git
+    dest: /home/{{ admin_username }}/metrics
+
+
+- name: Setup correct env vars
+  ansible.builtin.template:
+    src: "{{envfile + '.tpl'}}"
+    dest: /home/{{ admin_username }}/metrics/.{{ envfile }}
+    mode: 0600
+  loop:
+    - "env.grafana"
+    - "env.alertmanager"
+  loop_control:
+    loop_var: envfile
+
+- name: Add Slack API url to alertmanager config
+  ansible.builtin.lineinfile:
+    path: /home/{{admin_username}}/metrics/configs/alertmanager/alertmanager.yml
+    state: present
+    regex: "^  slack_api_url: SLACK_API_URL"
+    line: "  slack_api_url: {{ am_slack_url }}"
+
+
+- name: Start up docker services
+  community.docker.docker_compose:
+    project_src: /home/{{ admin_username }}/metrics
+    build: true
+  register: output
+
+
+- name: Show results of docker-compose up
+  ansible.builtin.debug:
+    var: output
+
+
+- name: Set nginx config for all services
+  become: true
+  ansible.builtin.template:
+    src: nginx.conf
+    dest: /etc/nginx/sites-available/{{ service.domain }}
+    mode: 0644
+  loop:
+    - name: "grafana"
+      domain: "{{ gf_domain }}"
+    - name: "prometheus"
+      domain: "{{ prom_domain }}"
+    - name: "alertmanager"
+      domain: "{{ am_domain }}"
+  loop_control:
+    loop_var: service
+
+
+- name: Symlink site configs to sites-enabled
+  become: true
+  ansible.builtin.file:
+    src: "/etc/nginx/sites-available/{{ domain }}"
+    dest: "/etc/nginx/sites-enabled/{{ domain }}"
+    state: link
+  loop:
+    - "{{ prom_domain }}"
+    - "{{ gf_domain }}"
+    - "{{ am_domain }}"
+  loop_control:
+    loop_var: domain
+
+
+- name: UFW - Allow http/https connections
+  become: true
+  community.general.ufw:
+    rule: allow
+    name: "Nginx Full"
+
+
+- name: Ensure config is valid
+  become: true
+  ansible.builtin.command: nginx -t
+  changed_when: false
+
+
+- name: Restart nginx
+  become: true
+  ansible.builtin.service:
+    name: nginx
+    state: restarted

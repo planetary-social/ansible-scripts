@@ -26,11 +26,7 @@
     mode: 0600
 
 
-- set_fact:
-    domains_list: "{{ domain + ',' + '*.' + domain if wildcard_needed == true else domain }}"
-
-
-- name: Add certificates for host
+- name: Add certificates for host for all its domains
   become: true
   ansible.builtin.shell:
     cmd: |
@@ -38,9 +34,13 @@
       --non-interactive \
       --agree-tos  \
       --dns-cloudflare \
+      --dns-cloudflare-propagation-seconds=20 \
       --dns-cloudflare-credentials /home/{{ admin_username }}/.config/certbot/cloudflare.ini \
       --email {{ cert_email }} \
-      -d {{ domains_list }}
+      -d {{ domain + "," + domain[2:] if domain.startswith("*.") else domain }}
+  loop: "{{ hostvars[inventory_hostname]['domains'] }}"
+  loop_control:
+    loop_var: domain
 
 
 - name: Get latest options ssl conf

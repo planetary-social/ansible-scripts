@@ -1,0 +1,46 @@
+---
+
+- name: Update and upgrade apt packages
+  become: true
+  ansible.builtin.apt:
+    upgrade: yes
+    update_cache: yes
+    cache_valid_time: 86400
+
+
+- name: Install nginx
+  become: true
+  ansible.builtin.apt:
+    pkg:
+      - nginx
+    state: latest
+
+
+- name: etc/hosts - Prevent nameclashes with hostname
+  become: true
+  ansible.builtin.lineinfile:
+    path: /etc/hosts
+    state: present
+    regex: "^127.0.1.1 {{ domain | replace('*.','') }}.*$"
+    line: "127.0.1.1 {{ domain | replace('*.','') | replace('.','') }}"
+  loop: "{{ hostvars[inventory_hostname]['domains'] }}"
+  loop_control:
+    loop_var: domain
+
+
+- name: etc/hosts template - Prevent nameclashes with hostname
+  become: true
+  ansible.builtin.lineinfile:
+    path: /etc/cloud/templates/hosts.debian.tmpl
+    state: present
+    regex: "^127.0.1.1 \\{\\{fqdn\\}\\}.*$"
+    line: "127.0.1.1 {{ domain | replace('*.','') | replace('.','') }}"
+  loop: "{{ hostvars[inventory_hostname]['domains'] }}"
+  loop_control:
+    loop_var: domain
+
+
+- name: Confirm nginx conf folder exists
+  ansible.builtin.stat:
+    path: "/etc/nginx/conf.d"
+  register: conf_d

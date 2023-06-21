@@ -1,0 +1,11 @@
+# Metric playbook
+# This playbook installs our three metrics services, held at https://github.com/planetary-social/metrics
+# The playbook assumes you've run the common and harden roles on a new server, and so cannot login as root.
+# (thus the ansible_user var)
+
+- name: Install new server with metric tools
+  hosts: all
+  vars:
+    ansible_user: admin
+  roles:
+    - metrics
