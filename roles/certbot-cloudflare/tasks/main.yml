@@ -34,6 +34,7 @@
       --non-interactive \
       --agree-tos  \
       --dns-cloudflare \
+      --dns-cloudflare-propagation-seconds=20 \
       --dns-cloudflare-credentials /home/{{ admin_username }}/.config/certbot/cloudflare.ini \
       --email {{ cert_email }} \
       -d {{ domain + "," + domain[2:] if domain.startswith("*.") else domain }}
