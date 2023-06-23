@@ -1,0 +1,12 @@
+all:
+  vars:
+    cert_email: ops@planetary.social
+    cloudflare_api_token: apitoken_generated_by_cloudflare
+    admin_username: admin
+  hosts:
+    ansible.fun:
+      domains:
+        - rsslay.ansible.fun
+      rsslay_domain: rsslay.ansible.fun
+      rsslay_port: 9018
+      rsslay_secret_string: "ooohsecret"

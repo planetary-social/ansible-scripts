@@ -1,0 +1,11 @@
+- name: Create an rsslay instance on a target server
+  hosts: all
+  vars:
+    ansible_user: admin
+    admin_username: admin
+  roles:
+    - digital-ocean
+    - docker
+    - certbot-cloudflare
+    - nginx
+    - rsslay
