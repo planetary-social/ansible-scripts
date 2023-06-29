@@ -1,0 +1,59 @@
+---
+- name: Ensure node-exporter dir exists
+  ansible.builtin.file:
+    path: /{{ home_dir }}/node-exporter
+    state: directory
+    mode: '0755'
+
+
+- name: Download and unarchive node-exporter tarball
+  ansible.builtin.unarchive:
+    src: https://github.com/prometheus/node_exporter/releases/download/v{{ node_exporter_version }}/node_exporter-{{ node_exporter_version }}.linux-amd64.tar.gz
+    dest: /{{ home_dir }}/node-exporter
+    remote_src: yes
+
+
+- name: Symlink node-exporter binary to /usr/local/bin
+  become: true
+  ansible.builtin.file:
+    src: /{{ home_dir }}/node-exporter/node_exporter-{{ node_exporter_version }}.linux-amd64/node_exporter
+    dest: /usr/local/bin/node_exporter
+    state: link
+
+
+- name: Copy systemd unit file
+  ansible.builtin.copy:
+    src: node-exporter.service
+    dest: /{{ home_dir }}/node-exporter/node-exporter.service
+    mode: 0644
+
+
+- name: Symlink service file to systemd service dir
+  become: true
+  ansible.builtin.file:
+    src: /{{ home_dir }}/node-exporter/node-exporter.service
+    dest: /etc/systemd/system/node-exporter.service
+    state: link
+
+
+- name: Enable node-exporter service
+  become: true
+  ansible.builtin.systemd:
+    name: node-exporter.service
+    enabled: true
+
+
+- name: Start node-exporter service
+  become: true
+  ansible.builtin.systemd:
+    name: node-exporter
+    state: started
+    daemon_reload: true
+
+
+- name: UFW - Allow tcp connection for node-exporter port
+  become: true
+  community.general.ufw:
+    rule: allow
+    port: 9100
+    proto: tcp
