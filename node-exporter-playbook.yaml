@@ -1,6 +1,6 @@
-- name: Create an rsslay instance on a target server
+- name: install node exporter service on target hosts
   hosts: all
   vars:
-    node_exporter_versin: 1.6.0
+    node_exporter_version: 1.6.0
   roles:
     - node-exporter
