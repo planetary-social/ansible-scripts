@@ -11,4 +11,5 @@ services:
     environment:
       - "SECRET={{ rsslay_secret_string }}"
       - "DB_DIR=/db/rsslay.sqlite"
+      - "MAIN_DOMAIN_NAME={{ rsslay_domain }}"
     restart: always
