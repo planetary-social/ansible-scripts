@@ -2,3 +2,6 @@ secrets
 feeds
 *.DS_Store
 *htpasswd
+.env
+.envrc
+.direnv
