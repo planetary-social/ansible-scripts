@@ -1,0 +1,6 @@
+- name: install node exporter service on target hosts
+  hosts: all
+  vars:
+    node_exporter_version: 1.6.0
+  roles:
+    - node-exporter

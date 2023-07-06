@@ -1,0 +1,10 @@
+[Unit]
+Description = Node Exporter: prometheus exporter for machine metrics
+
+[Service]
+Type=simple
+ExecStart=/usr/local/bin/node_exporter
+Restart=always
+
+[Install]
+WantedBy=default.target
