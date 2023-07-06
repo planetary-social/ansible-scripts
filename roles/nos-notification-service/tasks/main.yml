@@ -1,0 +1,107 @@
+# Setup nos-notification-service-go on server
+---
+- name: Create dir for AAA root certificate
+  become: true
+  ansible.builtin.file:
+    path: /usr/local/share/ca-certificates/extra
+    state: directory
+
+
+- name: Copy AAA certificate to ca-certificates location
+  become: true
+  ansible.builtin.copy:
+    src: AAACertificateServices.crt
+    dest: /usr/local/share/ca-certificates/extra/AAACertificateServices.crt
+  register: result
+
+
+- name: Update certificates, if needed
+  become: true
+  ansible.builtin.command: update-ca-certificates
+  when: result is changed
+
+
+- name: Copy nginx config to sites available
+  become: true
+  ansible.builtin.template:
+    src: nginx.conf.tpl
+    dest: /etc/nginx/sites-available/{{ notifications_domain }}
+    mode: 0644
+
+
+- name: Symlink site config to sites-enabled
+  become: true
+  ansible.builtin.file:
+    src: "/etc/nginx/sites-available/{{ notifications_domain }}"
+    dest: "/etc/nginx/sites-enabled/{{ notifications_domain }}"
+    state: link
+
+
+- name: UFW - Allow http/https connections
+  become: true
+  community.general.ufw:
+    rule: allow
+    name: "Nginx Full"
+
+
+- name: UFW - Allow tcp connections for websockets
+  become: true
+  community.general.ufw:
+    rule: allow
+    port: 80
+    proto: tcp
+
+
+- name: Ensure config is valid
+  become: true
+  ansible.builtin.command: nginx -t
+  changed_when: false
+
+
+- name: Restart nginx
+  become: true
+  ansible.builtin.service:
+    name: nginx
+    state: restarted
+
+
+- name: Ensure notifications dir exists
+  ansible.builtin.file:
+    path: /home/{{ admin_username }}/notifications
+    state: directory
+    mode: '0755'
+
+
+- name: Copy docker-compose.yml to notifications dir
+  ansible.builtin.template:
+    src: docker-compose.yml.tpl
+    dest: /home/{{ admin_username }}/notifications/docker-compose.yml
+    mode: 0644
+
+
+- name: Ensure notifications/certs dir exists
+  ansible.builtin.file:
+    path: /home/{{ admin_username }}/notifications/certs
+    state: directory
+    mode: '0755'
+
+
+- name: Copy certs to notifications dir
+  ansible.builtin.copy:
+    src: "{{ cert.path }}"
+    dest: /home/{{ admin_username }}/notifications/certs/{{ cert.file }}
+    mode: 0644
+  loop:
+    - file: "{{ notifications_apns_certificate }}"
+      path: "{{ notifications_apns_certificate_path }}"
+    - file: "{{ notifications_firestore_credentials_json }}"
+      path: "{{ notifications_firestore_credentials_json_path }}"
+  loop_control:
+    loop_var: cert
+
+
+- name: Copy env file to notifications dir
+  ansible.builtin.template:
+    src: env.notifications
+    dest: /home/{{ admin_username }}/notifications/.env
+    mode: 0644

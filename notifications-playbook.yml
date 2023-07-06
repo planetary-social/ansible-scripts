@@ -1,0 +1,15 @@
+# Notifications playbook
+# This playbook installs our nos-notifications-go service on a new,hardened ubuntu server.
+# The playbook assumes you've run the common and harden roles on the server, and so cannot login as root.
+# (thus the ansible_user var)
+
+- name: Install new server with the nos-notifications-go service
+  hosts: all
+  vars:
+    ansible_user: admin
+  roles:
+    # - digital-ocean
+    # - docker
+    # - certbot
+    # - nginx
+    - nos-notification-service

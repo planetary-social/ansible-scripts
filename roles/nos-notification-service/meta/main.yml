@@ -1,0 +1,5 @@
+---
+dependencies:
+  - role: digital-ocean
+  - role: docker
+  - role: nginx
