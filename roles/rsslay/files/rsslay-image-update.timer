@@ -1,0 +1,10 @@
+[Unit]
+Description=Runs rsslay-image-update every 3 minutes
+Requires=rsslay-image-update.service
+
+[Timer]
+Unit=rsslay-image-update.service
+OnUnitActiveSec=3m
+
+[Install]
+WantedBy=timers.target
