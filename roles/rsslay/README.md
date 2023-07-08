@@ -10,6 +10,7 @@ for a new version of our stable image, restarting the service with the updated i
 ## Variables
 
 | variable | example    | purpose                                               |
+|----------|------------|-------------------------------------------------------|
 | rsslay_domain   | rsslay_planet.fun | the fqdn of the service |
 | rsslay_port   | 9018 | what port to map on the host to the container. |
 | rsslay_secret_string   | oohchacha | any string, used for generating id's by rsslay |
