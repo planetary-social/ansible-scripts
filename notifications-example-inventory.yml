@@ -11,7 +11,7 @@ all:
     notifications_firestore_project_id: "nos-notification-service-dev"
     notifications_firestore_credentials_json: "some-service-account-3333-dev.json"
     notifications_firestore_credentials_json_path: "/local/path/to/credentials_json_file"
-    notifications_apns_topic: "see.your.apple.account"
+    notifications_apns_topic: "with.extreme.likelihood.this.is.the.bundle.id.of.your.ios.app"
     notifications_apns_certificate: "certificate_apns.p12"
     notifications_apns_certificate_path: "/local/path/to/apns/certificate"
     notifications_apns_certificate_password: "password_you_set_for_apns_cert"
