@@ -105,3 +105,56 @@
     src: env.notifications
     dest: /home/{{ admin_username }}/notifications/.env
     mode: 0644
+
+- name: Copy systemd service for notifications image update
+  ansible.builtin.template:
+    src: notifications-image-update.service.tpl
+    dest: /home/{{ admin_username }}/notifications/notifications-image-update.service
+    mode: 0644
+
+
+- name: Copy systemd timer
+  ansible.builtin.copy:
+    src: notifications-image-update.timer
+    dest: /home/{{ admin_username }}/notifications/notifications-image-update.timer
+    mode: 0644
+
+
+- name: Copy systemd shell script
+  ansible.builtin.copy:
+    src: notifications-image-update.sh
+    dest: /home/{{ admin_username }}/notifications/notifications-image-update.sh
+    mode: 0755
+
+
+- name: Symlink image update files to correct locations
+  become: true
+  ansible.builtin.file:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    state: link
+  loop:
+    - src: /home/{{ admin_username }}//notifications/notifications-image-update.service
+      dest: /etc/systemd/system/notifications-image-update.service
+    - src: /home/{{ admin_username }}//notifications/notifications-image-update.timer
+      dest: /etc/systemd/system/notifications-image-update.timer
+    - src: /home/{{ admin_username }}/notifications/notifications-image-update.sh
+      dest: /usr/local/bin/notifications-image-update.sh
+
+
+- name: Enable image update service and timer
+  become: true
+  ansible.builtin.systemd:
+    name: "{{ item }}"
+    enabled: true
+  loop:
+    - notifications-image-update.service
+    - notifications-image-update.timer
+
+
+- name: Start image update service
+  become: true
+  ansible.builtin.systemd:
+    name: notifications-image-update
+    state: started
+    daemon_reload: true
