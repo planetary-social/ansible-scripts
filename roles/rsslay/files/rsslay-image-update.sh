@@ -1,10 +1,10 @@
 #!/bin/bash
 
-currentHash=$(docker inspect cooldracula/rsslay:stable --format "{{ .Id }}")
+currentHash=$(docker inspect ghcr.io/planetary-social/rsslay:stable --format "{{ .Id }}")
 
 docker-compose pull -q
 
-newHash=$(docker inspect cooldracula/rsslay:stable --format "{{ .Id }}")
+newHash=$(docker inspect ghcr.io/planetary-social/rsslay:stable --format "{{ .Id }}")
 
 if [[ "$currentHash" != "$newHash" ]]; then
         docker-compose up -d
