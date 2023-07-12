@@ -27,6 +27,7 @@
     src: nginx.conf.tpl
     dest: /etc/nginx/sites-available/{{ notifications_domain }}
     mode: 0644
+    force: no
 
 
 - name: Symlink site config to sites-enabled
@@ -121,8 +122,8 @@
 
 
 - name: Copy systemd shell script
-  ansible.builtin.copy:
-    src: notifications-image-update.sh
+  ansible.builtin.template:
+    src: notifications-image-update.sh.tpl
     dest: /home/{{ admin_username }}/notifications/notifications-image-update.sh
     mode: 0755
 
