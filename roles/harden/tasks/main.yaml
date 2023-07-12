@@ -21,12 +21,28 @@
     create_home: true
 
 
-- name: Set authorized key for remote admin
-  ansible.posix.authorized_key:
-    user: "{{ admin_username }}"
-    state: present
-    key: "{{ lookup('file', admin_ssh_pubkey) }}"
-  register: admin_added
+- name: Create .ssh folder for admin user
+  ansible.builtin.file:
+    path: "{{ homedir }}/.ssh/"
+    state: directory
+    mode: "0700"
+    owner: "{{ admin_username }}"
+    group: users
+
+
+- name: Copy authorized keys from root dir to admin dir
+  # The authorized keys in root are added during the creation of the droplet. We want to honor the keys added there.
+  ansible.builtin.command:
+    cmd: "cp /root/.ssh/authorized_keys {{ homedir }}/.ssh/authorized_keys"
+
+
+- name: Ensure authorized_keys owned by admin_user
+  ansible.builtin.file:
+    path: "{{ homedir }}/.ssh/authorized_keys"
+    state: file
+    mode: "0700"
+    owner: "{{ admin_username }}"
+    group: users
 
 
 - name: Disable password login for everyone
