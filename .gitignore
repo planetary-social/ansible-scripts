@@ -5,3 +5,4 @@ feeds
 .env
 .envrc
 .direnv
+notifications-inventory.yml
