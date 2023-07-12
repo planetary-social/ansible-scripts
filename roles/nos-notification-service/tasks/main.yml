@@ -27,6 +27,7 @@
     src: nginx.conf.tpl
     dest: /etc/nginx/sites-available/{{ notifications_domain }}
     mode: 0644
+    force: no
 
 
 - name: Symlink site config to sites-enabled
