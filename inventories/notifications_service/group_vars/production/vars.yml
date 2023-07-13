@@ -1,0 +1,7 @@
+---
+notifications_image_tag: stable
+notifications_firestore_project_id: "nos-notification-service"
+notifications_firestore_credentials_json: "{{ vault_notifications_firestore_credentials_json }}"
+notifications_firestore_credentials_json_path: "{{ vault_firestore_credentials_json_path }}"
+notifications_environment: "PRODUCTION"
+notifications_log_level: "DEBUG"

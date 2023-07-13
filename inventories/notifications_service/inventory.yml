@@ -1,0 +1,14 @@
+---
+notifications_service:
+  hosts:
+   notifications.nos.social:
+     notifications_domain: notifications.nos.social
+   dev-notifications.nos.social:
+     notifications_domain: dev-notifications.nos.social
+  children:
+    production:
+      hosts:
+        notifications.nos.social:
+    development:
+      hosts:
+        dev-notifications.nos.social:
