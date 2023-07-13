@@ -1,0 +1,5 @@
+---
+- name: Setup new server with common defaults and basic hardening
+  hosts: all
+  roles:
+    - harden
