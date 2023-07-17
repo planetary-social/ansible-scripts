@@ -1,0 +1,16 @@
+
+---
+- name: "List the vars used for the given inventory"
+  hosts: vars_example
+  vars:
+    ansible_user: admin
+  tasks:
+  - name: print the vars
+    ansible.builtin.debug:
+      var: "{{ item }}"
+    loop:
+      - listen_port
+      - app_image
+      - app_image_tag
+      - admin_password
+      - app_environment
