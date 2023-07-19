@@ -1,7 +1,0 @@
----
-notifications_image_tag: latest
-notifications_firestore_project_id: "nos-notification-service-dev"
-notifications_firestore_credentials_json: "{{ vault_notifications_firestore_credentials_json }}"
-notifications_firestore_credentials_json_path: "{{ vault_notifications_firestore_credentials_json_path }}"
-notifications_environment: "DEVELOPMENT"
-notifications_log_level: "DEBUG"
