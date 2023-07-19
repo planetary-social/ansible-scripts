@@ -1,0 +1,59 @@
+---
+- name: Create temporary file to store ssh keys
+  ansible.builtin.tempfile:
+    state: file
+    suffix: temp
+  register: sshkeys_tempfile
+
+
+- name: pull down ssh keys for chosen github users
+  ansible.builtin.shell: curl https://github.com/{{ username }}.keys >> {{ sshkeys_tempfile.path }}
+  loop: "{{ gh_user_keys_to_add }}"
+  loop_control:
+    loop_var: username
+
+
+- name: Set ssh keys as var for use in template
+  ansible.builtin.set_fact:
+    do_ssh_keys: "{{ lookup('ansible.builtin.file', sshkeys_tempfile.path) | split('\n') }}"
+
+
+- name: Create a new Droplet assigned to project
+  community.digitalocean.digital_ocean_droplet:
+    state: present
+    oauth_token: "{{ do_oauth_token }}"
+    name: "{{ do_droplet_name }}"
+    size: "{{ do_droplet_size }}"
+    region: "{{ do_droplet_region }}"
+    image: "{{ do_droplet_image }}"
+    ssh_keys:
+      - 95:d7:14:8e:81:7e:33:83:4a:47:8e:af:50:31:65:bd
+      # this is the fingerprint for zach's ssh public key.
+      # We include this because otherwise digital ocean
+      # overrides our sshd config to allow for password authentication.
+      # We turn off password authentication and the ability to login
+      # as root, anyway, so this will not be used.
+    tags: "{{ do_droplet_tags }}"
+    monitoring: "{{ do_droplet_enable_monitoring }}"
+    backups: "{{ do_droplet_enable_backups }}"
+    wait_timeout: 500
+    user_data: "{{ lookup('template', './cloud-config.yml.tpl') }}"
+    project: "{{ do_droplet_project }}"
+  register: new_do_droplet
+
+
+- name: delete ssh temp file
+  ansible.builtin.file:
+    state: absent
+    path:  "{{ sshkeys_tempfile.path }}"
+  when: sshkeys_tempfile.path is defined
+
+
+- name: Show Droplet info
+  ansible.builtin.debug:
+    msg: "{{ do_info | split('\n') }}"
+  vars:
+    do_info: |
+      Droplet ID is {{ new_do_droplet.data.droplet.id }}
+      First Public IPv4 is {{ (new_do_droplet.data.droplet.networks.v4 | selectattr('type', 'equalto', 'public')).0.ip_address | default('<none>', true) }}
+      First Private IPv4 is {{ (new_do_droplet.data.droplet.networks.v4 | selectattr('type', 'equalto', 'private')).0.ip_address | default('<none>', true) }}
