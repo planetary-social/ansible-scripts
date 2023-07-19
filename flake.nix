@@ -21,17 +21,21 @@
           pkgs.devshell.mkShell {
             packages = [
               pkgs.ansible
+              pkgs.tree
             ];
             commands = [
               {
                 name = ''new-role'';
                 help = ''scaffolds new role with given name'';
+                category = ''ansible-tasks'';
                 command =
                   ''
                     ROLESDIR=$(git rev-parse --show-toplevel)/roles/$1
                     mkdir -p $ROLESDIR/{tasks,templates,files,defaults,meta}
                     touch $ROLESDIR/{tasks,templates,defaults,meta}/main.yml
                     echo "# $1" >> $ROLESDIR/README.md
+                    echo "new role created: "
+                    tree $ROLESDIR
                   '';
               }
             ];
