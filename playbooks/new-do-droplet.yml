@@ -1,0 +1,24 @@
+---
+- name: provision a new digital ocean droplet
+  hosts: localhost
+  connection: local
+  gather_facts: yes
+  vars:
+    admin_username: admin
+    do_oauth_token: "{{ lookup('ansible.builtin.env', 'DO_API_TOKEN') }}"
+    do_droplet_name: testing.ansible.fun
+    do_droplet_size: s-1vcpu-1gb
+    do_droplet_region: SFO3
+    do_droplet_image: ubuntu-22-10-x64
+    do_droplet_project: Nos
+    do_droplet_enable_monitoring: true
+    do_droplet_enable_backups: false
+    do_droplet_tags:
+      - development
+    gh_user_keys_to_add:
+      - cooldracula
+      - zachmandeville
+      - mplorentz
+      - boreq
+  roles:
+    - new-do-droplet
