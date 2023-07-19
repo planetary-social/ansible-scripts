@@ -32,7 +32,7 @@
                   ''
                     ROLESDIR=$(git rev-parse --show-toplevel)/roles/$1
                     mkdir -p $ROLESDIR/{tasks,templates,files,defaults,meta}
-                    touch $ROLESDIR/{tasks,templates,defaults,meta}/main.yml
+                    touch $ROLESDIR/{tasks,defaults,meta}/main.yml
                     echo "# $1" >> $ROLESDIR/README.md
                     echo "new role created: "
                     tree $ROLESDIR
