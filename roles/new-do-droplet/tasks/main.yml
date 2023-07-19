@@ -6,7 +6,7 @@
   register: sshkeys_tempfile
 
 
-- name: pull down ssh keys for chosen github users
+- name: Pull down ssh keys for chosen github users
   ansible.builtin.shell: curl https://github.com/{{ username }}.keys >> {{ sshkeys_tempfile.path }}
   loop: "{{ gh_user_keys_to_add }}"
   loop_control:
@@ -42,7 +42,7 @@
   register: new_do_droplet
 
 
-- name: delete ssh temp file
+- name: Delete ssh temp file
   ansible.builtin.file:
     state: absent
     path:  "{{ sshkeys_tempfile.path }}"
