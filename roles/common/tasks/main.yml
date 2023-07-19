@@ -1,4 +1,5 @@
 - name: Install aptitude using apt
+  become: true
   ansible.builtin.apt:
     name: aptitude
     state: latest
@@ -7,6 +8,7 @@
 
 
 - name: Perform a dist-upgrade.
+  become: true
   ansible.builtin.apt:
     upgrade: dist
     update_cache: yes
@@ -14,11 +16,13 @@
 
 
 - name: Remove dependencies that are no longer required.
+  become: true
   ansible.builtin.apt:
     autoremove: yes
 
 
 - name: "Disable Snapd Service"
+  become: true
   ansible.builtin.service:
     name: snapd
     state: stopped
@@ -26,24 +30,26 @@
 
 
 - name: "Uninstall Snapd"
+  become: true
   ansible.builtin.apt:
     pkg: snapd
     state: absent
 
 
 - name: "Remove Snapd directory"
+  become: true
   ansible.builtin.file:
     path: /root/snap
     state: absent
 
 
 - name: Install common packages
+  become: true
   ansible.builtin.apt:
     pkg:
       - curl
       - vim
       - git
-      - ufw
       - rsync
       - jq
       - tmux
@@ -69,5 +75,6 @@
 
 
 - name: Reboot the server (if required).
+  become: true
   ansible.builtin.reboot:
   when: reboot_required_file.stat.exists == true
