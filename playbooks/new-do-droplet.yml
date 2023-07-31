@@ -12,7 +12,7 @@
     do_droplet_image: ubuntu-22-10-x64
     do_droplet_project: Nos
     do_droplet_enable_monitoring: true
-    do_droplet_enable_backups: false
+    do_droplet_enable_backups: true
     do_droplet_tags:
       - development
     gh_user_keys_to_add:
