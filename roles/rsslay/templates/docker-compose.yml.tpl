@@ -2,7 +2,7 @@
 version: '3'
 services:
   rsslay:
-    image: cooldracula/rsslay:stable
+    image: ghcr.io/planetary-social/rsslay:stable
     container_name: rsslay
     volumes:
           - ./db:/db
