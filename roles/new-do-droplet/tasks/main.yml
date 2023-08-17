@@ -1,0 +1,127 @@
+---
+- name: Create temporary file to store ssh keys
+  ansible.builtin.tempfile:
+    state: file
+    suffix: temp
+  register: sshkeys_tempfile
+
+
+- name: Pull down ssh keys for chosen github users
+  ansible.builtin.shell: curl https://github.com/{{ username }}.keys >> {{ sshkeys_tempfile.path }}
+  loop: "{{ gh_user_keys_to_add }}"
+  loop_control:
+    loop_var: username
+
+
+- name: Set ssh keys as var for use in template
+  ansible.builtin.set_fact:
+    do_ssh_keys: "{{ lookup('ansible.builtin.file', sshkeys_tempfile.path) | split('\n') }}"
+
+
+- name: Create a new Droplet assigned to project
+  community.digitalocean.digital_ocean_droplet:
+    state: present
+    oauth_token: "{{ do_oauth_token }}"
+    name: "{{ do_droplet_name }}"
+    size: "{{ do_droplet_size }}"
+    region: "{{ do_droplet_region }}"
+    image: "{{ do_droplet_image }}"
+    wait: true
+    ssh_keys:
+      - 95:d7:14:8e:81:7e:33:83:4a:47:8e:af:50:31:65:bd
+      # this is the fingerprint for zach's ssh public key.
+      # We include this because otherwise digital ocean
+      # overrides our sshd config to allow for password authentication.
+      # We turn off password authentication and the ability to login
+      # as root, anyway, so this will not be used.
+    tags: "{{ do_droplet_tags }}"
+    monitoring: "{{ do_droplet_enable_monitoring }}"
+    backups: "{{ do_droplet_enable_backups }}"
+    wait_timeout: 500
+    user_data: "{{ lookup('template', './cloud-config.yml.tpl') }}"
+    project: "{{ do_droplet_project }}"
+  register: new_do_droplet
+
+
+- name: Delete ssh temp file
+  ansible.builtin.file:
+    state: absent
+    path:  "{{ sshkeys_tempfile.path }}"
+  when: sshkeys_tempfile.path is defined
+
+
+- name: Register ip_address
+  ansible.builtin.set_fact:
+    ip_address: "{{ (new_do_droplet.data.droplet.networks.v4 | selectattr('type','equalto','public')).0.ip_address | default('<none>', true) }}"
+
+
+- name: Show Droplet info
+  ansible.builtin.debug:
+    msg: "{{ do_info | split('\n') }}"
+  vars:
+    do_info: |
+      Droplet ID is {{ new_do_droplet.data.droplet.id }}
+      Public IPv4 is {{ ip_address }}
+
+
+- name: Add new A record pointing to IP
+  community.general.cloudflare_dns:
+    zone: "{{ domain }}"
+    record: "@"
+    type: A
+    value:  "{{ ip_address }}"
+    account_email: "{{ cloudflare_email }}"
+    api_token: "{{ cloudflare_api_token }}"
+  when:
+    add_cloudflare_record
+  register: record
+
+
+- name: Show record result
+  ansible.builtin.debug:
+    msg: "{{ record }}"
+  when:
+    add_cloudflare_record and record is defined
+
+
+- name: Set inventory file
+  ansible.builtin.set_fact:
+    inv_file: "{{ base + '/inventories/' + inv + '/inventory.yml' }}"
+
+
+- name: backup inventory file
+  ansible.builtin.copy:
+    src: "{{ inv_file }}"
+    dest: "{{ inv_file + '.bkup_' + now(fmt='%y-%m-%d_%H:%M')}}"
+
+
+- name: slurp inventory yaml for modifying
+  ansible.builtin.slurp:
+    path: "{{ inv_file }}"
+  register: slurped_inv
+
+
+- name: extract inv data
+  ansible.builtin.set_fact:
+    inv_data: "{{ slurped_inv['content'] | b64decode | from_yaml }}"
+
+
+- name: build new_hosts dict
+  ansible.builtin.set_fact:
+    new_hosts: "{{ new_hosts | default({}) | combine({group:{'hosts': {domain:{}  }}})}}"
+  loop: "{{ inv_groups }}"
+  loop_control:
+    loop_var: group
+
+
+- name: add new_hosts to inventory
+  ansible.builtin.set_fact:
+    modified_inv: "{{ inv_data | combine(new_hosts, recursive=true) }}"
+
+
+- name: write  modified inv to file
+  ansible.builtin.copy:
+    content: "{{ '---\n' + inv_yaml }}"
+    dest: "{{ inv_file }}"
+  vars:
+    inv_yaml: "{{ modified_inv | to_nice_yaml(sort_keys=false,indent=2) | regex_replace('null','')  | regex_replace('{}','') }}"

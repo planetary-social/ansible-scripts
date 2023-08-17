@@ -1,0 +1,10 @@
+---
+admin_username: admin
+do_droplet_size: s-1vcpu-1gb
+do_droplet_region: SFO3
+do_droplet_image: ubuntu-22-10-x64
+do_droplet_enable_monitoring: true
+do_droplet_enable_backups: true
+do_droplet_name: "{{do_droplet_image + '.' ansible_date_time.date }}"
+do_droplet_project: Verse
+base: "{{ lookup('pipe', 'git rev-parse --show-toplevel') }}"
