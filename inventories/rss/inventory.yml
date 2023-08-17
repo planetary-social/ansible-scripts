@@ -1,17 +1,14 @@
 ---
 rss:
+  hosts:
+    rss.nos.social: 
   vars:
     admin_username: admin
     homedir: /home/{{ admin_username }}
     rsslay_port: 9018
-    rsslay_secret_string: "{{ vault_rsslay_secret_string }}"
+    rsslay_secret_string: '{{ vault_rsslay_secret_string }}'
+prod:
   hosts:
-    rss.nos.social:
-    rss.ansible.fun:
-  children:
-    prod:
-      hosts:
-        rss.nos.social:
-    dev:
-      hosts:
-        rss.ansible.fun:
+    rss.nos.social: 
+dev:
+  hosts:
