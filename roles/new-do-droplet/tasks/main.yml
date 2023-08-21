@@ -64,10 +64,21 @@
       Public IPv4 is {{ ip_address }}
 
 
+- name: Grab domain url parts
+  ansible.builtin.set_fact:
+    url_parts: "{{ domain | split('.') }}"
+
+
+- name: Establish zone and record of domain
+  ansible.builtin.set_fact:
+    zone: "{{ domain if url_parts|length == 2 else url_parts[1:]|join('.')}}"
+    record: "{{ '@' if url_parts|length == 2 else url_parts[0] }}"
+
+
 - name: Add new A record pointing to IP
   community.general.cloudflare_dns:
-    zone: "{{ domain }}"
-    record: "@"
+    zone: "{{ zone }}"
+    record: "{{ record }}"
     type: A
     value:  "{{ ip_address }}"
     account_email: "{{ cloudflare_email }}"
@@ -125,3 +136,9 @@
     dest: "{{ inv_file }}"
   vars:
     inv_yaml: "{{ modified_inv | to_nice_yaml(sort_keys=false,indent=2) | regex_replace('null','')  | regex_replace('{}','') }}"
+
+
+- name: Add droplet to new_do_droplet group for further plays
+  ansible.builtin.add_host:
+    name: "{{ domain }}"
+    groups: new_do_droplet
