@@ -15,17 +15,21 @@
       - nginx
     state: latest
 
+# Some inventories have domains, some only a domain.  This simplifies the role across these inventories
+- name: Establish domains
+  ansible.builtin.set_fact:
+    domains: "{{ domains if domains is defined else [ domain ] if domain is defined else [ inventory_hostname ] }}"
+
+
 
 - name: etc/hosts - Prevent nameclashes with hostname
   become: true
   ansible.builtin.lineinfile:
     path: /etc/hosts
     state: present
-    regex: "^127.0.1.1 {{ domain | replace('*.','') }}.*$"
-    line: "127.0.1.1 {{ domain | replace('*.','') | replace('.','') }}"
-  loop: "{{ hostvars[inventory_hostname]['domains'] }}"
-  loop_control:
-    loop_var: domain
+    regex: "^127.0.1.1 {{ item | replace('*.','') }}.*$"
+    line: "127.0.1.1 {{ item | replace('*.','') | replace('.','') }}"
+  loop: "{{ domains }}"
 
 
 - name: etc/hosts template - Prevent nameclashes with hostname
@@ -34,10 +38,8 @@
     path: /etc/cloud/templates/hosts.debian.tmpl
     state: present
     regex: "^127.0.1.1 \\{\\{fqdn\\}\\}.*$"
-    line: "127.0.1.1 {{ domain | replace('*.','') | replace('.','') }}"
-  loop: "{{ hostvars[inventory_hostname]['domains'] }}"
-  loop_control:
-    loop_var: domain
+    line: "127.0.1.1 {{ item | replace('*.','') | replace('.','') }}"
+  loop: "{{ domains }}"
 
 
 - name: Confirm nginx conf folder exists

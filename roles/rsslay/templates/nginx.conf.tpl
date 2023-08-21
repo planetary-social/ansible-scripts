@@ -1,5 +1,5 @@
 server {
-        server_name {{ rsslay_domain }};
+        server_name {{ domain }};
 
 
         location / {
@@ -22,18 +22,18 @@ server {
 
 
         listen 443 ssl; # managed by Certbot
-                ssl_certificate /etc/letsencrypt/live/{{ rsslay_domain }}/fullchain.pem; # managed by Certbot
-                ssl_certificate_key /etc/letsencrypt/live/{{ rsslay_domain }}/privkey.pem; # managed by Certbot
+                ssl_certificate /etc/letsencrypt/live/{{ domain }}/fullchain.pem; # managed by Certbot
+                ssl_certificate_key /etc/letsencrypt/live/{{ domain }}/privkey.pem; # managed by Certbot
                 include /etc/letsencrypt/options-ssl-nginx.conf; # managed by Certbot
                 ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem; # managed by Certbot
 
 }
 server {
-        if ($host = {{ rsslay_domain }}) {
+        if ($host = {{ domain }}) {
                 return 301 https://$host$request_uri;
         }
 
-        server_name {{ rsslay_domain }};
+        server_name {{ domain }};
         listen 80;
         return 404; # managed by Certbot
 }
