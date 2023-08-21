@@ -1,24 +1,32 @@
-- name: Install aptitude using apt
-  ansible.builtin.apt:
-    name: aptitude
-    state: latest
-    update_cache: no
-    force_apt_get: no
-
-
 - name: Perform a dist-upgrade.
+  become: true
   ansible.builtin.apt:
     upgrade: dist
+  register: dist_upgraded
+  retries: 10
+  delay: 5
+  until: dist_upgraded is success
+
+
+- name: update cache
+  become: true
+  ansible.builtin.apt:
     update_cache: yes
     cache_valid_time: 3600
 
 
 - name: Remove dependencies that are no longer required.
+  become: true
   ansible.builtin.apt:
     autoremove: yes
+  register: dependencies_removed
+  retries: 10
+  delay: 5
+  until: dependencies_removed is success
 
 
 - name: "Disable Snapd Service"
+  become: true
   ansible.builtin.service:
     name: snapd
     state: stopped
@@ -26,18 +34,25 @@
 
 
 - name: "Uninstall Snapd"
+  become: true
   ansible.builtin.apt:
     pkg: snapd
     state: absent
+  register: snapd_removed
+  retries: 10
+  delay: 5
+  until: snapd_removed is success
 
 
 - name: "Remove Snapd directory"
+  become: true
   ansible.builtin.file:
     path: /root/snap
     state: absent
 
 
 - name: Install common packages
+  become: true
   ansible.builtin.apt:
     pkg:
       - curl
@@ -49,19 +64,14 @@
       - tmux
       - mosh
     state: latest
-    update_cache: true
-    cache_valid_time: 3600
-
-
-- name: Update and upgrade all installed packages
-  become: true
-  ansible.builtin.apt:
-    upgrade: yes
-    update_cache: yes
-    cache_valid_time: 3600
+  register: pkgs_added
+  retries: 10
+  delay: 5
+  until: pkgs_added is success
 
 
 - name: Check if a reboot is required.
+  become: true
   ansible.builtin.stat:
     path: /var/run/reboot-required
     get_md5: no
@@ -69,5 +79,6 @@
 
 
 - name: Reboot the server (if required).
+  become: true
   ansible.builtin.reboot:
   when: reboot_required_file.stat.exists == true
