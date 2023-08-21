@@ -76,3 +76,7 @@
     name: "{{ admin_username }}"
     groups: docker
     append: yes
+
+
+- name: Reset ssh connection to allow changes to affect ansible user
+  ansible.builtin.meta: reset_connection
