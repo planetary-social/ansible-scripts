@@ -5,7 +5,7 @@
 #
 - name: Ensure planetary-graphql dir exists
   ansible.builtin.file:
-    path: /home/{{ admin_username }}/graphql # we name it this to avoid confusion with the planetary-graphql repo
+    path: "{{ homedir }}/graphql" # we name it this to avoid confusion with the planetary-graphql repo
     state: directory
     mode: '0755'
 
@@ -14,7 +14,7 @@
   become: true
   ansible.builtin.shell: "cat secret | jq .id"
   args:
-    chdir: /home/{{ admin_username }}/room/ssb-go-room-secrets
+    chdir: "{{ homedir }}/room/ssb-go-room-secrets"
   register: get_admin_room_key
 
 
@@ -25,14 +25,14 @@
 - name: Copy docker-compose.yml to graphql dir
   ansible.builtin.template:
     src: docker-compose.yml.tpl
-    dest: /home/{{ admin_username }}/graphql/docker-compose.yml
+    dest: "{{ homedir }}/graphql/docker-compose.yml"
     mode: 0644
 
 
 - name: Start up planetary-graphql
   become: true
   community.docker.docker_compose:
-    project_src: /home/{{ admin_username }}/graphql
+    project_src: "{{ homedir }}/graphql"
     build: false
   register: output
 
@@ -42,26 +42,29 @@
   ansible.builtin.command:
   args:
     cmd: docker-compose exec -T -e "KEY_LOCATION=/tmp/planetary-graphql/secret" graphql node print-key.js
-    chdir: /home/{{ admin_username }}/graphql
+    chdir: "{{ homedir }}/graphql"
   register: get_graphql_key
 
 
 - set_fact:
     graphql_key: "{{ get_graphql_key.stdout|replace('\"','') }}"
 
+
 - ansible.builtin.debug:
     var: graphql_key
+
 
 - name: Add graphql as member to room
   ansible.builtin.command:
   args:
     cmd: docker-compose exec -T room /app/cmd/insert-user/insert-user -repo /ssb-go-room-secrets -role admin -password {{graphql_password}} {{ graphql_key }}
-    chdir: /home/{{ admin_username }}/room
+    chdir: "{{ homedir }}/room"
+
 
 - name: Restart planetary-graphql
   become: true
   community.docker.docker_compose:
-    project_src: /home/{{ admin_username }}/graphql
+    project_src: "{{ homedir }}/graphql"
     build: false
     restarted: true
   register: output

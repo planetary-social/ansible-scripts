@@ -5,7 +5,7 @@
 
 - name: Ensure frontend dir exists
   ansible.builtin.file:
-    path: /home/{{ admin_username }}/frontend
+    path: "{{ homedir }}/frontend"
     state: directory
     mode: '0755'
 
@@ -13,14 +13,14 @@
 - name: Copy docker-compose.yml to room dir
   ansible.builtin.template:
     src: docker-compose.yml.tpl
-    dest: /home/{{ admin_username }}/frontend/docker-compose.yml
+    dest: "{{ homedir }}/frontend/docker-compose.yml"
     mode: 0644
 
 
 - name: Start up rooms-frontend
   become: true
   community.docker.docker_compose:
-    project_src: /home/{{ admin_username }}/frontend
+    project_src: "{{ homedir }}/frontend"
     build: false
     restarted: true
   register: docker_compose_status
