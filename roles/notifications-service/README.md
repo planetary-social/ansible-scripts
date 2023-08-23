@@ -1,4 +1,4 @@
-# Nos Notification Service
+# Notification Service
 
 This role sets up the [nos notification
 service](https://github.com/planetary-social/nos-notification-service-go/) on an
@@ -12,6 +12,7 @@ The variables follow the env vars needed for the servie as specified in the serv
 
 | variable                                      | example                                | purpose                          |
 |-----------------------------------------------|----------------------------------------|----------------------------------|
+| domain                                        | notify.ansible.fun                     | the http domain for this service |
 | notifications_image_tag                       | stable                                 | which docker image to run        |
 | notifications_nostr_listen_address            | 8008                                   | see service README               |
 | notifications_metrics_listen_address          | 8009                                   | see service README               |

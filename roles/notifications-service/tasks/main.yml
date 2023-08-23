@@ -25,7 +25,7 @@
   become: true
   ansible.builtin.template:
     src: nginx.conf.tpl
-    dest: /etc/nginx/sites-available/{{ notifications_domain }}
+    dest: /etc/nginx/sites-available/{{ domain }}
     mode: 0644
     force: no
 
@@ -33,8 +33,8 @@
 - name: Symlink site config to sites-enabled
   become: true
   ansible.builtin.file:
-    src: "/etc/nginx/sites-available/{{ notifications_domain }}"
-    dest: "/etc/nginx/sites-enabled/{{ notifications_domain }}"
+    src: "/etc/nginx/sites-available/{{ domain }}"
+    dest: "/etc/nginx/sites-enabled/{{ domain }}"
     state: link
 
 
@@ -68,7 +68,7 @@
 
 - name: Ensure notifications dir exists
   ansible.builtin.file:
-    path: /home/{{ admin_username }}/notifications
+    path: "{{ homedir }}/notifications"
     state: directory
     mode: '0755'
 
@@ -76,13 +76,13 @@
 - name: Copy docker-compose.yml to notifications dir
   ansible.builtin.template:
     src: docker-compose.yml.tpl
-    dest: /home/{{ admin_username }}/notifications/docker-compose.yml
+    dest: "{{ homedir }}/notifications/docker-compose.yml"
     mode: 0644
 
 
 - name: Ensure notifications/certs dir exists
   ansible.builtin.file:
-    path: /home/{{ admin_username }}/notifications/certs
+    path: "{{ homedir }}/notifications/certs"
     state: directory
     mode: '0755'
 
@@ -90,7 +90,7 @@
 - name: Copy certs to notifications dir
   ansible.builtin.copy:
     src: "{{ cert.path }}"
-    dest: /home/{{ admin_username }}/notifications/certs/{{ cert.file }}
+    dest: "{{ homedir }}/notifications/certs/{{ cert.file }}"
     mode: 0644
   loop:
     - file: "{{ notifications_apns_certificate }}"
@@ -104,27 +104,27 @@
 - name: Copy env file to notifications dir
   ansible.builtin.template:
     src: env.notifications
-    dest: /home/{{ admin_username }}/notifications/.env
+    dest: "{{ homedir }}/notifications/.env"
     mode: 0644
 
 - name: Copy systemd service for notifications image update
   ansible.builtin.template:
     src: notifications-image-update.service.tpl
-    dest: /home/{{ admin_username }}/notifications/notifications-image-update.service
+    dest: "{{ homedir }}/notifications/notifications-image-update.service"
     mode: 0644
 
 
 - name: Copy systemd timer
   ansible.builtin.copy:
     src: notifications-image-update.timer
-    dest: /home/{{ admin_username }}/notifications/notifications-image-update.timer
+    dest: "{{ homedir }}/notifications/notifications-image-update.timer"
     mode: 0644
 
 
 - name: Copy systemd shell script
   ansible.builtin.template:
     src: notifications-image-update.sh.tpl
-    dest: /home/{{ admin_username }}/notifications/notifications-image-update.sh
+    dest: "{{ homedir }}/notifications/notifications-image-update.sh"
     mode: 0755
 
 
@@ -135,11 +135,11 @@
     dest: "{{ item.dest }}"
     state: link
   loop:
-    - src: /home/{{ admin_username }}//notifications/notifications-image-update.service
+    - src: "{{ homedir }}/notifications/notifications-image-update.service"
       dest: /etc/systemd/system/notifications-image-update.service
-    - src: /home/{{ admin_username }}//notifications/notifications-image-update.timer
+    - src: "{{ homedir }}/notifications/notifications-image-update.timer"
       dest: /etc/systemd/system/notifications-image-update.timer
-    - src: /home/{{ admin_username }}/notifications/notifications-image-update.sh
+    - src: "{{ homedir }}/notifications/notifications-image-update.sh"
       dest: /usr/local/bin/notifications-image-update.sh
 
 
