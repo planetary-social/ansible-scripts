@@ -1,0 +1,7 @@
+- name: Create rsslay service on targets
+  hosts: rss
+  vars:
+    ansible_user: admin
+  roles:
+    - rsslay
+    - node-exporter
