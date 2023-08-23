@@ -4,9 +4,9 @@
   connection: local
   gather_facts: yes
   vars:
-    do_droplet_name: zachss.ansible.fun
+    domain: coolzach.ansible.fun
+    do_droplet_name:  "{{ domain }}"
     do_oauth_token: "{{ lookup('env', 'DO_API_TOKEN') }}"
-    domain: "{{ do_droplet_name }}"
     do_droplet_size: s-1vcpu-1gb
     do_droplet_region: SFO3
     do_droplet_image: ubuntu-22-10-x64
@@ -25,6 +25,7 @@
     inv_groups:
       - rss
       - dev
+      - cool
     add_cloudflare_record: true
     cloudflare_email: code@solarpunk.cool
     cloudflare_api_token: "{{ lookup('env', 'CLOUDFLARE_API_TOKEN')}}"
@@ -36,10 +37,12 @@
 
 
 - name: Run additional plays
-  hosts: rss:&dev
+  hosts: "{{ inv_groups | join(':&') }}"
   gather_facts: no
   vars:
     ansible_user: admin
+  roles:
+    - node-exporter # always add node-exporter to our server
   pre_tasks:
     # SSH Host key checking
     # https://stackoverflow.com/a/54735937/982195
@@ -57,5 +60,10 @@
       ansible.builtin.wait_for_connection:
     - name: Gather Facts
       ansible.builtin.gather_facts:
-  roles:
-    - rsslay
+  tasks:
+    - name: Run additional roles
+      ansible.builtin.include_role:
+        name: "{{ additional_role }}"
+      loop: "{{ additional_roles }}"
+      loop_control:
+        loop_var: additional_role
