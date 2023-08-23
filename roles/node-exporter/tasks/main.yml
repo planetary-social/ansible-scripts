@@ -1,7 +1,7 @@
 ---
 - name: Ensure node-exporter dir exists
   ansible.builtin.file:
-    path: /{{ home_dir }}/node-exporter
+    path: "{{ homedir }}/node-exporter"
     state: directory
     mode: '0755'
 
@@ -9,14 +9,14 @@
 - name: Download and unarchive node-exporter tarball
   ansible.builtin.unarchive:
     src: https://github.com/prometheus/node_exporter/releases/download/v{{ node_exporter_version }}/node_exporter-{{ node_exporter_version }}.linux-amd64.tar.gz
-    dest: /{{ home_dir }}/node-exporter
+    dest: /{{ homedir }}/node-exporter
     remote_src: yes
 
 
 - name: Symlink node-exporter binary to /usr/local/bin
   become: true
   ansible.builtin.file:
-    src: /{{ home_dir }}/node-exporter/node_exporter-{{ node_exporter_version }}.linux-amd64/node_exporter
+    src: "{{ homedir }}/node-exporter/node_exporter-{{ node_exporter_version }}.linux-amd64/node_exporter"
     dest: /usr/local/bin/node_exporter
     state: link
 
@@ -24,14 +24,14 @@
 - name: Copy systemd unit file
   ansible.builtin.copy:
     src: node-exporter.service
-    dest: /{{ home_dir }}/node-exporter/node-exporter.service
+    dest: "{{ homedir }}/node-exporter/node-exporter.service"
     mode: 0644
 
 
 - name: Symlink service file to systemd service dir
   become: true
   ansible.builtin.file:
-    src: /{{ home_dir }}/node-exporter/node-exporter.service
+    src: "{{ homedir }}/node-exporter/node-exporter.service"
     dest: /etc/systemd/system/node-exporter.service
     state: link
 
