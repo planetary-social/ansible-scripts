@@ -1,0 +1,13 @@
+---
+domain: example.ansible.fun
+do_droplet_tags:
+  - dev
+gh_user_keys_to_add:
+  - cooldracula
+  - zachmandeville
+inv:  notifications_service
+inv_groups:
+  - notifications_service
+  - dev
+additional_roles:
+  - notifications-service
