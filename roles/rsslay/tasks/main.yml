@@ -5,34 +5,18 @@
     state: directory
     mode: '0755'
 
+
 - name: Copy docker-compose.yml to rsslay dir
   ansible.builtin.template:
     src: docker-compose.yml.tpl
     dest: "{{ homedir }}/rsslay/docker-compose.yml"
     mode: 0644
 
+
 - name: ensure docker is running
   ansible.builtin.service:
     name: docker
     state: started
-
-- name: register whoami
-  ansible.builtin.command: whoami
-  register: who_i_am
-
-- name: print whoami
-  ansible.builtin.debug:
-    msg: "{{ who_i_am }}"
-
-
-- name: register id
-  ansible.builtin.command: id
-  register: my_id
-
-
-- name: print whoami
-  ansible.builtin.debug:
-    msg: "{{ my_id }}"
 
 
 - name: Start up rsslay
@@ -112,8 +96,8 @@
 - name: Symlink rsslay image update files to correct locations
   become: true
   ansible.builtin.file:
-    src: "{{ item.src }}"
-    dest: "{{ item.dest }}"
+    src: "{{ file.src }}"
+    dest: "{{ file.dest }}"
     state: link
   loop:
     - src: "{{ homedir }}/rsslay/rsslay-image-update.service"
@@ -122,16 +106,20 @@
       dest: /etc/systemd/system/rsslay-image-update.timer
     - src: "{{ homedir }}/rsslay/rsslay-image-update.sh"
       dest: /usr/local/bin/rsslay-image-update.sh
+  loop_control:
+    loop_var: file
 
 
 - name: Enable image update service and timer
   become: true
   ansible.builtin.systemd:
-    name: "{{ item }}"
+    name: "{{ unit_file }}"
     enabled: true
   loop:
     - rsslay-image-update.service
     - rsslay-image-update.timer
+  loop_control:
+    loop_var: unit_file
 
 
 - name: Start image update service
