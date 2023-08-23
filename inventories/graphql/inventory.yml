@@ -1,0 +1,5 @@
+---
+graphql:
+  # used by the rooms UI
+  hosts:
+    graphql.planetary.pub

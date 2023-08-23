@@ -1,0 +1,46 @@
+---
+pubs:
+  hosts:
+    one.planetary.pub:
+    two.planetary.pub:
+    three.planetary.pub:
+    four.planetary.pub:
+    poetry.planetary.pub:
+    gardening.planetary.pub:
+    fungi.planetary.pub:
+    cooking.planetary.pub:
+    floss.planetary.pub:
+    crypto.planetary.pub:
+    queer.family:
+    espanol.planetary.pub:
+    russian-language.planetary.pub:
+    ukrainian-language.planetary.pub:
+    french-language.planetary.pub:
+    chinese-language.planetary.pub:
+
+system:
+  hosts:
+    one.planetary.pub:
+    two.planetary.pub:
+    three.planetary.pub:
+    four.planetary.pub:
+
+topical:
+  hosts:
+    poetry.planetary.pub:
+    gardening.planetary.pub:
+    fungi.planetary.pub:
+    cooking.planetary.pub:
+    floss.planetary.pub:
+    crypto.planetary.pub:
+    queer.family:
+  vars:
+    hops: 1
+
+language:
+  hosts:
+    espanol.planetary.pub:
+    russian-language.planetary.pub:
+    ukrainian-language.planetary.pub:
+    french-language.planetary.pub:
+    chinese-language.planetary.pub:
