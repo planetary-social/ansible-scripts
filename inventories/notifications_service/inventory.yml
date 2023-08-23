@@ -1,43 +1,42 @@
 ---
 notifications_service:
+  hosts:
+    notifications.nos.social:
+    dev-notifications.nos.social:
   vars:
     admin_username: admin
-    admin_password: "{{ vault_admin_password }}"
-    homedir: "/home/{{ admin_username }}"
-
-    cert_email: "{{ vault_cert_email }}"
-    cloudflare_api_token: "{{ vault_cloudflare_api_token }}"
-    domain: "{{ inventory_hostname }}"
-
-    notifications_domain: "{{ domain }}"
+    admin_password: '{{ vault_admin_password }}'
+    homedir: /home/{{ admin_username }}
+    cert_email: '{{ vault_cert_email }}'
+    cloudflare_api_token: '{{ vault_cloudflare_api_token }}'
+    domain: '{{ inventory_hostname }}'
     notifications_nostr_listen_address: 8008
     notifications_metrics_listen_address: 8009
-    notifications_apns_topic: "com.verse.Nos"
-
-    notifications_apns_certificate: "certificate_apns.p12"
-    notifications_apns_certificate_path: "{{ vault_apns_certificate_path }}"
-    notifications_apns_certificate_password: "{{ vault_apns_certificate_password }}"
+    notifications_apns_topic: com.verse.Nos
+    notifications_apns_certificate: certificate_apns.p12
+    notifications_apns_certificate_path: '{{ vault_apns_certificate_path }}'
+    notifications_apns_certificate_password: '{{ vault_apns_certificate_password }}'
+prod:
   hosts:
-   notifications.nos.social:
-   dev-notifications.nos.social:
-  children:
-    prod:
-      vars:
-        notifications_image_tag: stable
-        notifications_firestore_project_id: "nos-notification-service"
-        notifications_environment: "PRODUCTION"
-        notifications_log_level: "DEBUG"
-        notifications_firestore_credentials_json: "{{ vault_firestore_credentials_json }}"
-        notifications_firestore_credentials_json_path: "{{ vault_firestore_credentials_json_path }}"
-      hosts:
-        notifications.nos.social:
-    dev:
-      vars:
-        notifications_image_tag: latest
-        notifications_firestore_project_id: "nos-notification-service-dev"
-        notifications_environment: "DEVELOPMENT"
-        notifications_log_level: "DEBUG"
-        notifications_firestore_credentials_json: "{{ vault_firestore_credentials_json }}"
-        notifications_firestore_credentials_json_path: "{{ vault_firestore_credentials_json_path }}"
-      hosts:
-        dev-notifications.nos.social:
+    notifications.nos.social: 
+  vars:
+    notifications_image_tag: stable
+    notifications_firestore_project_id: nos-notification-service
+    notifications_environment: PRODUCTION
+    notifications_log_level: DEBUG
+    notifications_firestore_credentials_json: '{{ vault_firestore_credentials_json
+      }}'
+    notifications_firestore_credentials_json_path: '{{ vault_firestore_credentials_json_path
+      }}'
+dev:
+  hosts:
+    dev-notifications.nos.social:
+  vars:
+    notifications_image_tag: latest
+    notifications_firestore_project_id: nos-notification-service-dev
+    notifications_environment: DEVELOPMENT
+    notifications_log_level: DEBUG
+    notifications_firestore_credentials_json: '{{ vault_firestore_credentials_json
+      }}'
+    notifications_firestore_credentials_json_path: '{{ vault_firestore_credentials_json_path
+      }}'
