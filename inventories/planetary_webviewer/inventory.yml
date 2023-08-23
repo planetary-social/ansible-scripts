@@ -1,0 +1,31 @@
+---
+planetary_webviewer:
+  hosts:
+    cooltesting.space:
+  vars:
+    admin_username: admin
+    homedir: /home/{{ admin_username  }}
+    frontend_docker_image: cooldracula/rooms-frontend
+    frontend_docker_tag: stable
+    frontend_port: 3000
+    room_docker_image: cooldracula/go-ssb-room
+    room_docker_tag: stable
+    room_port: 5000
+    room_aliases_as_subdomains: false
+    room_add_admin: true
+    room_admin_ssb_key: '{{ vault_room_admin_ssb_key }}'
+    room_admin_password: '{{ vault_room_admin_password }}'
+    graphql_docker_image: cooldracula/planetary-graphql
+    graphql_docker_tag: stable
+    graphql_port: 4000
+    graphql_blob_port: 26835
+    room_bypass_invites_token: '{{ vault_room_bypass_invites_token }}'
+    graphql_password: '{{ vault_graphql_password }}'
+    magic_token: '{{ vault_magic_token }}'
+    cert_email: code@solarpunk.cool
+    cloudflare_api_token: '{{ lookup(''env'', ''CLOUDFLARE_API_TOKEN'')}}'
+prod:
+  hosts: 
+dev:
+  hosts:
+    cooltesting.space:
