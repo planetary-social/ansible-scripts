@@ -135,7 +135,7 @@
     content: "{{ '---\n' + inv_yaml }}"
     dest: "{{ inv_file }}"
   vars:
-    inv_yaml: "{{ modified_inv | to_nice_yaml(sort_keys=false,indent=2) | regex_replace('null','')  | regex_replace('{}','') }}"
+    inv_yaml: "{{ modified_inv | to_nice_yaml(sort_keys=false,indent=2) | regex_replace('null','')  | regex_replace(' {}','') }}"
 
 
 - name: Add droplet to new_do_droplet group for further plays
