@@ -1,0 +1,15 @@
+---
+- name: Ansible | List all known variables and facts
+  hosts: notifications_service
+  vars:
+    ansible_user: admin
+  tasks:
+  - name: print the vars
+    ansible.builtin.debug:
+      var: "{{ item }}"
+    loop:
+      - domain
+      - notifications_environment
+      - cloudflare_api_token
+      - notifications_image_tag
+      - notifications_firestore_credentials_json_path

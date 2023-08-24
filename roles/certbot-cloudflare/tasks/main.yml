@@ -14,7 +14,7 @@
 
 - name: Create config directory
   ansible.builtin.file:
-    path: /home/{{ admin_username }}/.config/certbot
+    path: "{{ homedir }}/.config/certbot"
     state: directory
     mode: 0755
 
@@ -22,8 +22,13 @@
 - name: Upload cloudflare credentials
   ansible.builtin.template:
     src: cloudflare.ini.tpl
-    dest: /home/{{ admin_username }}/.config/certbot/cloudflare.ini
+    dest: "{{ homedir }}/.config/certbot/cloudflare.ini"
     mode: 0600
+
+# Some inventories have domains, some only a domain.  This simplifies the role across these inventories
+- name: Establish domains
+  ansible.builtin.set_fact:
+    domains: "{{ domains if domains is defined else [ domain ] if domain is defined else [ inventory_hostname ] }}"
 
 
 - name: Add certificates for host for all its domains
@@ -35,12 +40,10 @@
       --agree-tos  \
       --dns-cloudflare \
       --dns-cloudflare-propagation-seconds=20 \
-      --dns-cloudflare-credentials /home/{{ admin_username }}/.config/certbot/cloudflare.ini \
+      --dns-cloudflare-credentials {{ homedir }}/.config/certbot/cloudflare.ini \
       --email {{ cert_email }} \
-      -d {{ domain + "," + domain[2:] if domain.startswith("*.") else domain }}
-  loop: "{{ hostvars[inventory_hostname]['domains'] }}"
-  loop_control:
-    loop_var: domain
+      -d {{ item + "," + domain[2:] if item.startswith("*.") else item }}
+  loop: "{{ domains }}"
 
 
 - name: Get latest options ssl conf

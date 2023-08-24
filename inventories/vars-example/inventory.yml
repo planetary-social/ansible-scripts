@@ -1,0 +1,12 @@
+---
+vars_example:
+  hosts:
+   ansible.fun:
+   dev-notifications.nos.social:
+  children:
+    lab:
+      hosts:
+        ansible.fun:
+    nostr:
+      hosts:
+        dev-notifications.nos.social:

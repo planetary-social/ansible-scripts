@@ -1,42 +1,47 @@
 ---
 - name: Ensure rsslay dir exists
   ansible.builtin.file:
-    path: /home/{{ admin_username }}/rsslay
+    path: "{{ homedir }}/rsslay"
     state: directory
     mode: '0755'
+
 
 - name: Copy docker-compose.yml to rsslay dir
   ansible.builtin.template:
     src: docker-compose.yml.tpl
-    dest: /home/{{ admin_username }}/rsslay/docker-compose.yml
+    dest: "{{ homedir }}/rsslay/docker-compose.yml"
     mode: 0644
+
+
+- name: ensure docker is running
+  ansible.builtin.service:
+    name: docker
+    state: started
 
 
 - name: Start up rsslay
   community.docker.docker_compose:
-    project_src: /home/{{  admin_username }}/rsslay
+    project_src: "{{ homedir }}/rsslay"
     build: false
     restarted: true
-  register: output
-
-
-- ansible.builtin.debug:
-    var: output
+  register: service_started
+  retries: 5
+  until: service_started is success
 
 
 - name: Set nginx config for all services
   become: true
   ansible.builtin.template:
     src: nginx.conf.tpl
-    dest: /etc/nginx/sites-available/{{ rsslay_domain }}
+    dest: /etc/nginx/sites-available/{{ domain }}
     mode: 0644
 
 
 - name: Symlink site config to sites-enabled
   become: true
   ansible.builtin.file:
-    src: "/etc/nginx/sites-available/{{ rsslay_domain }}"
-    dest: "/etc/nginx/sites-enabled/{{ rsslay_domain }}"
+    src: "/etc/nginx/sites-available/{{ domain }}"
+    dest: "/etc/nginx/sites-enabled/{{ domain }}"
     state: link
 
 
@@ -70,47 +75,51 @@
 - name: Copy systemd service for rsslay image update
   ansible.builtin.template:
     src: rsslay-image-update.service.tpl
-    dest: /home/{{ admin_username }}/rsslay/rsslay-image-update.service
+    dest: "{{ homedir }}/rsslay/rsslay-image-update.service"
     mode: 0644
 
 
 - name: Copy systemd timer for rsslay image update
   ansible.builtin.copy:
     src: rsslay-image-update.timer
-    dest: /home/{{ admin_username }}/rsslay/rsslay-image-update.timer
+    dest: "{{ homedir }}/rsslay/rsslay-image-update.timer"
     mode: 0644
 
 
 - name: Copy systemd shell script for rsslay image update
   ansible.builtin.copy:
     src: rsslay-image-update.sh
-    dest: /home/{{ admin_username }}/rsslay/rsslay-image-update.sh
+    dest: "{{ homedir }}/rsslay/rsslay-image-update.sh"
     mode: 0755
 
 
 - name: Symlink rsslay image update files to correct locations
   become: true
   ansible.builtin.file:
-    src: "{{ item.src }}"
-    dest: "{{ item.dest }}"
+    src: "{{ file.src }}"
+    dest: "{{ file.dest }}"
     state: link
   loop:
-    - src: /home/{{ admin_username }}//rsslay/rsslay-image-update.service
+    - src: "{{ homedir }}/rsslay/rsslay-image-update.service"
       dest: /etc/systemd/system/rsslay-image-update.service
-    - src: /home/{{ admin_username }}//rsslay/rsslay-image-update.timer
+    - src: "{{ homedir }}/rsslay/rsslay-image-update.timer"
       dest: /etc/systemd/system/rsslay-image-update.timer
-    - src: /home/{{ admin_username }}/rsslay/rsslay-image-update.sh
+    - src: "{{ homedir }}/rsslay/rsslay-image-update.sh"
       dest: /usr/local/bin/rsslay-image-update.sh
+  loop_control:
+    loop_var: file
 
 
 - name: Enable image update service and timer
   become: true
   ansible.builtin.systemd:
-    name: "{{ item }}"
+    name: "{{ unit_file }}"
     enabled: true
   loop:
     - rsslay-image-update.service
     - rsslay-image-update.timer
+  loop_control:
+    loop_var: unit_file
 
 
 - name: Start image update service

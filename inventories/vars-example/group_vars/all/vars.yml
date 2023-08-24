@@ -1,0 +1,5 @@
+---
+listen_port: 8008
+app_image: ghcr.io/planetary/example-image
+admin_user: zach
+admin_password: "{{ vault_admin_password }}"

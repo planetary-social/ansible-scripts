@@ -4,7 +4,7 @@ Wants=rsslay-image-update.timer
 
 [Service]
 ExecStart=/usr/local/bin/rsslay-image-update.sh
-WorkingDirectory=/home/{{ admin_username }}/rsslay
+WorkingDirectory={{ homedir }}/rsslay
 
 [Install]
 WantedBy=multi-user.target

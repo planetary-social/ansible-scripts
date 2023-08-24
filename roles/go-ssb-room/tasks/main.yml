@@ -6,7 +6,7 @@
 ---
 - name: Ensure room dir exists
   ansible.builtin.file:
-    path: /home/{{ admin_username }}/room
+    path: "{{ homedir }}/room"
     state: directory
     mode: '0755'
 
@@ -14,14 +14,14 @@
 - name: Copy docker-compose.yml to room dir
   ansible.builtin.template:
     src: docker-compose.yml.tpl
-    dest: /home/{{ admin_username }}/room/docker-compose.yml
+    dest: "{{ homedir }}/room/docker-compose.yml"
     mode: 0644
 
 
 - name: Start up room
   become: true
   community.docker.docker_compose:
-    project_src: /home/{{  admin_username }}/room
+    project_src: "{{ homedir }}/room"
     build: false
     restarted: true
   register: output
@@ -34,7 +34,7 @@
 - name: Add admin  to room
   ansible.builtin.command:
   args:
-    chdir: /home/{{ admin_username }}/room
+    chdir: "{{ homedir }}/room"
     cmd: docker-compose exec -T room /app/cmd/insert-user/insert-user -repo /ssb-go-room-secrets -role admin -password {{ room_admin_password }} {{ room_admin_ssb_key }}
   when: room_add_admin == true
 

@@ -1,0 +1,4 @@
+---
+app_image_tag: stable
+app_environment: LAB
+admin_password: "{{ vault_lab_password }}"
