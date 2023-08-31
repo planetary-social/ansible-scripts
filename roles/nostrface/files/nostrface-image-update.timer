@@ -1,9 +1,9 @@
 [Unit]
-Description=Runs notifications-image-update every 3 minutes
-Requires=notifications-image-update.service
+Description=Runs nostrface-image-update every 3 minutes
+Requires=nostrface-image-update.service
 
 [Timer]
-Unit=notifications-image-update.service
+Unit=nostrface-image-update.service
 OnUnitActiveSec=3m
 
 [Install]
