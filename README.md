@@ -5,6 +5,11 @@ scripts we use to set up some of our infrastructure at Planetary.social. These
 scripts are not designed to be used outside of Planetary, but are still
 published here in case they are useful for other scuttlebutt/nostr users.
 
+# Setup
+
+1. Install Ansible and Ansible Galaxy
+2. Run `ansible-galaxy install -r requirements.yml`
+
 # Repo structure
 
 Ansible is structured around running playbooks against an inventory of servers.  Our repo is mainly structured, around our

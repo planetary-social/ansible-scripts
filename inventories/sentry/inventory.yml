@@ -1,0 +1,12 @@
+---
+sentry:
+  hosts:
+    sentry.nos.social:
+      domains: 
+        - sentry.nos.social
+      cloudflare_api_token: '{{ vault_cloudflare_api_token }}' 
+      wildcard_needed: false
+      cert_email: ops@nos.social
+      homedir: /home/{{ admin_username }}
+ 
+  

@@ -36,12 +36,14 @@ systemctl status certbot
 
 # Variables in this Role
 
-| variable             | example              | purpose                                                                    |
-|:---------------------|:---------------------|:---------------------------------------------------------------------------|
-| admin_username       | admin                | who you log into the server as, instead of root.                           |
-| domain               | ansible.fun          | fqdn of host server. should be set in inventory                            |
-| wildcard_needed      | true                 | whether role should get certs for *.domain too.                            |
-| cloudflare_api_token | someApiString        | the zoned token created in cloudflare.                                     |
-| cert_email           | ops@planetary.social | email used when assigning cert, for receiving notices (renewal,issues,etc) |
+| variable             | example                    | purpose                                                                    |
+|:---------------------|:---------------------------|:---------------------------------------------------------------------------|
+| admin_username       | admin                      | who you log into the server as, instead of root.                           |
+| domain               | ansible.fun                | fqdn of host server. should be set in inventory                            |
+| wildcard_needed      | true                       | whether role should get certs for *.domain too.                            |
+| cloudflare_api_token | someApiString              | the zoned token created in cloudflare.                                     |
+| cert_email           | ops@planetary.social       | email used when assigning cert, for receiving notices (renewal,issues,etc) |
+| homedir              | /home/{{ admin_username }} | the home directory of the current user                                     |
+ 
 
 
