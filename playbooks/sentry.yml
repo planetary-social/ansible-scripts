@@ -23,8 +23,4 @@
     - name: Gather Facts
       ansible.builtin.setup:
   roles:
-    - common
-    - docker
-    - certbot-cloudflare
-    - nginx
     - sentry
