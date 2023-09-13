@@ -3,7 +3,7 @@
   hosts: sentry
   gather_facts: false
   vars:
-    ansible_user: root
+    ansible_user: admin
     admin_username: admin
     sentry_port: 9000
   pre_tasks:
