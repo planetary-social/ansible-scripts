@@ -11,6 +11,7 @@
     dest: "{{ homedir }}/sentry/sentry/config.yml"
     mode: 0644
 
+
 - name: Run sentry install/update script
   ansible.builtin.command:
     cmd: ./install.sh --no-report-self-hosted-issues --skip-user-prompt
@@ -34,10 +35,20 @@
     var: service_started
 
 
+- name: Create first admin user
+  ansible.builtin.command:
+    cmd: docker compose run web createuser --force-update --superuser --email {{ sentry_admin_email }} --password {{ sentry_admin_password }}
+    chdir: "{{ homedir }}/sentry"
+  async: 900
+  poll: 10
+  register: user_created
+  retries: 5
+  until: user_created is success
 
 - ansible.builtin.debug:
-    var: output
-      
+    var: user_created
+
+
 - name: Set nginx config for all services
   become: true
   ansible.builtin.template:
