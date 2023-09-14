@@ -1,17 +1,14 @@
 ---
 - name: Clone latest sentry repo
-  become: true
-  become_user: admin
   ansible.builtin.git:
     repo: https://github.com/getsentry/self-hosted.git
-    dest: /home/{{ admin_username }}/sentry
+    dest: "{{ homedir }}/sentry"
+
 
 - name: Copy sentry config
-  become: true
-  become_user: admin
   ansible.builtin.template:
     src: sentry.config.tpl
-    dest: /home/{{ admin_username }}/sentry/sentry/config.yml
+    dest: "{{ homedir }}/sentry/sentry/config.yml"
     mode: 0644
 
 - name: Run sentry install/update script
@@ -19,7 +16,7 @@
   become_user: admin
   ansible.builtin.command: 
     cmd: ./install.sh --no-report-self-hosted-issues
-    chdir: /home/{{ admin_username }}/sentry
+    chdir: "{{ homedir }}/sentry"
 
 - name: Start services
   community.docker.docker_compose:
