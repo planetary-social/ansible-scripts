@@ -1,0 +1,3 @@
+sentry_port: 9000
+admin_username: admin
+homedir: /home/{{ admin_username }}
