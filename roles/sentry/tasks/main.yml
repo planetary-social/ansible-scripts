@@ -12,18 +12,28 @@
     mode: 0644
 
 - name: Run sentry install/update script
-  become: true
-  become_user: admin
-  ansible.builtin.command: 
-    cmd: ./install.sh --no-report-self-hosted-issues
+  ansible.builtin.command:
+    cmd: ./install.sh --no-report-self-hosted-issues --skip-user-prompt
     chdir: "{{ homedir }}/sentry"
+  async: 900
+  poll: 10
+
 
 - name: Start services
   community.docker.docker_compose:
-    project_src: /home/{{  admin_username }}/sentry
+    project_src: "{{ homedir }}/sentry"
     build: false
     restarted: true
-  register: output
+  async: 900
+  poll: 10
+  register: service_started
+  retries: 5
+  until: service_started is success
+
+- ansible.builtin.debug:
+    var: service_started
+
+
 
 - ansible.builtin.debug:
     var: output
