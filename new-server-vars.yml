@@ -1,13 +1,39 @@
 ---
-domain: example.ansible.fun
+#-----------------------------
+# Notification Service example
+#-----------------------------
+
+# Notification Service example
+# domain: example.ansible.fun
+# do_droplet_tags:
+#   - dev
+# gh_user_keys_to_add:
+#   - cooldracula
+#   - zachmandeville
+# inv:  notifications_service
+# inv_groups:
+#   - notifications_service
+#   - dev
+# additional_roles:
+#   - notifications-service
+
+
+#-----------------------------
+# Sentry Example
+#-----------------------------
+domain: sentry.ansible.fun
+do_droplet_size: s-2vcpu-8gb-160gb-intel
+do_droplet_image: ubuntu-22-04-x64
+do_droplet_region: NYC3
+do_droplet_project: Nos
 do_droplet_tags:
   - dev
 gh_user_keys_to_add:
   - cooldracula
-  - zachmandeville
-inv:  notifications_service
+  - mplorentz
+inv:  sentry
 inv_groups:
-  - notifications_service
+  - sentry
   - dev
 additional_roles:
-  - notifications-service
+  - sentry
