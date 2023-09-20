@@ -1,0 +1,93 @@
+---
+- name: Clone latest sentry repo
+  ansible.builtin.git:
+    repo: https://github.com/getsentry/self-hosted.git
+    dest: "{{ homedir }}/sentry"
+
+
+- name: Copy sentry config
+  ansible.builtin.template:
+    src: sentry.config.tpl
+    dest: "{{ homedir }}/sentry/sentry/config.yml"
+    mode: 0644
+
+
+- name: Run sentry install/update script
+  ansible.builtin.command:
+    cmd: ./install.sh --no-report-self-hosted-issues --skip-user-prompt
+    chdir: "{{ homedir }}/sentry"
+  async: 900
+  poll: 10
+
+
+- name: Start services
+  community.docker.docker_compose:
+    project_src: "{{ homedir }}/sentry"
+    build: false
+    restarted: true
+  async: 900
+  poll: 10
+  register: service_started
+  retries: 5
+  until: service_started is success
+
+- ansible.builtin.debug:
+    var: service_started
+
+
+- name: Create first admin user
+  ansible.builtin.command:
+    cmd: docker compose run web createuser --force-update --superuser --email {{ sentry_admin_email }} --password {{ sentry_admin_password }}
+    chdir: "{{ homedir }}/sentry"
+  async: 900
+  poll: 10
+  register: user_created
+  retries: 5
+  until: user_created is success
+
+- ansible.builtin.debug:
+    var: user_created
+
+
+- name: Set nginx config for all services
+  become: true
+  ansible.builtin.template:
+    src: nginx.conf.tpl
+    dest: /etc/nginx/sites-available/{{ inventory_hostname }}
+    mode: 0644
+
+
+- name: Symlink site config to sites-enabled
+  become: true
+  ansible.builtin.file:
+    src: "/etc/nginx/sites-available/{{ inventory_hostname }}"
+    dest: "/etc/nginx/sites-enabled/{{ inventory_hostname }}"
+    state: link
+
+
+- name: UFW - Allow http/https connections
+  become: true
+  community.general.ufw:
+    rule: allow
+    name: "Nginx Full"
+
+
+- name: UFW - Allow tcp connections for websockets
+  become: true
+  community.general.ufw:
+    rule: allow
+    port: 80
+    proto: tcp
+
+
+- name: Ensure config is valid
+  become: true
+  ansible.builtin.command: nginx -t
+  changed_when: false
+
+
+- name: Restart nginx
+  become: true
+  ansible.builtin.service:
+    name: nginx
+    state: restarted

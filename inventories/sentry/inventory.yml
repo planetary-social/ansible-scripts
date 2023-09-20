@@ -1,0 +1,14 @@
+---
+sentry:
+  hosts:
+    sentry.nos.social:
+  vars:
+    cert_email: ops@nos.social
+    # cloudflare_api_token: '{{ vault_cloudflare_api_token }}'
+    admin_username: admin
+    homedir: /home/{{ admin_username }}
+    sentry_admin_email: ops@nos.social
+    sentry_admin_password: '{{ vault_sentry_admin_password }}'
+    sentry_port: 9000
+prod:
+  sentry.nos.social:
