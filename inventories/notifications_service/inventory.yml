@@ -28,6 +28,9 @@ prod:
       }}'
     notifications_firestore_credentials_json_path: '{{ vault_firestore_credentials_json_path
       }}'
+    notifications_google_pubsub_enabled: TRUE
+    notifications_google_pubsub_project_id: pub-verse-app
+    notifications_google_pubsub_credentials_json_path: `{{ ? }}`
 dev:
   hosts:
     dev-notifications.nos.social:
@@ -40,3 +43,4 @@ dev:
       }}'
     notifications_firestore_credentials_json_path: '{{ vault_firestore_credentials_json_path
       }}'
+    notifications_google_pubsub_enabled: FALSE
