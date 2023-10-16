@@ -8,4 +8,4 @@
   vars:
     ansible_user: admin
   roles:
-    - nos-notification-service
+    - notifications-service
