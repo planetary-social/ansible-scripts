@@ -1,5 +1,28 @@
 ---
 #-----------------------------
+# Crossposting Service example
+#-----------------------------
+# domain: tweeter.nos.social
+# do_droplet_size: s-1vcpu-1gb
+# do_droplet_image: ubuntu-22-04-x64
+# do_droplet_region: NYC3
+# do_droplet_project: Nos
+# do_droplet_tags:
+#   - prod
+# gh_user_keys_to_add:
+#   - cooldracula
+#   - zachmandeville
+#   - mplorentz
+#   - boreq
+# inv:  nos_crossposting_service
+# inv_groups:
+#   - nos_crossposting_service
+#   - prod
+# additional_roles:
+#   - nos-crossposting-service
+
+
+#-----------------------------
 # Notification Service example
 #-----------------------------
 
