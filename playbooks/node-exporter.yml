@@ -2,5 +2,6 @@
   hosts: all
   vars:
     node_exporter_version: 1.6.0
+    ansible_user: admin
   roles:
     - node-exporter
