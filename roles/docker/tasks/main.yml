@@ -18,9 +18,9 @@
       - ca-certificates
       - curl
       - software-properties-common
-      - python3-pip
-      - virtualenv
-      - python3-setuptools
+      # - python3-pip
+      # - virtualenv
+      # - python3-setuptools
     state: latest
     update_cache: true
     cache_valid_time: 3600
@@ -48,23 +48,12 @@
     update_cache: yes
     cache_valid_time: 3600
 
-- name: Install Docker Module for Python/Ansible
-  ansible.builtin.pip:
-    executable: pip3
-    name:
-      - docker
-      - docker-compose
-
-
-- name: register python version being used
-  shell: python --version | awk '{print $2 }'
-  register: python_version
-
-
-- name: Use Python 3
+- name: Ensure docker cli-plugins dir exists
   become: true
-  ansible.builtin.command: "update-alternatives --install /usr/bin/python python /usr/bin/python3 1"
-  when: python_version is regex('^3.*')
+  ansible.builtin.file:
+    path: /usr/local/lib/docker/cli-plugins
+    state: directory
+    mode: '0755'
 
 
 - name: Ensure group "docker" exists
@@ -80,6 +69,30 @@
     name: "{{ admin_username }}"
     groups: docker
     append: yes
+
+
+- name: Download compose plugin
+  become: true
+  ansible.builtin.get_url:
+    url: https://github.com/docker/compose/releases/download/v2.23.0/docker-compose-linux-x86_64
+    dest: /usr/local/lib/docker/cli-plugins/docker-compose
+
+
+- name: Ensure compose is executable
+  become: true
+  ansible.builtin.file:
+    path: /usr/local/lib/docker/cli-plugins/docker-compose
+    mode: a+x
+
+
+- name: Check docker compose works
+  ansible.builtin.shell: docker compose version
+  register: compose_version
+
+
+- name: print version
+  ansible.builtin.debug:
+    msg: "{{ compose_version }}"
 
 
 - name: Reset ssh connection to allow changes to affect ansible user

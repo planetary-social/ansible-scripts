@@ -73,10 +73,9 @@
 
 
 - name: Start up crossposting service
-  community.docker.docker_compose:
-    project_src: "{{ homedir }}/crossposting"
-    build: false
-    restarted: true
+  ansible.builtin.shell: "docker compose down && docker compose up -d"
+  args:
+    chdir: "{{ homedir }}/crossposting"
   register: service_started
   retries: 5
   until: service_started is success
