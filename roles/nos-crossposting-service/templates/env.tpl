@@ -5,4 +5,4 @@ CROSSPOSTING_TWITTER_KEY="{{ crossposting_twitter_key }}"
 CROSSPOSTING_TWITTER_KEY_SECRET="{{ crossposting_twitter_key_secret }}"
 CROSSPOSTING_DATABASE_PATH="/db/database.sqlite"
 CROSSPOSTING_LOG_LEVEL={{ crossposting_log_level }}
-CROSSPOSTING_PUBLIC_FACING_ADDRESS={{ domain }}
+CROSSPOSTING_PUBLIC_FACING_ADDRESS="https://{{ domain }}"

@@ -14,7 +14,7 @@ server {
                 proxy_set_header   X-Forwarded-For  $proxy_add_x_forwarded_for;
         }
         location /metrics {
-                proxy_pass         http://127.0.0.1:{{ crossposting_listen_address }}/metrics;
+                proxy_pass         http://127.0.0.1:{{ crossposting_metrics_listen_address }}/metrics;
                 proxy_redirect     off;
 
                 proxy_set_header   Host             $host;
