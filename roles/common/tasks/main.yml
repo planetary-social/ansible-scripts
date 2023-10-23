@@ -25,12 +25,11 @@
   until: dependencies_removed is success
 
 
-- name: "Disable Snapd Service"
+- name: Disable snapd service if enabled
   become: true
-  ansible.builtin.service:
-    name: snapd
-    state: stopped
-    enabled: false
+  shell: if systemctl is-enabled --quiet snapd; then systemctl disable snapd && echo disable_ok ; fi
+  register: output
+  changed_when: "'disable_ok' in output.stdout"
 
 
 - name: "Uninstall Snapd"

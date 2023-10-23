@@ -101,11 +101,41 @@
     loop_var: cert
 
 
+- name: Copy pubsub cert to notifications dir
+  ansible.builtin.copy:
+    src: "{{ cert.path }}"
+    dest: "{{ homedir }}/notifications/certs/{{ cert.file }}"
+    mode: 0644
+  loop:
+    - file: "{{ notifications_google_pubsub_credentials_json }}"
+      path: "{{ notifications_google_pubsub_credentials_path }}"
+  loop_control:
+    loop_var: cert
+  when: notifications_google_pubsub_enabled is true
+
+
 - name: Copy env file to notifications dir
   ansible.builtin.template:
     src: env.notifications
     dest: "{{ homedir }}/notifications/.env"
     mode: 0644
+
+
+- name: ensure docker is running
+  ansible.builtin.service:
+    name: docker
+    state: started
+
+
+- name: Start up notifications
+  community.docker.docker_compose:
+    project_src: "{{ homedir }}/notifications"
+    build: false
+    restarted: true
+  register: service_started
+  retries: 5
+  until: service_started is success
+
 
 - name: Copy systemd service for notifications image update
   ansible.builtin.template:

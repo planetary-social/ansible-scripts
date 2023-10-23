@@ -48,19 +48,23 @@
     update_cache: yes
     cache_valid_time: 3600
 
-
 - name: Install Docker Module for Python/Ansible
-  become: true
   ansible.builtin.pip:
     executable: pip3
-    name: 
+    name:
       - docker
       - docker-compose
+
+
+- name: register python version being used
+  shell: python --version | awk '{print $2 }'
+  register: python_version
 
 
 - name: Use Python 3
   become: true
   ansible.builtin.command: "update-alternatives --install /usr/bin/python python /usr/bin/python3 1"
+  when: python_version is regex('^3.*')
 
 
 - name: Ensure group "docker" exists
