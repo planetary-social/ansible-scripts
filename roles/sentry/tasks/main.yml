@@ -21,10 +21,9 @@
 
 
 - name: Start services
-  community.docker.docker_compose:
-    project_src: "{{ homedir }}/sentry"
-    build: false
-    restarted: true
+  ansible.builtin.shell: "docker compose down && docker compose up -d"
+  args:
+    chdir: "{{ homedir }}/sentry"
   async: 900
   poll: 10
   register: service_started

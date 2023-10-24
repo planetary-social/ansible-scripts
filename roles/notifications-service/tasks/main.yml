@@ -128,10 +128,9 @@
 
 
 - name: Start up notifications
-  community.docker.docker_compose:
-    project_src: "{{ homedir }}/notifications"
-    build: false
-    restarted: true
+  ansible.builtin.shell: "docker compose down && docker compose up -d"
+  args:
+    chdir: "{{ homedir }}/notifications"
   register: service_started
   retries: 5
   until: service_started is success

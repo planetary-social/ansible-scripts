@@ -20,10 +20,9 @@
 
 
 - name: Start up rsslay
-  community.docker.docker_compose:
-    project_src: "{{ homedir }}/rsslay"
-    build: false
-    restarted: true
+  ansible.builtin.shell: "docker compose down && docker compose up -d"
+  args:
+    chdir: "{{ homedir }}/rsslay"
   register: service_started
   retries: 5
   until: service_started is success
