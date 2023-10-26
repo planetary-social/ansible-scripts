@@ -47,6 +47,28 @@
 
 
 #-----------------------------
+# Nostrface Service example
+#-----------------------------
+# domain: nosface.ansible.fun
+# do_droplet_size: s-1vcpu-1gb
+# do_droplet_image: ubuntu-22-04-x64
+# do_droplet_region: NYC3
+# do_droplet_project: Nos
+# do_droplet_tags:
+#   - dev
+# gh_user_keys_to_add:
+#   - cooldracula
+#   - mplorentz
+#   - zachmandeville
+# inv:  nostrface
+# inv_groups:
+#   - nostrface
+#   - dev
+# additional_roles:
+#   - nostrface
+
+
+#-----------------------------
 # Sentry Example
 #-----------------------------
 # domain: sentry.ansible.fun
