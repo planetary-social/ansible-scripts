@@ -25,7 +25,6 @@
 #-----------------------------
 # Notification Service example
 #-----------------------------
-
 # domain: dev-notifications.nos.social
 # do_droplet_size: s-1vcpu-1gb
 # do_droplet_image: ubuntu-22-04-x64
