@@ -1,0 +1,21 @@
+---
+nos_crossposting_service:
+  vars:
+    admin_username: admin
+    homedir: /home/{{ admin_username }}
+    cert_email: '{{ vault_cert_email }}'
+    cloudflare_api_token: '{{ vault_cloudflare_api_token }}'
+    crossposting_listen_address: 8008
+    crossposting_metrics_listen_address: 8009
+    crossposting_environment: PRODUCTION
+    crossposting_log_level: DEBUG
+    crossposting_twitter_key: '{{ vault_crossposting_twitter_key }}'
+    crossposting_twitter_key_secret: '{{ vault_crossposting_twitter_key_secret }}'
+    crossposting_image: ghcr.io/planetary-social/nos-crossposting-service
+    crossposting_image_tag: latest
+  hosts:
+    tweeter.nos.social:
+prod:
+  hosts:
+    tweeter.nos.social:
+  vars: 

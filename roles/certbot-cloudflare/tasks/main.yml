@@ -25,6 +25,7 @@
     dest: "{{ homedir }}/.config/certbot/cloudflare.ini"
     mode: 0600
 
+
 # Some inventories have domains, some only a domain.  This simplifies the role across these inventories
 - name: Establish domains
   ansible.builtin.set_fact:
@@ -41,6 +42,7 @@
       --dns-cloudflare \
       --dns-cloudflare-propagation-seconds=20 \
       --dns-cloudflare-credentials {{ homedir }}/.config/certbot/cloudflare.ini \
+      --post-hook  "systemctl restart nginx" \
       --email {{ cert_email }} \
       -d {{ item + "," + domain[2:] if item.startswith("*.") else item }}
   loop: "{{ domains }}"

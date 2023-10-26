@@ -1,0 +1,5 @@
+---
+crossposting_listen_address: 8008
+crossposting_metrics_listen_address: 8009
+crossposting_environment: "PRODUCTION"
+crossposting_log_level: "DEBUG"
