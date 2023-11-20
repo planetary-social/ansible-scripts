@@ -1,0 +1,11 @@
+# Crossposting playbook
+# This playbook installs our nos-crossposting-service on a new,hardened ubuntu server.
+# The playbook assumes you're running a hardened server, wher eyou cannot login as root. (thus the ansible_user var)
+
+- name: Install new server with the nos-crossposting-service
+  hosts: nos_event_service
+  vars:
+    ansible_user: admin
+    domain: "{{ inventory_hostname }}"
+  roles:
+    - nos-event-service
