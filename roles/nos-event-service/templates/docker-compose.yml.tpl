@@ -1,7 +1,7 @@
 ---
 version: '3'
 services:
-  notifications:
+  events:
     image: "{{ events_image }}:{{events_image_tag }}"
     container_name: events
     env_file:
