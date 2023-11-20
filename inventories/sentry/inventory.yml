@@ -6,6 +6,7 @@ sentry:
     cert_email: ops@nos.social
     # cloudflare_api_token: '{{ vault_cloudflare_api_token }}'
     admin_username: admin
+    admin_password: '{{ vault_admin_password }}'
     homedir: /home/{{ admin_username }}
     sentry_admin_email: ops@nos.social
     sentry_admin_password: '{{ vault_sentry_admin_password }}'
