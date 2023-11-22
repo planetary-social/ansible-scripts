@@ -18,9 +18,6 @@
       - ca-certificates
       - curl
       - software-properties-common
-      # - python3-pip
-      # - virtualenv
-      # - python3-setuptools
     state: latest
     update_cache: true
     cache_valid_time: 3600
@@ -47,6 +44,7 @@
     state: latest
     update_cache: yes
     cache_valid_time: 3600
+
 
 - name: Ensure docker cli-plugins dir exists
   become: true
@@ -93,6 +91,22 @@
 - name: print version
   ansible.builtin.debug:
     msg: "{{ compose_version }}"
+
+
+- name: add daemon.json config
+  become: true
+  ansible.builtin.copy:
+    src: daemon.json
+    dest: /etc/docker/daemon.json
+    mode: 0755
+
+
+- name: Restart docker so config changes take effect
+  become: true
+  ansible.builtin.systemd:
+    name: docker
+    state: started
+    daemon_reload: true
 
 
 - name: Reset ssh connection to allow changes to affect ansible user

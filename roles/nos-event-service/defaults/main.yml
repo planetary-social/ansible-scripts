@@ -1,0 +1,4 @@
+---
+events_listen_address: 8008
+events_environment: "PRODUCTION"
+events_log_level: "DEBUG"
