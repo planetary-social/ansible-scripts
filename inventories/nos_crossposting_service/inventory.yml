@@ -14,8 +14,12 @@ nos_crossposting_service:
     crossposting_image: ghcr.io/planetary-social/nos-crossposting-service
     crossposting_image_tag: latest
   hosts:
-    tweeter.nos.social:
+    connect.nos.social:
+      redirects:
+        - tweeter.nos.social
 prod:
   hosts:
-    tweeter.nos.social:
-  vars: 
+    tweeter.nos.social: 
+  vars:
+dev:
+  hosts:

@@ -1,7 +1,7 @@
 ---
 version: '3'
 services:
-  notifications:
+  crossposting:
     image: "{{ crossposting_image }}:{{crossposting_image_tag }}"
     container_name: crossposting
     env_file:
