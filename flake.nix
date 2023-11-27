@@ -23,6 +23,7 @@
               pkgs.ansible
               pkgs.netcat
               pkgs.tree
+              pkgs.doctl
             ];
             commands = [
               {
