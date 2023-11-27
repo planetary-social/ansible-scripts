@@ -1,0 +1,11 @@
+# Posthog playbook
+# This playbook installs Posthog(https://posthog.com) onto an ubuntu server
+# The playbook assumes you're running a hardened server, wher eyou cannot login as root. (thus the ansible_user var)
+
+- name: Install new server with Posthog
+  hosts: posthog
+  vars:
+    ansible_user: admin
+    domain: "{{ inventory_hostname }}"
+  roles:
+    - posthog

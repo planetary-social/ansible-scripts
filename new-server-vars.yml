@@ -155,3 +155,25 @@
 # - dev
 # additional_roles:
 # - nos_social
+
+
+# Posthog example
+#-----------------------------
+# domain: posthog.ansible.fun
+# do_droplet_size: s-4vcpu-8gb   # basic, 4 VCPU's, 8gb ram, $48 per month
+# do_droplet_image: ubuntu-22-04-x64
+# do_droplet_region: NYC3
+# do_droplet_project: Nos
+# do_droplet_tags:
+#   - prod
+# gh_user_keys_to_add:
+#   - cooldracula
+#   - zachmandeville
+#   - mplorentz
+#   - boreq
+# inv:  posthog
+# inv_groups:
+#   - posthog
+#   - prod
+# additional_roles:
+#   - posthog
