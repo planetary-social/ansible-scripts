@@ -19,7 +19,7 @@ services:
       - "./letsencrypt:/letsencrypt"
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
 
-  {{ service_name }}:
+  nostrface:
     image: "{{ nostrface_image }}:{{ nostrface_image_tag }}"
     container_name: "nostrface"
     labels:
