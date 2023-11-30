@@ -6,5 +6,6 @@
   hosts: nostrface
   vars:
     ansible_user: admin
+    domain: "{{ inventory_hostname }}"
   roles:
     - nostrface
