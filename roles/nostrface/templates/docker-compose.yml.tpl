@@ -22,6 +22,7 @@ services:
   nostrface:
     image: "{{ nostrface_image }}:{{ nostrface_image_tag }}"
     container_name: "nostrface"
+    restart: always
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.nostrface.rule=Host(`{{ domain }}`)"
