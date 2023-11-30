@@ -23,6 +23,11 @@
     dest: "{{ homedir }}/services/relay/docker-compose.yml"
     mode: 0644
 
+- name: Copy nginx-redirect.conf to relay dir
+  ansible.builtin.template:
+    src: nginx-redirect.conf.tpl
+    dest: "{{ homedir }}/services/relay/nginx-redirect.conf"
+    mode: 0644
 
 - name: ensure docker is running
   ansible.builtin.service:
