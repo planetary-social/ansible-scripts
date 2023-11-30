@@ -1,0 +1,14 @@
+---
+relay:
+  hosts:
+    relay.ansible.fun:
+  vars:
+    admin_username: admin
+    homedir: /home/{{ admin_username }}
+    cloudflare_api_token: '{{ lookup(''env'', ''CLOUDFLARE_API_TOKEN'') }}'
+    cert_email: zach@nos.social
+    domain: '{{ inventory_hostname }}'
+    nostrface_listen_address: 3000
+dev:
+  hosts:
+    relay.ansible.fun:
