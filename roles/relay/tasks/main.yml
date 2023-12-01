@@ -1,5 +1,5 @@
 ---
-- name: UFW - Allow http/https and traefik dashboard connections
+- name: UFW - Allow http/https connections
   become: true
   community.general.ufw:
     rule: allow
