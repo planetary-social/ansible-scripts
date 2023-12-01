@@ -1,7 +1,7 @@
 ---
 relay:
   hosts:
-    strfry.ansible.fun:
+    relay-do.ansible.fun:
   vars:
     admin_username: admin
     homedir: /home/{{ admin_username }}
@@ -11,4 +11,4 @@ relay:
     nostrface_listen_address: 3000
 dev:
   hosts:
-    strfry.ansible.fun:
+    relay-do.ansible.fun:
