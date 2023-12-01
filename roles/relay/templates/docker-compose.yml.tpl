@@ -12,14 +12,15 @@ services:
       - "--providers.docker.exposedbydefault=false"
       - "--api.dashboard=true"
       - "--entrypoints.websecure.address=:443"
+      - "--entrypoints.web.address=:80"
       - "--entrypoints.web.http.redirections.entryPoint.to=websecure"
       - "--entrypoints.web.http.redirections.entryPoint.scheme=https"
       - "--entrypoints.web.http.redirections.entrypoint.permanent=true"
       - "--certificatesresolvers.nosresolver.acme.tlschallenge=true"
       - "--certificatesresolvers.nosresolver.acme.email={{ cert_email }}"
       - "--certificatesresolvers.nosresolver.acme.storage=/letsencrypt/acme.json"
-     
     ports:
+      - "80:80"
       - "443:443"
     volumes:
       - "./letsencrypt:/letsencrypt"
@@ -60,7 +61,7 @@ services:
       - ./nginx-redirect.conf:/etc/nginx/conf.d/default.conf
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.redirect-service.rule=Host(`{{ domain }}`)"
+      - "traefik.http.routers.redirect-service.rule=Host(`{{ domain }}`) && !PathPrefix(`/dashboard`)"
       - "traefik.http.routers.redirect-service.entrypoints=websecure"
       - "traefik.http.routers.redirect-service.tls=true"
       - "traefik.http.routers.redirect-service.tls.certresolver=nosresolver"
