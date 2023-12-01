@@ -1,5 +1,5 @@
 ---
-- name: UFW - Allow http/https connections
+- name: UFW - Allow http/https and traefik dashboard connections
   become: true
   community.general.ufw:
     rule: allow
@@ -16,24 +16,44 @@
     state: directory
     mode: '0755'
 
+- name: Ensure strfry directory exists
+  become: true
+  ansible.builtin.file:
+    path: "{{ homedir }}/services/relay/strfrydb"
+    state: directory
+    mode: '0755'
 
 - name: Copy docker-compose.yml to relay dir
   ansible.builtin.template:
     src: docker-compose.yml.tpl
     dest: "{{ homedir }}/services/relay/docker-compose.yml"
-    mode: 0644
+    mode: '0644'
 
 - name: Copy nginx-redirect.conf to relay dir
+  become: true
   ansible.builtin.template:
     src: nginx-redirect.conf.tpl
     dest: "{{ homedir }}/services/relay/nginx-redirect.conf"
-    mode: 0644
+    mode: '0644'
+
+- name: Copy strfry.conf to relay dir
+  become: true
+  ansible.builtin.copy:
+    src: "{{ role_path }}/files/strfry.conf"
+    dest: "{{ homedir }}/services/relay/strfry.conf"
+    mode: '0644'
+
+- name: Copy whitelist.js to relay dir
+  become: true
+  ansible.builtin.copy:
+    src: "{{ role_path }}/files/whitelist.js"
+    dest: "{{ homedir }}/services/relay/whitelist.js"
+    mode: '0755'
 
 - name: ensure docker is running
   ansible.builtin.service:
     name: docker
     state: started
-
 
 - name: Start up docker services
   ansible.builtin.shell: "docker compose down && docker compose up -d"
