@@ -4,7 +4,8 @@ This role sets up a strfry instance on a target server set up in front of a Trae
 
 ## Variables
 
-| variable  | example           | purpose                   |
-| --------- | ----------------- | ------------------------- |
-| domain    | relay.nos.social  | the fqdn of the service   |
-| cert_email| foo@bar.com       | the email used for the letsencrypt certificate |
+| variable     | example            | purpose                    |
+| ------------ | ------------------ | -------------------------- |
+| domain       | relay.nos.social   | the fqdn of the service    |
+| cert_email   | foo@bar.com        | the email used for the letsencrypt certificate |
+| relay_image_tag | 0.9.4           | image tag for relayable/strfry |
