@@ -1,17 +1,17 @@
 ---
 nostrface:
   hosts:
-    nosface.ansible.fun:
+    nostrface.ansible.fun: 
   vars:
     admin_username: admin
     homedir: /home/{{ admin_username }}
-    cert_email: code@solarpunk.cool
-    cloudflare_api_token: '{{ lookup(''env'', ''CLOUDFLARE_API_TOKEN'') }}'
+    cert_email: zach@nos.social
     domain: '{{ inventory_hostname }}'
     nostrface_listen_address: 3000
     nostrface_image: cooldracula/nostrface
+    nostrface_image_tag: latest
 dev:
   hosts:
-    nosface.ansible.fun:
+    nostrface.ansible.fun: 
   vars:
     nostrface_image_tag: latest

@@ -71,7 +71,7 @@
 #-----------------------------
 # Nostrface Service example
 #-----------------------------
-# domain: nosface.ansible.fun
+# domain: nostrface.ansible.fun
 # do_droplet_size: s-1vcpu-1gb
 # do_droplet_image: ubuntu-22-04-x64
 # do_droplet_region: NYC3

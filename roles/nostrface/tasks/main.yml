@@ -1,47 +1,13 @@
 ---
-- name: Copy nginx config to sites available
-  become: true
-  ansible.builtin.template:
-    src: nginx.conf.tpl
-    dest: /etc/nginx/sites-available/{{ domain }}
-    mode: 0644
-    force: no
-
-
-- name: Symlink site config to sites-enabled
-  become: true
-  ansible.builtin.file:
-    src: "/etc/nginx/sites-available/{{ domain }}"
-    dest: "/etc/nginx/sites-enabled/{{ domain }}"
-    state: link
-
-
 - name: UFW - Allow http/https connections
   become: true
   community.general.ufw:
     rule: allow
-    name: "Nginx Full"
-
-
-- name: UFW - Allow tcp connections for websockets
-  become: true
-  community.general.ufw:
-    rule: allow
-    port: 80
+    port: "{{ item }}"
     proto: tcp
-
-
-- name: Ensure config is valid
-  become: true
-  ansible.builtin.command: nginx -t
-  changed_when: false
-
-
-- name: Restart nginx
-  become: true
-  ansible.builtin.service:
-    name: nginx
-    state: restarted
+  loop:
+    - "80"
+    - "443"
 
 
 - name: Ensure services/nostrface exists
@@ -58,38 +24,51 @@
     mode: 0644
 
 
-- name: Copy systemd service for nostrface  image update
+- name: ensure docker is running
+  ansible.builtin.service:
+    name: docker
+    state: started
+
+
+- name: Start up docker services
+  ansible.builtin.shell: "docker compose down && docker compose up -d"
+  args:
+    chdir: "{{ homedir }}/services/nostrface"
+  register: service_started
+  retries: 5
+  until: service_started is success
+
+
+- name: Copy systemd service files for image update
   become: true
   ansible.builtin.template:
-    src: nostrface-image-update.service.tpl
-    dest: "/etc/systemd/system/nostrface-image-update.service"
-    mode: 0644
-
-
-- name: Copy systemd timer
-  become: true
-  ansible.builtin.copy:
-    src: nostrface-image-update.timer
-    dest: "/etc/systemd/system/nostrface-image-update.timer"
-    mode: 0644
-
-
-- name: Copy systemd shell script
-  become: true
-  ansible.builtin.template:
-    src: nostrface-image-update.sh.tpl
-    dest: "/usr/local/bin/nostrface-image-update.sh"
-    mode: 0755
+    src: "{{ file.src }}"
+    dest: "{{ file.dest }}"
+    mode: "{{ file.mode }}"
+  loop:
+    - src: nostrface-image-update.service.tpl
+      dest: "/etc/systemd/system/nostrface-image-update.service"
+      mode: "0644"
+    - src: nostrface-image-update.sh.tpl
+      dest: "/usr/local/bin/nostrface-image-update.sh"
+      mode: "0755"
+    - src: nostrface-image-update.timer.tpl
+      dest: "/etc/systemd/system/nostrface-image-update.timer"
+      mode: "0644"
+  loop_control:
+    loop_var: file
 
 
 - name: Enable image update service and timer
   become: true
   ansible.builtin.systemd:
-    name: "{{ item }}"
+    name: "{{ systemd_unit }}"
     enabled: true
   loop:
     - nostrface-image-update.service
     - nostrface-image-update.timer
+  loop_control:
+    loop_var: systemd_unit
 
 
 - name: Start image update service
