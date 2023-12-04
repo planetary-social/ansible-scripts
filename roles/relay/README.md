@@ -1,14 +1,10 @@
-# RSSLay role
+# Relay role
 
-This role sets up a strfry instance on a target server set up with an nginx reverse proxy.
-
-We use docker-compose for our deployment, with an image generated automatically from https://github.com/planetary-social/localstrfry
-
-Along with setting up the nginx configuration for the site, this role also sets up a scheduled task that checks our registry
-for a new version of our stable image, restarting the service with the updated image if necessary.
+This role sets up a strfry instance on a target server set up in front of a Traefik proxy and a nginx server for Webflow proxy_pass. Websocket and application/nostr+json requests are sent to strfry, the rest to our Webflow page at https://nos-relay.webflow.io/. 
 
 ## Variables
 
-| variable     | example          | purpose                 |
-| ------------ | ---------------- | ----------------------- |
-| relay_domain | relay.nos.social | the fqdn of the service |
+| variable  | example           | purpose                   |
+| --------- | ----------------- | ------------------------- |
+| domain    | relay.nos.social  | the fqdn of the service   |
+| cert_email| foo@bar.com       | the email used for the letsencrypt certificate |
