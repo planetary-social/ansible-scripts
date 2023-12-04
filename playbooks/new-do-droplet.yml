@@ -20,6 +20,7 @@
       - zachmandeville
       - mplorentz
       - boreq
+      - dcadenas
     admin_username: admin
     # these are inv examples, will be overwritten by any var passed in at runtime
     inv:  rss
