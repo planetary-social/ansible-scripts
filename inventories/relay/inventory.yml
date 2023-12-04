@@ -1,7 +1,7 @@
 ---
 relay:
   hosts:
-    relay-do.ansible.fun:
+    relay.nos.social:
   vars:
     admin_username: admin
     homedir: /home/{{ admin_username }}
@@ -9,6 +9,6 @@ relay:
     cert_email: zach@nos.social
     domain: '{{ inventory_hostname }}'
     nostrface_listen_address: 3000
-dev:
+prod:
   hosts:
-    relay-do.ansible.fun:
+    relay.nos.social:
