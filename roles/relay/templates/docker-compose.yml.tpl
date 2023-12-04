@@ -28,7 +28,7 @@ services:
 
 
   strfry:
-    image: relayable/strfry:latest
+    image: relayable/strfry:{{ relay_image_tag }}
     container_name: "strfry"
     restart: always
     volumes:

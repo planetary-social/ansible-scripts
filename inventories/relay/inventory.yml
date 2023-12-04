@@ -5,10 +5,9 @@ relay:
   vars:
     admin_username: admin
     homedir: /home/{{ admin_username }}
-    cloudflare_api_token: '{{ lookup(''env'', ''CLOUDFLARE_API_TOKEN'') }}'
     cert_email: zach@nos.social
     domain: '{{ inventory_hostname }}'
-    nostrface_listen_address: 3000
+    relay_image_tag: '0.9.4'
 prod:
   hosts:
     relay.nos.social:
