@@ -14,11 +14,7 @@ nos_event_service:
     events_image_tag: latest
   hosts:
     events.nos.social: 
-    events.ansible.fun:
 prod:
   hosts:
     events.nos.social: 
   vars: 
-dev:
-  hosts:
-    events.ansible.fun:
