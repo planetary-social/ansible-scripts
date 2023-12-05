@@ -132,3 +132,25 @@
 # - dev
 #additional_roles:
 # - relay
+
+#-----------------------------
+# Nos.social
+#-----------------------------
+# domain: nos-social2.ansible.fun
+# do_droplet_size: s-1vcpu-2gb
+# do_droplet_image: ubuntu-22-04-x64
+# do_droplet_region: NYC3
+# do_droplet_project: Nos
+# do_droplet_tags:
+# - dev
+# gh_user_keys_to_add:
+# - cooldracula
+# - mplorentz
+# - zachmandeville
+# - dcadenas
+# inv:  nos-social
+# inv_groups:
+# - nos-social
+# - dev
+# additional_roles:
+# - nos-social
