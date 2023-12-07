@@ -9,6 +9,9 @@ nos_event_service:
     events_google_pubsub_credentials_json_path: '{{inventory_dir}}/group_vars/all/vault_pubsub-credentials.json'
     events_listen_address: 8008
     events_environment: PRODUCTION
+    events_pyroscope_server_address: https://pyroscope.nos.pink
+    events_pyroscope_basic_auth_user: '{{ vault_events_pyroscope_basic_auth_user }}'
+    events_pyroscope_basic_auth_password: '{{ vault_events_pyroscope_basic_auth_password }}'
     events_log_level: DEBUG
     events_image: ghcr.io/planetary-social/nos-event-service
     events_image_tag: latest
@@ -17,4 +20,5 @@ nos_event_service:
 prod:
   hosts:
     events.nos.social: 
-  vars: 
+  vars:
+    events_pyroscope_application_name: events.nos.social
