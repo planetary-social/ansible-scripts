@@ -4,7 +4,6 @@ nos_event_service:
     admin_username: admin
     homedir: /home/{{ admin_username }}
     cert_email: '{{ vault_cert_email }}'
-    cloudflare_api_token: '{{ vault_cloudflare_api_token }}'
     events_google_pubsub_project_id: '{{ vault_events_google_pubsub_project_id }}'
     events_google_pubsub_credentials_json: pubsub-credentials.json
     events_google_pubsub_credentials_json_path: '{{inventory_dir}}/group_vars/all/vault_pubsub-credentials.json'
@@ -14,8 +13,8 @@ nos_event_service:
     events_image: ghcr.io/planetary-social/nos-event-service
     events_image_tag: latest
   hosts:
-    events.nos.social:
+    events.nos.social: 
 prod:
   hosts:
-    events.nos.social:
+    events.nos.social: 
   vars: 

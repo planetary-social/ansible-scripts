@@ -1,53 +1,19 @@
 # Setup nos-crossposting-service on server
 ---
-- name: Copy nginx config to sites available
-  become: true
-  ansible.builtin.template:
-    src: nginx.conf.tpl
-    dest: /etc/nginx/sites-available/{{ domain }}
-    mode: 0644
-    force: yes
-
-
-- name: Symlink site config to sites-enabled
-  become: true
-  ansible.builtin.file:
-    src: "/etc/nginx/sites-available/{{ domain }}"
-    dest: "/etc/nginx/sites-enabled/{{ domain }}"
-    state: link
-
-
 - name: UFW - Allow http/https connections
   become: true
   community.general.ufw:
     rule: allow
-    name: "Nginx Full"
-
-
-- name: UFW - Allow tcp connections for websockets
-  become: true
-  community.general.ufw:
-    rule: allow
-    port: 80
+    port: "{{ item }}"
     proto: tcp
-
-
-- name: Ensure config is valid
-  become: true
-  ansible.builtin.command: nginx -t
-  changed_when: false
-
-
-- name: Restart nginx
-  become: true
-  ansible.builtin.service:
-    name: nginx
-    state: restarted
+  loop:
+    - "80"
+    - "443"
 
 
 - name: Ensure events dir exists
   ansible.builtin.file:
-    path: "{{ homedir }}/events"
+    path: "{{ homedir }}/services/events"
     state: directory
     mode: '0755'
 
@@ -55,20 +21,20 @@
 - name: Copy docker-compose.yml to events dir
   ansible.builtin.template:
     src: docker-compose.yml.tpl
-    dest: "{{ homedir }}/events/docker-compose.yml"
+    dest: "{{ homedir }}/services/events/docker-compose.yml"
     mode: 0644
 
 
 - name: Copy env file to events dir
   ansible.builtin.template:
     src: env.tpl
-    dest: "{{ homedir }}/events/.env"
+    dest: "{{ homedir }}/services/events/.env"
     mode: 0644
 
 
 - name: Ensure events/certs dir exists
   ansible.builtin.file:
-    path: "{{ homedir }}/events/certs"
+    path: "{{ homedir }}/services/events/certs"
     state: directory
     mode: '0755'
 
@@ -76,7 +42,7 @@
 - name: Copy pubsub cert to events dir
   ansible.builtin.copy:
     src: "{{ events_google_pubsub_credentials_json_path }}"
-    dest: "{{ homedir }}/events/certs/{{ events_google_pubsub_credentials_json }}"
+    dest: "{{ homedir }}/services/events/certs/{{ events_google_pubsub_credentials_json }}"
     mode: 0644
 
 
@@ -89,46 +55,30 @@
 - name: Start up events service
   ansible.builtin.shell: "docker compose down && docker compose up -d"
   args:
-    chdir: "{{ homedir }}/events"
+    chdir: "{{ homedir }}/services/events"
   register: service_started
   retries: 5
   until: service_started is success
 
 
-- name: Copy systemd service for events image update
-  ansible.builtin.template:
-    src: event-image-update.service.tpl
-    dest: "{{ homedir }}/events/event-image-update.service"
-    mode: 0644
-
-
-- name: Copy systemd timer
-  ansible.builtin.copy:
-    src: event-image-update.timer
-    dest: "{{ homedir }}/events/event-image-update.timer"
-    mode: 0644
-
-
-- name: Copy systemd shell script
-  ansible.builtin.template:
-    src: event-image-update.sh.tpl
-    dest: "{{ homedir }}/events/event-image-update.sh"
-    mode: 0755
-
-
-- name: Symlink image update files to correct locations
+- name: Copy systemd service files for image update
   become: true
-  ansible.builtin.file:
-    src: "{{ item.src }}"
-    dest: "{{ item.dest }}"
-    state: link
+  ansible.builtin.template:
+    src: "{{ file.src }}"
+    dest: "{{ file.dest }}"
+    mode: "{{ file.mode }}"
   loop:
-    - src: "{{ homedir }}/events/event-image-update.service"
-      dest: /etc/systemd/system/event-image-update.service
-    - src: "{{ homedir }}/events/event-image-update.timer"
-      dest: /etc/systemd/system/event-image-update.timer
-    - src: "{{ homedir }}/events/event-image-update.sh"
-      dest: /usr/local/bin/event-image-update.sh
+    - src: event-image-update.service.tpl
+      dest: "/etc/systemd/system/event-image-update.service"
+      mode: "0644"
+    - src: event-image-update.sh.tpl
+      dest: "/usr/local/bin/event-image-update.sh"
+      mode: "0755"
+    - src: event-image-update.timer.tpl
+      dest: "/etc/systemd/system/event-image-update.timer"
+      mode: "0644"
+  loop_control:
+    loop_var: file
 
 
 - name: Enable image update service and timer

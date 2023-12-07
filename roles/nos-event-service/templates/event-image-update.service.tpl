@@ -4,7 +4,7 @@ Wants=event-image-update.timer
 
 [Service]
 ExecStart=/usr/local/bin/event-image-update.sh
-WorkingDirectory={{ homedir }}/events
+WorkingDirectory={{ homedir }}/services/events
 
 [Install]
 WantedBy=multi-user.target

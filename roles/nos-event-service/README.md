@@ -7,8 +7,6 @@ https://github.com/planetary-social/nos-event-service
 It starts up a docker service running the given image tag (by default `latest`)
 and a systemd job to regularly check for new versions of this image.
 
-It also installs node-exporter, available at `{{domain}}:9100`
-
 It's configuration is based on environment variables tied to inventory vars.
 
 they are:
