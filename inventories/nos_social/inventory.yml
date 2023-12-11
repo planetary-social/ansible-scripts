@@ -7,7 +7,6 @@ nos_social:
     homedir: /home/{{ admin_username }}
     cert_email: zach@nos.social
     domain: '{{ inventory_hostname }}'
-    relay_image_tag: 0.9.4
 prod:
   hosts:
     nos_social2.ansible.fun: 
