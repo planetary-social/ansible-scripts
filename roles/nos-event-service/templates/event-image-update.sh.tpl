@@ -1,13 +1,15 @@
 #!/bin/bash
+#
+function getImageHash() {
+  docker inspect {{ events_image }}:{{ events_image_tag }} --format "{{ '{{ .Id }}' }}"
+}
 
-currentHash=$(docker inspect {{ events_image }}:{{ events_image_tag }} --format "{{ '{{ .Id }}' }}")
+currentHash=$(getImageHash)
 
-docker compose pull -q
+docker-compose pull && docker-compose up -d
 
-newHash=$(docker inspect {{ events_image }}:{{ events_image_tag }} --format "{{ '{{ .Id }}' }}")
+newHash=$(getImageHash)
 
 if [[ "$currentHash" != "$newHash" ]]; then
-        docker compose down
-        docker compose up -d
         echo "updated service to image id $newHash"
 fi
