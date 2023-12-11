@@ -1,7 +1,7 @@
 ---
-nos-social:
+nos_social:
   hosts:
-    nos-social2.ansible.fun:
+    nos_social2.ansible.fun:
   vars:
     admin_username: admin
     homedir: /home/{{ admin_username }}
@@ -10,7 +10,7 @@ nos-social:
     relay_image_tag: 0.9.4
 prod:
   hosts:
-    nos-social2.ansible.fun: 
+    nos_social2.ansible.fun: 
 dev:
   hosts:
-    nos-social2.ansible.fun:
+    nos_social2-dev.ansible.fun:

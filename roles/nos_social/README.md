@@ -1,6 +1,6 @@
-# nos-social role
+# nos_social role
 
-This role sets up the nos.social homepage and prepares for a future service to provide the nip 05 service. It uses a Traefik proxy and a nginx server for Webflow proxy_pass to https://nos-social.webflow.io/. 
+This role sets up the nos.social homepage and prepares for a future service to provide the nip 05 service. It uses a Traefik proxy and a nginx server for Webflow proxy_pass to https://nos_social.webflow.io/. 
 
 ## Variables
 

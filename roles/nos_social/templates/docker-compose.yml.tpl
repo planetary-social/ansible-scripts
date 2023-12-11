@@ -26,6 +26,16 @@ services:
       - "./letsencrypt:/letsencrypt"
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
 
+  api:
+    image: "{{ nos_api_image }}:{{ nos_api_image_tag }}"
+    container_name: "api"
+    restart: always
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.api.rule=Host(`{{ domain }}`) && (PathPrefix(`/api/`) || PathPrefix(`/.well-known`))"
+      - "traefik.http.services.redirect-service.loadbalancer.server.port=8080"
+
+
   redirect-service:
     image: nginx:alpine
     container_name: "redirect-service"
@@ -35,5 +45,4 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.redirect-service.rule=Host(`{{ domain }}`) && !PathPrefix(`/.well-known`)"
-      - "traefik.http.routers.redirect-service.entrypoints=websecure"
       - "traefik.http.services.redirect-service.loadbalancer.server.port=80"

@@ -8,6 +8,6 @@ server {
     server_name  host.docker.internal;
 
     location ~* ^/(.*) {
-        proxy_pass https://nos-social.webflow.io$request_uri;
+        proxy_pass https://nos_social.webflow.io$request_uri;
     }
 }
