@@ -17,6 +17,36 @@
     state: link
 
 
+- name: Remove default config from sites-enabled
+  become: true
+  ansible.builtin.file:
+    path: /etc/nginx/sites-enabled/default
+    state: absent
+
+
+- name: Archive existing configs that are now redirects
+  become: true
+  ansible.builtin.command: mv /etc/nginx/sites-available/{{ redirect }} /etc/nginx/sites-available/{{ redirect }}.bk
+  args:
+    removes: /etc/nginx/sites-available/{{ redirect }}
+    creates: /etc/nginx/sites-available/{{ redirect }}.bk
+  loop: "{{ redirects }}"
+  loop_control:
+    loop_var: redirect
+  when: redirects is defined
+
+
+- name: Remove redirect configs from sites-enabled
+  become: true
+  ansible.builtin.file:
+    path: /etc/nginx/sites-enabled/{{ redirect }}
+    state: absent
+  loop: "{{ redirects }}"
+  loop_control:
+    loop_var: redirect
+  when: redirects is defined
+
+
 - name: UFW - Allow http/https connections
   become: true
   community.general.ufw:
