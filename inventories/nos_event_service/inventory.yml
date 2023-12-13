@@ -16,9 +16,8 @@ nos_event_service:
     events_image: ghcr.io/planetary-social/nos-event-service
     events_image_tag: latest
   hosts:
-    events.nos.social: 
+    events.nos.social:
+      events_pyroscope_application_name: events.nos.social
 prod:
   hosts:
     events.nos.social: 
-  vars:
-    events_pyroscope_application_name: events.nos.social
