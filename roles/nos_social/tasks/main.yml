@@ -1,0 +1,42 @@
+---
+- name: UFW - Allow http/https connections
+  become: true
+  community.general.ufw:
+    rule: allow
+    port: "{{ item }}"
+    proto: tcp
+  loop:
+    - "80"
+    - "443"
+
+- name: Ensure services/nos_social exists
+  ansible.builtin.file:
+    path: "{{ homedir }}/services/nos_social"
+    state: directory
+    mode: '0755'
+
+- name: Copy docker-compose.yml
+  ansible.builtin.template:
+    src: docker-compose.yml.tpl
+    dest: "{{ homedir }}/services/nos_social/docker-compose.yml"
+    mode: '0644'
+
+- name: Copy nginx-redirect.conf
+  become: true
+  ansible.builtin.template:
+    src: nginx-redirect.conf.tpl
+    dest: "{{ homedir }}/services/nos_social/nginx-redirect.conf"
+    mode: '0644'
+
+- name: ensure docker is running
+  ansible.builtin.service:
+    name: docker
+    state: started
+
+- name: Start up docker services
+  ansible.builtin.shell: "docker compose down && docker compose up -d"
+  args:
+    chdir: "{{ homedir }}/services/nos_social"
+  register: service_started
+  retries: 5
+  until: service_started is success

@@ -1,0 +1,15 @@
+---
+nos_social:
+  hosts:
+    nos_social2.ansible.fun:
+  vars:
+    admin_username: admin
+    homedir: /home/{{ admin_username }}
+    cert_email: zach@nos.social
+    domain: '{{ inventory_hostname }}'
+prod:
+  hosts:
+    nos_social2.ansible.fun: 
+dev:
+  hosts:
+    nos_social2-dev.ansible.fun:
