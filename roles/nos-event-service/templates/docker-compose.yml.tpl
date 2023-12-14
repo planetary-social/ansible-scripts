@@ -14,6 +14,7 @@ services:
       - "--certificatesresolvers.nosresolver.acme.email={{ cert_email }}"
       - "--certificatesresolvers.nosresolver.acme.storage=/letsencrypt/acme.json"
     ports:
+      - "80:80"
       - "443:443"
     volumes:
       - "./letsencrypt:/letsencrypt"
