@@ -53,7 +53,7 @@
 
 
 - name: Start up events service
-  ansible.builtin.shell: "docker compose down && docker compose up -d"
+  ansible.builtin.shell: "docker compose down && docker network prune -f && docker compose up -d"
   args:
     chdir: "{{ homedir }}/services/events"
   register: service_started
