@@ -65,6 +65,10 @@
     - name: Run additional roles
       ansible.builtin.include_role:
         name: "{{ additional_role }}"
-      loop: "{{ additional_roles }}"  # expected to be given at runtime
+      loop: "{{ additional_roles }}"
       loop_control:
         loop_var: additional_role
+      when:
+        - additional_roles is defined
+        - additional_roles is iterable
+        - additional_roles | length > 0
