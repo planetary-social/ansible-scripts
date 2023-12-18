@@ -1,0 +1,7 @@
+- name: deploy traefik on proxy network to server
+  hosts: e4.ansible.fun
+  vars:
+    ansible_user: admin
+    domain: "{{ inventory_hostname }}"
+  roles:
+    - traefik

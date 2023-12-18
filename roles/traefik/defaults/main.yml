@@ -1,0 +1,4 @@
+---
+traefik_dashboard_enabled: true
+cert_email: zach@nos.social
+traefik_domain: "{{ 'traefik.' + inventory_hostname }}"
