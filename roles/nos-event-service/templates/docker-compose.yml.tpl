@@ -1,27 +1,11 @@
 ---
-version: "3.3"
+version: "3"
 
 services:
-
-  traefik:
-    image: "traefik:v2.10"
-    container_name: "traefik"
-    command:
-      - "--providers.docker=true"
-      - "--providers.docker.exposedbydefault=false"
-      - "--entrypoints.websecure.address=:443"
-      - "--certificatesresolvers.nosresolver.acme.tlschallenge=true"
-      - "--certificatesresolvers.nosresolver.acme.email={{ cert_email }}"
-      - "--certificatesresolvers.nosresolver.acme.storage=/letsencrypt/acme.json"
-    ports:
-      - "80:80"
-      - "443:443"
-    volumes:
-      - "./letsencrypt:/letsencrypt"
-      - "/var/run/docker.sock:/var/run/docker.sock:ro"
-
   events:
     image: "{{ events_image }}:{{events_image_tag }}"
+    networks:
+      - proxy
     container_name: events
     env_file:
      - ./.env
@@ -33,6 +17,9 @@ services:
     restart: always
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.events.rule=Host(`{{ domain }}`)"
-      - "traefik.http.routers.events.entrypoints=websecure"
-      - "traefik.http.routers.events.tls.certresolver=nosresolver"
+      - "traefik.docker.network=proxy"
+      - "traefik.http.routers.nos_event_service.rule=Host(`{{ domain }}`)"
+      - "traefik.http.routers.nos_event_service.entrypoints=websecure"
+networks:
+  proxy:
+    external: true

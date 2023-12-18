@@ -1,16 +1,5 @@
 # Setup nos-crossposting-service on server
 ---
-- name: UFW - Allow http/https connections
-  become: true
-  community.general.ufw:
-    rule: allow
-    port: "{{ item }}"
-    proto: tcp
-  loop:
-    - "80"
-    - "443"
-
-
 - name: Ensure events dir exists
   ansible.builtin.file:
     path: "{{ homedir }}/services/events"
