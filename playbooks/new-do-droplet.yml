@@ -28,6 +28,7 @@
       - rss
       - dev
     add_cloudflare_record: true
+    add_cloudflare_wildcard_record: true
     cloudflare_email: code@solarpunk.cool
     cloudflare_api_token: "{{ lookup('env', 'CLOUDFLARE_API_TOKEN')}}"
   roles:

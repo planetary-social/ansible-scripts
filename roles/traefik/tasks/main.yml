@@ -64,10 +64,6 @@
   ignore_errors: true
   register: network_exists
 
-- name: print network
-  ansible.builtin.debug:
-    var: network_exists
-
 
 - name: Start up traefik
   ansible.builtin.shell: "docker compose up -d"
