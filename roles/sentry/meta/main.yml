@@ -1,7 +1,3 @@
 ---
 dependencies:
-  - role: common
-  - role: digital-ocean
-  - role: docker
-  - role: certbot-cloudflare
-  - role: nginx
+  - role: node-exporter
