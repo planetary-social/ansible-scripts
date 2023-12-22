@@ -21,6 +21,14 @@
     state: link
 
 
+- name: Ensure text-collector directory exists
+  become: true
+  ansible.builtin.file:
+    path: "/var/lib/node_exporter/textfile_collector"
+    state: directory
+    mode: '0755'
+
+
 - name: Copy systemd unit file
   ansible.builtin.copy:
     src: node-exporter.service
