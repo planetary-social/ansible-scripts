@@ -37,5 +37,7 @@ networks:
 
 And they'll be automatically picked up by the traefik proxy, with routing and certs handled by it.
 
+## Vars
 
+  * [ ] There are two sets of var files in this role: defaults/main.yml, which holds public default variables and vars/main.yml, which is vault-encrypted and holds our standard `traefik_user` and `traefik_password`.
 
