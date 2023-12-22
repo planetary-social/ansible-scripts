@@ -1,0 +1,12 @@
+---
+posthog:
+  vars:
+    admin_username: admin
+    homedir: /home/{{ admin_username }}
+    domain: '{{ inventory_hostname }}'
+    posthog_app_tag: latest
+  hosts:
+    posthog.planetary.tools:
+prod:
+  hosts:
+    posthog.planetary.tools:

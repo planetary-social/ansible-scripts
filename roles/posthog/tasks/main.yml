@@ -1,0 +1,26 @@
+---
+- name: Ensure posthog dir exists
+  ansible.builtin.file:
+    path: "{{ homedir }}/posthog"
+    state: directory
+    mode: '0755'
+
+
+- name: copy env file to posthog file
+  ansible.builtin.template:
+    src: env.tmpl
+    dest: "{{ homedir }}/posthog/.env"
+
+
+- name: Copy install script
+  become: true
+  ansible.builtin.get_url:
+    url: "https://raw.githubusercontent.com/posthog/posthog/HEAD/bin/deploy-hobby"
+    dest: "{{ homedir }}/posthog/deploy-hobby"
+
+
+- name: Run install script
+  become: true
+  ansible.builtin.shell:
+    cmd: bash deploy-hobby {{ posthog_app_tag }} {{ domain }}
+    chdir: "{{ homedir }}/posthog"
