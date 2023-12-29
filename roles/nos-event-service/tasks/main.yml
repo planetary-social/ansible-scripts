@@ -1,37 +1,33 @@
 # Setup nos-crossposting-service on server
 ---
-- name: Ensure events dir exists
+- name: Set events dir
+  ansible.builtin.set_fact:
+    events_dir: "{{ homedir }}/services/events"
+
+
+- name: Ensure events directories exist
   ansible.builtin.file:
-    path: "{{ homedir }}/services/events"
+    path: "{{ events_dir }}/certs"
     state: directory
     mode: '0755'
 
 
-- name: Copy docker-compose.yml to events dir
+- name: Copy necessary template files to events dir
   ansible.builtin.template:
-    src: docker-compose.yml.tpl
-    dest: "{{ homedir }}/services/events/docker-compose.yml"
+    src: "{{ item.src }}"
+    dest: "{{ events_dir }}/{{ item.dest }}"
     mode: 0644
-
-
-- name: Copy env file to events dir
-  ansible.builtin.template:
-    src: env.tpl
-    dest: "{{ homedir }}/services/events/.env"
-    mode: 0644
-
-
-- name: Ensure events/certs dir exists
-  ansible.builtin.file:
-    path: "{{ homedir }}/services/events/certs"
-    state: directory
-    mode: '0755'
+  loop:
+    - src: docker-compose.yml.tpl
+      dest: docker-compose.yml
+    - src: env.tpl
+      dest: .env
 
 
 - name: Copy pubsub cert to events dir
   ansible.builtin.copy:
     src: "{{ events_google_pubsub_credentials_json_path }}"
-    dest: "{{ homedir }}/services/events/certs/{{ events_google_pubsub_credentials_json }}"
+    dest: "{{ events_dir }}/certs/{{ events_google_pubsub_credentials_json }}"
     mode: 0644
 
 
@@ -42,9 +38,9 @@
 
 
 - name: Start up events service
-  ansible.builtin.shell: "docker compose down && docker network prune -f && docker compose up -d"
+  ansible.builtin.shell: "docker compose down && docker compose up -d"
   args:
-    chdir: "{{ homedir }}/services/events"
+    chdir: "{{ events_dir }}"
   register: service_started
   retries: 5
   until: service_started is success
