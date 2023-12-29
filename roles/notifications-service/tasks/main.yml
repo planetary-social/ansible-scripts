@@ -1,5 +1,10 @@
 # Setup nos-notification-service-go on server
 ---
+- name: Set notifications dir
+  ansible.builtin.set_fact:
+    notifications_dir: "{{ homedir }}/notifications"
+
+
 - name: Create dir for AAA root certificate
   become: true
   ansible.builtin.file:
@@ -66,25 +71,23 @@
     state: restarted
 
 
-- name: Ensure notifications dir exists
+- name: Ensure notifications dirs exists
   ansible.builtin.file:
-    path: "{{ homedir }}/notifications"
+    path: "{{ notifications_dir }}/certs"
     state: directory
     mode: '0755'
 
 
-- name: Copy docker-compose.yml to notifications dir
+- name: Copy necessary template files to notifications dir
   ansible.builtin.template:
-    src: docker-compose.yml.tpl
-    dest: "{{ homedir }}/notifications/docker-compose.yml"
+    src: "{{ item.src }}"
+    dest: "{{ notifications_dir }}/{{ item.dest }}"
     mode: 0644
-
-
-- name: Ensure notifications/certs dir exists
-  ansible.builtin.file:
-    path: "{{ homedir }}/notifications/certs"
-    state: directory
-    mode: '0755'
+  loop:
+    - src: docker-compose.yml.tpl
+      dest: docker-compose.yml
+    - src: env.notifications
+      dest: .env
 
 
 - name: Copy certs to notifications dir
@@ -114,13 +117,6 @@
   when: notifications_google_pubsub_enabled is true
 
 
-- name: Copy env file to notifications dir
-  ansible.builtin.template:
-    src: env.notifications
-    dest: "{{ homedir }}/notifications/.env"
-    mode: 0644
-
-
 - name: ensure docker is running
   ansible.builtin.service:
     name: docker
@@ -128,10 +124,9 @@
 
 
 - name: Start up notifications
-  community.docker.docker_compose:
-    project_src: "{{ homedir }}/notifications"
-    build: false
-    restarted: true
+  ansible.builtin.shell: "docker compose down && docker compose up -d"
+  args:
+    chdir: "{{ notifications_dir }}"
   register: service_started
   retries: 5
   until: service_started is success
