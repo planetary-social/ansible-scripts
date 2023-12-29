@@ -2,7 +2,7 @@
 version: '3'
 services:
   notifications:
-    image: ghcr.io/planetary-social/nos-notification-service-go:{{notifications_image_tag }}
+    image: {{ notifications_image }}:{{notifications_image_tag }}
     container_name: notifications
     env_file:
      - ./.env
