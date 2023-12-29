@@ -1,7 +1,12 @@
 ---
+- name: Set rss dir
+  ansible.builtin.set_fact:
+    rss_dir: "{{ homedir }}/rsslay"
+
+
 - name: Ensure rsslay dir exists
   ansible.builtin.file:
-    path: "{{ homedir }}/rsslay"
+    path: "{{ rss_dir }}"
     state: directory
     mode: '0755'
 
@@ -9,7 +14,7 @@
 - name: Copy docker-compose.yml to rsslay dir
   ansible.builtin.template:
     src: docker-compose.yml.tpl
-    dest: "{{ homedir }}/rsslay/docker-compose.yml"
+    dest: "{{ rss_dir }}/docker-compose.yml"
     mode: 0644
 
 
@@ -20,10 +25,9 @@
 
 
 - name: Start up rsslay
-  community.docker.docker_compose:
-    project_src: "{{ homedir }}/rsslay"
-    build: false
-    restarted: true
+  ansible.builtin.shell: "docker compose down && docker compose up -d"
+  args:
+    chdir: "{{ rss_dir }}"
   register: service_started
   retries: 5
   until: service_started is success
@@ -72,59 +76,13 @@
     name: nginx
     state: restarted
 
-- name: Copy systemd service for rsslay image update
-  ansible.builtin.template:
-    src: rsslay-image-update.service.tpl
-    dest: "{{ homedir }}/rsslay/rsslay-image-update.service"
-    mode: 0644
 
-
-- name: Copy systemd timer for rsslay image update
-  ansible.builtin.copy:
-    src: rsslay-image-update.timer
-    dest: "{{ homedir }}/rsslay/rsslay-image-update.timer"
-    mode: 0644
-
-
-- name: Copy systemd shell script for rsslay image update
-  ansible.builtin.copy:
-    src: rsslay-image-update.sh
-    dest: "{{ homedir }}/rsslay/rsslay-image-update.sh"
-    mode: 0755
-
-
-- name: Symlink rsslay image update files to correct locations
-  become: true
-  ansible.builtin.file:
-    src: "{{ file.src }}"
-    dest: "{{ file.dest }}"
-    state: link
-  loop:
-    - src: "{{ homedir }}/rsslay/rsslay-image-update.service"
-      dest: /etc/systemd/system/rsslay-image-update.service
-    - src: "{{ homedir }}/rsslay/rsslay-image-update.timer"
-      dest: /etc/systemd/system/rsslay-image-update.timer
-    - src: "{{ homedir }}/rsslay/rsslay-image-update.sh"
-      dest: /usr/local/bin/rsslay-image-update.sh
-  loop_control:
-    loop_var: file
-
-
-- name: Enable image update service and timer
-  become: true
-  ansible.builtin.systemd:
-    name: "{{ unit_file }}"
-    enabled: true
-  loop:
-    - rsslay-image-update.service
-    - rsslay-image-update.timer
-  loop_control:
-    loop_var: unit_file
-
-
-- name: Start image update service
-  become: true
-  ansible.builtin.systemd:
-    name: rsslay-image-update
-    state: started
-    daemon_reload: true
+- name: Setup the image updater
+  ansible.builtin.include_role:
+    name: image-update-service
+  vars:
+    service_name: rsslay
+    service_image: "{{ rss_image }}"
+    service_image_tag: "{{ rss_image_tag }}"
+    frequency: 3m
+    working_dir: "{{ rss_dir }}"
