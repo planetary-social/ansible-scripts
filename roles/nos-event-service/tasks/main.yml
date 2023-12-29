@@ -46,39 +46,12 @@
   until: service_started is success
 
 
-- name: Copy systemd service files for image update
-  become: true
-  ansible.builtin.template:
-    src: "{{ file.src }}"
-    dest: "{{ file.dest }}"
-    mode: "{{ file.mode }}"
-  loop:
-    - src: event-image-update.service.tpl
-      dest: "/etc/systemd/system/event-image-update.service"
-      mode: "0644"
-    - src: event-image-update.sh.tpl
-      dest: "/usr/local/bin/event-image-update.sh"
-      mode: "0755"
-    - src: event-image-update.timer.tpl
-      dest: "/etc/systemd/system/event-image-update.timer"
-      mode: "0644"
-  loop_control:
-    loop_var: file
-
-
-- name: Enable image update service and timer
-  become: true
-  ansible.builtin.systemd:
-    name: "{{ item }}"
-    enabled: true
-  loop:
-    - event-image-update.service
-    - event-image-update.timer
-
-
-- name: Start image update service
-  become: true
-  ansible.builtin.systemd:
-    name: event-image-update
-    state: started
-    daemon_reload: true
+- name: Setup the image updater
+  ansible.builtin.include_role:
+    name: image-update-service
+  vars:
+    service_name: events
+    service_image: "{{ events_image }}"
+    service_image_tag: "{{ events_image_tag }}"
+    frequency: 3m
+    working_dir: "{{ events_dir }}"
