@@ -74,26 +74,28 @@
     name: nginx
     state: restarted
 
+- name: Set crossposting dir
+  ansible.builtin.set_fact:
+    crossposting_dir: "{{ homedir }}/crossposting"
+
 
 - name: Ensure crossposting dir exists
   ansible.builtin.file:
-    path: "{{ homedir }}/crossposting"
+    path: "{{ crossposting_dir }}"
     state: directory
     mode: '0755'
 
 
-- name: Copy docker-compose.yml to crossposting dir
+- name: Copy necessary template files to events dir
   ansible.builtin.template:
-    src: docker-compose.yml.tpl
-    dest: "{{ homedir }}/crossposting/docker-compose.yml"
+    src: "{{ item.src }}"
+    dest: "{{ crossposting_dir }}/{{ item.dest }}"
     mode: 0644
-
-
-- name: Copy env file to crossposting dir
-  ansible.builtin.template:
-    src: env.tpl
-    dest: "{{ homedir }}/crossposting/.env"
-    mode: 0644
+  loop:
+    - src: docker-compose.yml.tpl
+      dest: docker-compose.yml
+    - src: env.tpl
+      dest: .env
 
 
 - name: ensure docker is running
@@ -111,55 +113,12 @@
   until: service_started is success
 
 
-- name: Copy systemd service for crossposting image update
-  ansible.builtin.template:
-    src: crossposting-image-update.service.tpl
-    dest: "{{ homedir }}/crossposting/crossposting-image-update.service"
-    mode: 0644
-
-
-- name: Copy systemd timer
-  ansible.builtin.copy:
-    src: crossposting-image-update.timer
-    dest: "{{ homedir }}/crossposting/crossposting-image-update.timer"
-    mode: 0644
-
-
-- name: Copy systemd shell script
-  ansible.builtin.template:
-    src: crossposting-image-update.sh.tpl
-    dest: "{{ homedir }}/crossposting/crossposting-image-update.sh"
-    mode: 0755
-
-
-- name: Symlink image update files to correct locations
-  become: true
-  ansible.builtin.file:
-    src: "{{ item.src }}"
-    dest: "{{ item.dest }}"
-    state: link
-  loop:
-    - src: "{{ homedir }}/crossposting/crossposting-image-update.service"
-      dest: /etc/systemd/system/crossposting-image-update.service
-    - src: "{{ homedir }}/crossposting/crossposting-image-update.timer"
-      dest: /etc/systemd/system/crossposting-image-update.timer
-    - src: "{{ homedir }}/crossposting/crossposting-image-update.sh"
-      dest: /usr/local/bin/crossposting-image-update.sh
-
-
-- name: Enable image update service and timer
-  become: true
-  ansible.builtin.systemd:
-    name: "{{ item }}"
-    enabled: true
-  loop:
-    - crossposting-image-update.service
-    - crossposting-image-update.timer
-
-
-- name: Start image update service
-  become: true
-  ansible.builtin.systemd:
-    name: crossposting-image-update
-    state: started
-    daemon_reload: true
+- name: Setup the image updater
+  ansible.builtin.include_role:
+    name: image-update-service
+  vars:
+    service_name: crossposting
+    service_image: "{{crossposting_image }}"
+    service_image_tag: "{{ crossposting_image_tag }}"
+    frequency: 3m
+    working_dir: "{{ crossposting_dir }}"
