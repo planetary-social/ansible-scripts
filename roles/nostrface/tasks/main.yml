@@ -1,26 +1,20 @@
 ---
-- name: UFW - Allow http/https connections
-  become: true
-  community.general.ufw:
-    rule: allow
-    port: "{{ item }}"
-    proto: tcp
-  loop:
-    - "80"
-    - "443"
+- name: Set nostrface_dir
+  ansible.builtin.set_fact:
+    nostrface_dir: "{{ homedir }}/services/nostrface"
 
 
-- name: Ensure services/nostrface exists
+- name: Ensure nostrface_dir exists
   ansible.builtin.file:
-    path: "{{ homedir }}/services/nostrface"
+    path: "{{ nostrface_dir }}"
     state: directory
     mode: '0755'
 
 
-- name: Copy docker-compose.yml to nostrface dir
+- name: Copy docker-compose.yml to nostrface_dir
   ansible.builtin.template:
     src: docker-compose.yml.tpl
-    dest: "{{ homedir }}/services/nostrface/docker-compose.yml"
+    dest: "{{ nostrface_dir }}/docker-compose.yml"
     mode: 0644
 
 
@@ -33,7 +27,7 @@
 - name: Start up docker services
   ansible.builtin.shell: "docker compose down && docker compose up -d"
   args:
-    chdir: "{{ homedir }}/services/nostrface"
+    chdir: "{{ nostrface_dir }}"
   register: service_started
   retries: 5
   until: service_started is success
