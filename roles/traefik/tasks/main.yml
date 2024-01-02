@@ -1,0 +1,74 @@
+# Setup traefik as docker service running on `proxy` network
+#
+- name: UFW - Allow http/https connections
+  become: true
+  community.general.ufw:
+    rule: allow
+    port: "{{ item }}"
+    proto: tcp
+  loop:
+    - "80"
+    - "443"
+
+
+- ansible.builtin.set_fact:
+    traefik_dir: "{{ homedir }}/services/traefik"
+
+
+- name: Ensure our traefik directories exist in ~/services
+  ansible.builtin.file:
+    path: "{{ traefik_dir }}/configurations"
+    state: directory
+    mode: '0755'
+
+- ansible.builtin.set_fact:
+    traefik_dir: "{{ homedir }}/services/traefik"
+
+
+- name: Copy traefik.yml to services/traefik/traefik.yml
+  ansible.builtin.template:
+    src: traefik.yml.tpl
+    dest: "{{ traefik_dir }}/traefik.yml"
+    mode: 0644
+
+
+- name: Copy dynamic.yml to services/traefik/configurations/dynamic.yml
+  ansible.builtin.template:
+    src: dynamic.yml.tpl
+    dest: "{{ traefik_dir }}/configurations/dynamic.yml"
+    mode: 0644
+
+
+- name: Create acme.json in services/traefik/acme.json
+  ansible.builtin.copy:
+    content: ""
+    dest: "{{ traefik_dir }}/acme.json"
+    force: false
+    mode: 0600
+
+
+- name: Copy docker-compose.yml to services/traefik/docker-compose.yml
+  ansible.builtin.template:
+    src: docker-compose.yml.tpl
+    dest: "{{ traefik_dir }}/docker-compose.yml"
+    mode: 0644
+
+
+- name: ensure docker is running
+  ansible.builtin.service:
+    name: docker
+    state: started
+
+- name: Create proxy network if it does not exists
+  ansible.builtin.shell: "docker network inspect proxy || docker network create --driver bridge proxy"
+  ignore_errors: true
+  register: network_exists
+
+
+- name: Start up traefik
+  ansible.builtin.shell: "docker compose up -d"
+  args:
+    chdir: "{{ traefik_dir }}"
+  register: traefik_started
+  retries: 5
+  until: traefik_started is success

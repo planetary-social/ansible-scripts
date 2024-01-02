@@ -2,22 +2,24 @@
 #-----------------------------
 # Event Service example
 #-----------------------------
-# domain: events.nos.social
+# domain: events-dev.ansible.fun
 # do_droplet_size: s-1vcpu-1gb
 # do_droplet_image: ubuntu-22-04-x64
 # do_droplet_region: NYC3
 # do_droplet_project: Nos
 # do_droplet_tags:
-#   - prod
+#   - dev
 # gh_user_keys_to_add:
 #   - cooldracula
 #   - zachmandeville
 #   - mplorentz
 #   - boreq
+# add_cloudflare_record: true
+# add_cloudflare_wildcard_record: true
 # inv:  nos_event_service
 # inv_groups:
 #   - nos_event_service
-#   - prod
+#   - dev
 # additional_roles:
 #   - nos-event-service
 
@@ -25,7 +27,7 @@
 #-----------------------------
 # Crossposting Service example
 #-----------------------------
-# domain: tweeter.nos.social
+# domain: .nos.social
 # do_droplet_size: s-1vcpu-1gb
 # do_droplet_image: ubuntu-22-04-x64
 # do_droplet_region: NYC3

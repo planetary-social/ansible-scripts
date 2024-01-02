@@ -85,14 +85,34 @@
     api_token: "{{ cloudflare_api_token }}"
   when:
     add_cloudflare_record
-  register: record
+  register: cloudflare_record
 
 
 - name: Show record result
   ansible.builtin.debug:
+    msg: "{{ cloudflare_record }}"
+  when:
+    add_cloudflare_record and cloudflare_record is defined
+
+
+- name: Add new wildcard record pointing to IP
+  community.general.cloudflare_dns:
+    zone: "{{ zone }}"
+    record: "{{ '*.' + record }}"
+    type: A
+    value:  "{{ ip_address }}"
+    account_email: "{{ cloudflare_email }}"
+    api_token: "{{ cloudflare_api_token }}"
+  when:
+    add_cloudflare_wildcard_record
+  register: wildcard_record
+
+
+- name: Show wildcard record result
+  ansible.builtin.debug:
     msg: "{{ record }}"
   when:
-    add_cloudflare_record and record is defined
+    add_cloudflare_wildcard_record and wildcard_record is defined
 
 
 - name: Set inventory file

@@ -15,9 +15,14 @@ nos_event_service:
     events_log_level: DEBUG
     events_image: ghcr.io/planetary-social/nos-event-service
     events_image_tag: latest
+    events_pyroscope_application_name: '{{ inventory_hostname }}'
   hosts:
     events.nos.social:
       events_pyroscope_application_name: events.nos.social
+    events-dev.ansible.fun:
 prod:
   hosts:
-    events.nos.social: 
+    events.nos.social:
+dev:
+  hosts:
+    events-dev.ansible.fun:
