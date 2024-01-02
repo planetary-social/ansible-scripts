@@ -23,17 +23,29 @@
     path: /etc/nginx/sites-enabled/default
     state: absent
 
+- name: Check if redirect configs exist on server
+  become: true
+  ansible.builtin.stat:
+    path: "/etc/nginx/sites-available/{{ redirect }}"
+  loop: "{{ redirects }}"
+  register: existing_redirects
+  loop_control:
+    loop_var: redirect
+  when: redirects is defined
+  ignore_errors: true
 
-- name: Archive existing configs that are now redirects
+- name: Archive existing redirect configs
   become: true
   ansible.builtin.command: mv /etc/nginx/sites-available/{{ redirect }} /etc/nginx/sites-available/{{ redirect }}.bk
   args:
     removes: /etc/nginx/sites-available/{{ redirect }}
     creates: /etc/nginx/sites-available/{{ redirect }}.bk
-  loop: "{{ redirects }}"
+  loop: "{{ existing_redirects.results }}"
   loop_control:
     loop_var: redirect
-  when: redirects is defined
+  when:
+    - redirects is defined
+    - redirect.stat.exists
 
 
 - name: Remove redirect configs from sites-enabled
@@ -41,10 +53,12 @@
   ansible.builtin.file:
     path: /etc/nginx/sites-enabled/{{ redirect }}
     state: absent
-  loop: "{{ redirects }}"
+  loop: "{{ existing_redirects.results }}"
   loop_control:
     loop_var: redirect
-  when: redirects is defined
+  when:
+    - redirects is defined
+    - redirect.stat.exists
 
 
 - name: UFW - Allow http/https connections

@@ -47,11 +47,6 @@ server {
 server {
   server_name {{ redirect }};
   return 301 http://{{ domain }}$request_uri;
-  listen 443 ssl; # managed by Certbot
-          ssl_certificate /etc/letsencrypt/live/{{ redirect }}/fullchain.pem; # managed by Certbot
-          ssl_certificate_key /etc/letsencrypt/live/{{ redirect }}/privkey.pem; # managed by Certbot
-          include /etc/letsencrypt/options-ssl-nginx.conf; # managed by Certbot
-          ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem; # managed by Certbot
 }
 {% endfor %}
 {% endif %}
