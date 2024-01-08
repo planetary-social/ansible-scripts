@@ -1,0 +1,39 @@
+# Image upage service: Setup systemd unit files for
+# continuously updating docker image.
+
+- name: Copy systemd service files for image update
+  become: true
+  ansible.builtin.template:
+    src: "{{ file.src }}"
+    dest: "{{ file.dest }}"
+    mode: "{{ file.mode }}"
+  loop:
+    - src: image-update.service.tpl
+      dest: "/etc/systemd/system/{{ service_name }}-image-update.service"
+      mode: "0644"
+    - src: image-update.sh.tpl
+      dest: "/usr/local/bin/{{ service_name }}-image-update.sh"
+      mode: "0755"
+    - src: image-update.timer.tpl
+      dest: "/etc/systemd/system/{{ service_name }}-image-update.timer"
+      mode: "0644"
+  loop_control:
+    loop_var: file
+
+
+- name: Enable image update service and timer
+  become: true
+  ansible.builtin.systemd:
+    name: "{{ item }}"
+    enabled: true
+  loop:
+    - "{{ service_name }}-image-update.service"
+    - "{{ service_name }}-image-update.timer"
+
+
+- name: Start image update service
+  become: true
+  ansible.builtin.systemd:
+    name: "{{ service_name }}-image-update"
+    state: started
+    daemon_reload: true

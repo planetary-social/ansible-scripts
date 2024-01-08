@@ -19,7 +19,7 @@ nos_crossposting_service:
         - tweeter.nos.social
 prod:
   hosts:
-    tweeter.nos.social: 
+    connect.nos.social:
   vars:
 dev:
   hosts:

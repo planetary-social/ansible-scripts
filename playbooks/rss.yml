@@ -1,7 +1,7 @@
-- name: Create rsslay service on targets
+- name: Create rss service on targets
   hosts: rss
   vars:
     ansible_user: admin
   roles:
-    - rsslay
+    - rss
     - node-exporter

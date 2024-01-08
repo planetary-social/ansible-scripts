@@ -2,9 +2,12 @@
 rss:
   hosts:
     rss.nos.social: 
+    rss.ansible.fun:
   vars:
     admin_username: admin
     homedir: /home/{{ admin_username }}
+    rss_image: cooldracula/rsslay
+    rss_image_tag: stable
     rsslay_port: 9018
     rsslay_secret_string: '{{ vault_rsslay_secret_string }}'
     cloudflare_api_token: '{{ lookup(''env'', ''CLOUDFLARE_API_TOKEN'')}}'
@@ -14,3 +17,4 @@ prod:
     rss.nos.social: 
 dev:
   hosts:
+    rss.ansible.fun:

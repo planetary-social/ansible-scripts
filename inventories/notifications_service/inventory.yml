@@ -16,6 +16,7 @@ notifications_service:
     notifications_apns_certificate: certificate_apns.p12
     notifications_apns_certificate_path: '{{inventory_dir}}/group_vars/all/{{ notifications_apns_certificate}}'
     notifications_apns_certificate_password: '{{ vault_apns_certificate_password }}'
+    notifications_image: "ghcr.io/planetary-social/nos-notification-service-go"
 prod:
   hosts:
     notifications.nos.social:

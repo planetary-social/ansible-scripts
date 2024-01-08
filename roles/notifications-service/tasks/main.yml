@@ -1,5 +1,10 @@
 # Setup nos-notification-service-go on server
 ---
+- name: Set notifications dir
+  ansible.builtin.set_fact:
+    notifications_dir: "{{ homedir }}/notifications"
+
+
 - name: Create dir for AAA root certificate
   become: true
   ansible.builtin.file:
@@ -66,25 +71,23 @@
     state: restarted
 
 
-- name: Ensure notifications dir exists
+- name: Ensure notifications dirs exists
   ansible.builtin.file:
-    path: "{{ homedir }}/notifications"
+    path: "{{ notifications_dir }}/certs"
     state: directory
     mode: '0755'
 
 
-- name: Copy docker-compose.yml to notifications dir
+- name: Copy necessary template files to notifications dir
   ansible.builtin.template:
-    src: docker-compose.yml.tpl
-    dest: "{{ homedir }}/notifications/docker-compose.yml"
+    src: "{{ item.src }}"
+    dest: "{{ notifications_dir }}/{{ item.dest }}"
     mode: 0644
-
-
-- name: Ensure notifications/certs dir exists
-  ansible.builtin.file:
-    path: "{{ homedir }}/notifications/certs"
-    state: directory
-    mode: '0755'
+  loop:
+    - src: docker-compose.yml.tpl
+      dest: docker-compose.yml
+    - src: env.notifications
+      dest: .env
 
 
 - name: Copy certs to notifications dir
@@ -114,13 +117,6 @@
   when: notifications_google_pubsub_enabled is true
 
 
-- name: Copy env file to notifications dir
-  ansible.builtin.template:
-    src: env.notifications
-    dest: "{{ homedir }}/notifications/.env"
-    mode: 0644
-
-
 - name: ensure docker is running
   ansible.builtin.service:
     name: docker
@@ -128,64 +124,20 @@
 
 
 - name: Start up notifications
-  community.docker.docker_compose:
-    project_src: "{{ homedir }}/notifications"
-    build: false
-    restarted: true
+  ansible.builtin.shell: "docker compose down && docker compose up -d"
+  args:
+    chdir: "{{ notifications_dir }}"
   register: service_started
   retries: 5
   until: service_started is success
 
 
-- name: Copy systemd service for notifications image update
-  ansible.builtin.template:
-    src: notifications-image-update.service.tpl
-    dest: "{{ homedir }}/notifications/notifications-image-update.service"
-    mode: 0644
-
-
-- name: Copy systemd timer
-  ansible.builtin.copy:
-    src: notifications-image-update.timer
-    dest: "{{ homedir }}/notifications/notifications-image-update.timer"
-    mode: 0644
-
-
-- name: Copy systemd shell script
-  ansible.builtin.template:
-    src: notifications-image-update.sh.tpl
-    dest: "{{ homedir }}/notifications/notifications-image-update.sh"
-    mode: 0755
-
-
-- name: Symlink image update files to correct locations
-  become: true
-  ansible.builtin.file:
-    src: "{{ item.src }}"
-    dest: "{{ item.dest }}"
-    state: link
-  loop:
-    - src: "{{ homedir }}/notifications/notifications-image-update.service"
-      dest: /etc/systemd/system/notifications-image-update.service
-    - src: "{{ homedir }}/notifications/notifications-image-update.timer"
-      dest: /etc/systemd/system/notifications-image-update.timer
-    - src: "{{ homedir }}/notifications/notifications-image-update.sh"
-      dest: /usr/local/bin/notifications-image-update.sh
-
-
-- name: Enable image update service and timer
-  become: true
-  ansible.builtin.systemd:
-    name: "{{ item }}"
-    enabled: true
-  loop:
-    - notifications-image-update.service
-    - notifications-image-update.timer
-
-
-- name: Start image update service
-  become: true
-  ansible.builtin.systemd:
-    name: notifications-image-update
-    state: started
-    daemon_reload: true
+- name: Setup the image updater
+  ansible.builtin.include_role:
+    name: image-update-service
+  vars:
+    service_name: notifications
+    service_image: "{{ notifications_image }}"
+    service_image_tag: "{{ notifications_image_tag }}"
+    frequency: 3m
+    working_dir: "{{ notifications_dir }}"
