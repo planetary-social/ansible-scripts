@@ -1,13 +1,24 @@
-The Sentry role configures a digital ocean droplet with a running instances of the [Sentry error tracking software](https://sentry.io). Sentry is mainly used to gather crash reports from our iOS app.
+## Sentry Role
 
-## Variables
+We run a self-hosted version of sentry(https://sentry.io), deployed using their
+self hosting instructions:
 
-| variable                   | purpose                                               |
-|----------------------------|-------------------------------------------------------|
-| vault_cloudflare_api_token | Access Cloudflare API for cert renewals               |
-| vault_sentry_secret_key    | Allowing clients to communicate securely with Sentry  |
-| vault_slack_client_id      | Allowing Sentry to post to Slack                      |
-| vault_slack_client_secret  | Allowing Sentry to post to Slack                      |
-| vault_slack_signing_secret | Allowing Sentry to post to Slack                      |
-| vault_google_client_id     | Supporting authentication via Google                  |
-| vault_google_client_secret | Supporting authentication via Google                  |
+https://develop.sentry.dev/self-hosted/
+
+The best way to deploy the service is to follow the instructions in that link,
+since it boils down to downloading and running an install script.  This installation can take a long time (> 30 minutes) and so running it via ansible is not ideal.  While we created a role for this originally, there was too much 
+trickery we had to do to keep our ssh connection open and running while sentry's own script did its job.  We do not want arbitrary ansible issues to interfere with their recommended install path, and so we opted to not use ansible for this.
+
+Following sentry's advice, for our current deployment we have the docker services behind an nginx proxy running on the server, with the TLS handled by the proxy.  The server is also generally hardened 
+
+## Metrics
+
+We do want to keep metrics about the server itself and whether sentry is healthy
+and htis can be handled by ansible. We collect these metrics using
+node-exporter, extending the base exporter with a cusotm check that uses
+sentry's own `/_health` endpoint. So this role now serves to create and add that
+custom extension.
+
+For the curious, you can still check out the tasks section of this role, and the bottom commented out section, to see the steps you'd take to install sentry...but again, these steps should be taken on the server itself, and not via ansible.
+
+

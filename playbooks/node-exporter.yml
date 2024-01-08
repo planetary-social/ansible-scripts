@@ -1,6 +1,7 @@
 - name: install node exporter service on target hosts
   hosts: all
   vars:
+    ansible_user: admin
     node_exporter_version: 1.6.0
     ansible_user: admin
   roles:

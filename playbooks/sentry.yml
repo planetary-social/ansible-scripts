@@ -4,23 +4,5 @@
   gather_facts: false
   vars:
     ansible_user: admin
-    admin_username: admin
-    sentry_port: 9000
-  pre_tasks:
-    # SSH Host key checking
-    # https://stackoverflow.com/a/54735937/982195
-    - name: "Check known_hosts for {{ inventory_hostname }}"
-      delegate_to: localhost
-      ansible.builtin.command: shell ssh-keygen -F {{ inventory_hostname }}
-      register: has_entry_in_known_hosts_file
-      failed_when: false
-      changed_when: false
-      ignore_errors: true
-    - name: Ignore host key for on first run for {{ inventory_hostname }}
-      when: has_entry_in_known_hosts_file.rc == 1
-      ansible.builtin.set_fact:
-        ansible_ssh_common_args: '-o StrictHostKeyChecking=no'
-    - name: Gather Facts
-      ansible.builtin.setup:
   roles:
     - sentry
