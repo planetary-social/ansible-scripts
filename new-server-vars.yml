@@ -13,7 +13,7 @@
 #   - cooldracula
 #   - zachmandeville
 #   - mplorentz
-#   - boreq
+#   - dcadenas
 # add_cloudflare_record: true
 # add_cloudflare_wildcard_record: true
 # inv:  nos_event_service
@@ -38,6 +38,7 @@
 #   - cooldracula
 #   - zachmandeville
 #   - mplorentz
+#   - dcadenas
 # inv:  nos_crossposting_service
 # inv_groups:
 #   - nos_crossposting_service
@@ -60,7 +61,7 @@
 #   - cooldracula
 #   - zachmandeville
 #   - mplorentz
-#   - boreq
+#   - dcadenas
 # inv:  notifications_service
 # inv_groups:
 #   - notifications_service
@@ -83,6 +84,7 @@
 #   - cooldracula
 #   - mplorentz
 #   - zachmandeville
+#   - dcadenas
 # inv:  nostrface
 # inv_groups:
 #   - nostrface
@@ -171,7 +173,7 @@
 #   - cooldracula
 #   - zachmandeville
 #   - mplorentz
-#   - boreq
+#   - dcadenas
 # inv:  posthog
 # inv_groups:
 #   - posthog
