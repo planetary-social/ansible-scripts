@@ -4,7 +4,7 @@
 # These should list github usernames whose keys should and should not be on the server, respectively.
 ---
 - name: Remove SSH Keys
-  hosts: nos:&dev
+  hosts: all
   vars:
     ansible_user: admin
   tasks:
