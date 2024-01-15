@@ -1,0 +1,24 @@
+---
+nos:
+  hosts:
+    events.nos.social:
+    notifications.nos.social:
+    rss.nos.social:
+    connect.nos.social:
+    events-dev.ansible.fun:
+  vars:
+    # Github users whose keys should be on the server
+    approved_users:
+      - mplorentz
+      - cooldracula
+      - zachmandeville
+      - dcadenas
+    # Github users who should be removed from the server
+    removed_users:
+      - boreq
+dev:
+  hosts:
+    events-dev.ansible.fun:
+prod:
+  hosts:
+    events.nos.social:
