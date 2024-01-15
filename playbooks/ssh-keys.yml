@@ -1,0 +1,39 @@
+# Removes the given user's SSH keys from all servers passed in by inventory file
+# Expects two variables, approved_users and removed_users.
+# Both variables are lists, most likely defined in the passed-in inventory file.
+# These should list github usernames whose keys should and should not be on the server, respectively.
+---
+- name: Remove SSH Keys
+  hosts: nos:&dev
+  vars:
+    ansible_user: admin
+  tasks:
+    - name: Check approved_users variable is present
+      ansible.builtin.assert:
+        that:
+          - approved_users is defined
+          - "{{ approved_users | type_debug == 'list' }}"
+        fail_msg: "approved_users not given. Should be a list of github users whose keys should be on the server."
+
+
+    - name: Add approved users' keys to servers
+      ansible.builtin.authorized_key:
+        user: "{{ ansible_user }}"
+        state: present
+        key: "https://github.com/{{ user }}.keys"
+      loop: "{{ approved_users }}"
+      loop_control:
+        loop_var: user
+
+
+    - name: Remove former users' keys from servers
+      ansible.builtin.authorized_key:
+        user: "{{ ansible_user }}"
+        state: absent
+        key: "https://github.com/{{ user }}.keys"
+      loop: "{{ removed_users }}"
+      loop_control:
+        loop_var: user
+      when:
+        - removed_users is defined
+        - removed_users | type_debug == 'list'
