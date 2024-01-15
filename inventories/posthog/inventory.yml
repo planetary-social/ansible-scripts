@@ -5,6 +5,13 @@ posthog:
     homedir: /home/{{ admin_username }}
     domain: '{{ inventory_hostname }}'
     posthog_app_tag: latest
+    approved_users:
+      - mplorentz
+      - zachmandeville
+      - cooldracula
+      - rabble
+    removed_users:
+      - boreq
   hosts:
     posthog.planetary.tools:
 prod:

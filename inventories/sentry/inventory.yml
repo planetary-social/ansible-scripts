@@ -10,5 +10,12 @@ sentry:
     sentry_admin_email: ops@nos.social
     sentry_admin_password: '{{ vault_sentry_admin_password }}'
     sentry_port: 9000
+    approved_users:
+      - mplorentz
+      - zachmandeville
+      - cooldracula
+      - rabble
+    removed_users:
+      - boreq
 prod:
   sentry.nos.social:
