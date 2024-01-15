@@ -1,5 +1,13 @@
 ---
 pubs:
+  vars:
+    approved_users:
+      - mplorentz
+      - zachmandeville
+      - cooldracula
+      - rabble
+    removed_users:
+      - boreq
   hosts:
     one.planetary.pub:
     two.planetary.pub:
