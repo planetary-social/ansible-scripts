@@ -1,0 +1,47 @@
+# Setup a health metric for our node_exporter textfile_collector, taken from
+# the given health endpoint
+---
+- name: Copy systemd files for nos-health-check
+  become: true
+  ansible.builtin.template:
+    src: "{{ file.src }}"
+    dest: "{{ file.dest }}"
+    mode: "{{ file.mode }}"
+  loop:
+    - src: nos-health-check.service.tpl
+      dest: "/etc/systemd/system/nos-health-check.service"
+      mode: "0644"
+    - src: nos-health-check.sh.tpl
+      dest: "/usr/local/bin/nos-health-check.sh"
+      mode: "0755"
+    - src: nos-health-check.timer.tpl
+      dest: "/etc/systemd/system/nos-health-check.timer"
+      mode: "0644"
+  loop_control:
+    loop_var: file
+
+
+- name: Enable nos-health-check service and timer
+  become: true
+  ansible.builtin.systemd:
+    name: "{{ item }}"
+    enabled: true
+  loop:
+    - nos-health-check.service
+    - nos-health-check.timer
+
+
+- name: Start nos-health-check service
+  become: true
+  ansible.builtin.systemd:
+    name: nos-health-check
+    state: started
+    daemon_reload: true
+
+
+- name: Restart node-exporter
+  become: true
+  ansible.builtin.systemd:
+    name: node-exporter
+    state: restarted
+    daemon_reload: true
