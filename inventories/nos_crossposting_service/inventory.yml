@@ -9,6 +9,7 @@ nos_crossposting_service:
     crossposting_metrics_listen_address: 8009
     crossposting_environment: PRODUCTION
     crossposting_log_level: DEBUG
+    crossposting_health_endpoint: "https://{{ inventory_hostname }}"
     crossposting_twitter_key: '{{ vault_crossposting_twitter_key }}'
     crossposting_twitter_key_secret: '{{ vault_crossposting_twitter_key_secret }}'
     crossposting_image: ghcr.io/planetary-social/nos-crossposting-service
@@ -17,9 +18,11 @@ nos_crossposting_service:
     connect.nos.social:
       redirects:
         - tweeter.nos.social
+    crossposting-dev.ansible.fun:
 prod:
   hosts:
     connect.nos.social:
   vars:
 dev:
   hosts:
+    crossposting-dev.ansible.fun:
