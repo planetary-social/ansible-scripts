@@ -86,3 +86,10 @@
     service_image_tag: "{{ rss_image_tag }}"
     frequency: 3m
     working_dir: "{{ rss_dir }}"
+
+
+- name: Setup the health check
+  ansible.builtin.include_role:
+    name: health-check
+  vars:
+    health_check_endpoint: "{{ rss_health_endpoint }}"

@@ -3,5 +3,5 @@
   vars:
     ansible_user: admin
   roles:
-    - rss
     - node-exporter
+    - rss

@@ -2,10 +2,10 @@
 rss:
   hosts:
     rss.nos.social: 
-    rss.ansible.fun:
   vars:
     admin_username: admin
     homedir: /home/{{ admin_username }}
+    rss_health_endpoint: "https://{{ inventory_hostname }}"
     rss_image: cooldracula/rsslay
     rss_image_tag: stable
     rsslay_port: 9018
@@ -15,6 +15,3 @@ rss:
 prod:
   hosts:
     rss.nos.social: 
-dev:
-  hosts:
-    rss.ansible.fun:
