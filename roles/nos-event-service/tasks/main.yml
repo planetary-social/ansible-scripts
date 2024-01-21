@@ -55,3 +55,10 @@
     service_image_tag: "{{ events_image_tag }}"
     frequency: 3m
     working_dir: "{{ events_dir }}"
+
+
+- name: Setup the health check
+  ansible.builtin.include_role:
+    name: health-check
+  vars:
+    health_endpoint: "{{ events_health_endpoint }}"

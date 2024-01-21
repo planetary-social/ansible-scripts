@@ -1,0 +1,2 @@
+---
+health_check_endpoint: https://{{ inventory_hostname }}/_health

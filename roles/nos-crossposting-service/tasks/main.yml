@@ -136,3 +136,10 @@
     service_image_tag: "{{ crossposting_image_tag }}"
     frequency: 3m
     working_dir: "{{ crossposting_dir }}"
+
+
+- name: Setup the health check
+  ansible.builtin.include_role:
+    name: health-check
+  vars:
+    health_endpoint: "{{ crossposting_health_endpoint }}"

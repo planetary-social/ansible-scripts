@@ -141,3 +141,10 @@
     service_image_tag: "{{ notifications_image_tag }}"
     frequency: 3m
     working_dir: "{{ notifications_dir }}"
+
+
+- name: Setup the health check
+  ansible.builtin.include_role:
+    name: health-check
+  vars:
+    health_endpoint: "{{ notifications_health_endpoint }}"
