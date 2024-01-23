@@ -55,7 +55,7 @@
   ansible.builtin.include_role:
     name: image-update-service
   vars:
-    service_name: events
+    service_name: nos_social
     service_image: "{{ nip05api_image }}"
     service_image_tag: "{{ nip05api_image_tag }}"
     frequency: 3m
