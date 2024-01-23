@@ -2,47 +2,47 @@
 version: "3.3"
 
 services:
-
-
-  traefik:
-    image: "traefik:v2.10"
-    container_name: "traefik"
-    command:
-      - "--providers.docker=true"
-      - "--providers.docker.exposedbydefault=false"
-      - "--entrypoints.websecure.address=:443"
-      - "--entrypoints.websecure.http.tls.certResolver=nosresolver"
-      - "--entrypoints.web.address=:80"
-      - "--entrypoints.web.http.redirections.entryPoint.to=websecure"
-      - "--entrypoints.web.http.redirections.entryPoint.scheme=https"
-      - "--entrypoints.web.http.redirections.entrypoint.permanent=true"
-      - "--certificatesresolvers.nosresolver.acme.tlschallenge=true"
-      - "--certificatesresolvers.nosresolver.acme.email={{ cert_email }}"
-      - "--certificatesresolvers.nosresolver.acme.storage=/letsencrypt/acme.json"
+  redis:
+    image: redis:7.2.4
     ports:
-      - "80:80"
-      - "443:443"
+      - "6379:6379"
+    command: redis-server --loglevel notice
     volumes:
-      - "./letsencrypt:/letsencrypt"
-      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+      - redis_data:/data
+    networks:
+      - proxy
 
   api:
-    image: "{{ nos_api_image }}:{{ nos_api_image_tag }}"
+    image: "{{ nip05api_image }}:{{ nip05api_image_tag }}"
     container_name: "api"
     restart: always
+    env_file:
+     - ./.env
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.api.rule=Host(`{{ domain }}`) && (PathPrefix(`/api/`) || PathPrefix(`/.well-known`))"
-      - "traefik.http.services.redirect-service.loadbalancer.server.port=8080"
-
+      - "traefik.http.routers.nip05api.rule=(Host(`{{ domain }}`) && (PathPrefix(`/metrics`) || PathPrefix(`/api/`) || PathPrefix(`/.well-known`))) || (HostRegexp(`{subdomain:[a-zA-Z0-9-]+}.{{ domain }}`) && !HostRegexp(`traefik.{{ domain }}`))"
+      - "traefik.http.routers.nip05api.entrypoints=websecure"
+    depends_on:
+      - redis
+    networks:
+      - proxy
 
   redirect-service:
-    image: nginx:alpine
+    image: nginx:1.25.3-alpine
     container_name: "redirect-service"
     restart: always
     volumes:
       - ./nginx-redirect.conf:/etc/nginx/conf.d/default.conf
     labels:
       - "traefik.enable=true"
+      - "traefik.http.routers.redirect-service.entrypoints=websecure"
       - "traefik.http.routers.redirect-service.rule=Host(`{{ domain }}`) && !PathPrefix(`/.well-known`)"
-      - "traefik.http.services.redirect-service.loadbalancer.server.port=80"
+    networks:
+      - proxy
+
+volumes:
+  redis_data:
+
+networks:
+  proxy:
+    external: true
