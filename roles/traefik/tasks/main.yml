@@ -11,7 +11,8 @@
     - "443"
 
 
-- ansible.builtin.set_fact:
+- name: Set traefik dir
+  ansible.builtin.set_fact:
     traefik_dir: "{{ homedir }}/services/traefik"
 
 
@@ -20,23 +21,6 @@
     path: "{{ traefik_dir }}/configurations"
     state: directory
     mode: '0755'
-
-- ansible.builtin.set_fact:
-    traefik_dir: "{{ homedir }}/services/traefik"
-
-
-- name: Copy traefik.yml to services/traefik/traefik.yml
-  ansible.builtin.template:
-    src: traefik.yml.tpl
-    dest: "{{ traefik_dir }}/traefik.yml"
-    mode: 0644
-
-
-- name: Copy dynamic.yml to services/traefik/configurations/dynamic.yml
-  ansible.builtin.template:
-    src: dynamic.yml.tpl
-    dest: "{{ traefik_dir }}/configurations/dynamic.yml"
-    mode: 0644
 
 
 - name: Create acme.json in services/traefik/acme.json
@@ -47,17 +31,27 @@
     mode: 0600
 
 
-- name: Copy docker-compose.yml to services/traefik/docker-compose.yml
+- name: Copy necessary template files to traefik dir
   ansible.builtin.template:
-    src: docker-compose.yml.tpl
-    dest: "{{ traefik_dir }}/docker-compose.yml"
+    src: "{{ item.src }}"
+    dest: "{{ traefik_dir }}/{{ item.dest }}"
     mode: 0644
+  loop:
+    - src: docker-compose.yml.tpl
+      dest: docker-compose.yml
+    - src: env.tpl
+      dest: .env
+    - src: traefik.yml.tpl
+      dest: traefik.yml
+    - src: dynamic.yml.tpl
+      dest: configurations/dynamic.yml
 
 
 - name: ensure docker is running
   ansible.builtin.service:
     name: docker
     state: started
+
 
 - name: Create proxy network if it does not exists
   ansible.builtin.shell: "docker network inspect proxy || docker network create --driver bridge proxy"

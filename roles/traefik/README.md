@@ -39,5 +39,5 @@ And they'll be automatically picked up by the traefik proxy, with routing and ce
 
 ## Vars
 
-  * [ ] There are two sets of var files in this role: defaults/main.yml, which holds public default variables and vars/main.yml, which is vault-encrypted and holds our standard `traefik_user` and `traefik_password`.
+  * There are two sets of var files in this role: defaults/main.yml, which holds public default variables and vars/main.yml, which is vault-encrypted and holds our standard `vault_traefik_user` and `vault_traefik_password` along with a cloudflare api token to handle dns challenges, called `vault_cf_dns_api_token`.
 
