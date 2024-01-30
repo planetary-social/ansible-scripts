@@ -1,5 +1,5 @@
 [Unit]
-Description=Run nos-health-check: adds status from {{ health_check_endpoint }}
+Description=Run nos-health-check: adds health metric using output of /usr/local/bin/nos-health-check.sh
 Wants=nos-health-check.timer
 
 [Service]
