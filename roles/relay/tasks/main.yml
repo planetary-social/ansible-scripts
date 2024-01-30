@@ -16,6 +16,7 @@
     state: directory
     mode: '0755'
 
+
 - name: Ensure strfry directory exists
   become: true
   ansible.builtin.file:
@@ -23,11 +24,13 @@
     state: directory
     mode: '0755'
 
+
 - name: Copy docker-compose.yml to relay dir
   ansible.builtin.template:
     src: docker-compose.yml.tpl
     dest: "{{ homedir }}/services/relay/docker-compose.yml"
     mode: '0644'
+
 
 - name: Copy nginx-redirect.conf to relay dir
   become: true
@@ -36,12 +39,14 @@
     dest: "{{ homedir }}/services/relay/nginx-redirect.conf"
     mode: '0644'
 
+
 - name: Copy strfry.conf to relay dir
   become: true
   ansible.builtin.copy:
     src: "{{ role_path }}/files/strfry.conf"
     dest: "{{ homedir }}/services/relay/strfry.conf"
     mode: '0644'
+
 
 - name: Copy whitelist.js to relay dir
   become: true
@@ -50,10 +55,12 @@
     dest: "{{ homedir }}/services/relay/whitelist.js"
     mode: '0755'
 
+
 - name: ensure docker is running
   ansible.builtin.service:
     name: docker
     state: started
+
 
 - name: Start up docker services
   ansible.builtin.shell: "docker compose down && docker compose up -d"
@@ -62,3 +69,11 @@
   register: service_started
   retries: 5
   until: service_started is success
+
+
+- name: Setup the health check
+  ansible.builtin.include_role:
+    name: health-check
+  vars:
+    health_check_endpoint: "{{ relay_health_check_endpoint }}"
+    health_check_command: "{{ relay_health_check_command }}"
