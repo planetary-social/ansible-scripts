@@ -69,6 +69,20 @@
   until: pkgs_added is success
 
 
+- name: UFW - Allow SSH connections
+  become: true
+  community.general.ufw:
+    rule: allow
+    name: OpenSSH
+
+
+- name: UFW - Enable and deny by default
+  become: true
+  community.general.ufw:
+    state: enabled
+    default: deny
+
+
 - name: Check if a reboot is required.
   become: true
   ansible.builtin.stat:

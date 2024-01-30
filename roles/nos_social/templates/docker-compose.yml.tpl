@@ -5,7 +5,7 @@ services:
   redis:
     image: redis:7.2.4
     ports:
-      - "6379:6379"
+      - "127.0.0.1:6379:6379"
     command: redis-server --loglevel notice
     volumes:
       - redis_data:/data
