@@ -16,6 +16,9 @@ entryPoints:
         - secureHeaders@file
       tls:
         certResolver: letsencrypt
+        domains:
+          - main: "{{ domain }}"
+            sans: "{{ '*.' + domain }}"
 
 providers:
   docker:
@@ -27,8 +30,8 @@ providers:
 certificatesResolvers:
   letsencrypt:
     acme:
+      dnschallenge:
+        provider: cloudflare
+        delayBeforeCheck: 0
       email: {{ cert_email }}
       storage: acme.json
-      keyType: EC384
-      httpChallenge:
-        entryPoint: web

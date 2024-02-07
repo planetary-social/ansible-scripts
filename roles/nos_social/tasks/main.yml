@@ -1,4 +1,30 @@
 ---
+- name: Set nos_social dir
+  ansible.builtin.set_fact:
+    nos_social_dir: "{{ homedir }}/services/nos_social"
+
+
+- name: Ensure services/nos_social exists
+  ansible.builtin.file:
+    path: "{{ nos_social_dir }}"
+    state: directory
+    mode: '0755'
+
+
+- name: Copy necessary template files to nos_social dir
+  ansible.builtin.template:
+    src: "{{ item.src }}"
+    dest: "{{ nos_social_dir }}/{{ item.dest }}"
+    mode: 0644
+  loop:
+    - src: docker-compose.yml.tpl
+      dest: docker-compose.yml
+    - src: env.tpl
+      dest: .env
+    - src: nginx-redirect.conf.tpl
+      dest: nginx-redirect.conf
+
+
 - name: UFW - Allow http/https connections
   become: true
   community.general.ufw:
@@ -9,34 +35,35 @@
     - "80"
     - "443"
 
-- name: Ensure services/nos_social exists
-  ansible.builtin.file:
-    path: "{{ homedir }}/services/nos_social"
-    state: directory
-    mode: '0755'
-
-- name: Copy docker-compose.yml
-  ansible.builtin.template:
-    src: docker-compose.yml.tpl
-    dest: "{{ homedir }}/services/nos_social/docker-compose.yml"
-    mode: '0644'
-
-- name: Copy nginx-redirect.conf
-  become: true
-  ansible.builtin.template:
-    src: nginx-redirect.conf.tpl
-    dest: "{{ homedir }}/services/nos_social/nginx-redirect.conf"
-    mode: '0644'
 
 - name: ensure docker is running
   ansible.builtin.service:
     name: docker
     state: started
 
+
 - name: Start up docker services
   ansible.builtin.shell: "docker compose down && docker compose up -d"
   args:
-    chdir: "{{ homedir }}/services/nos_social"
+    chdir: "{{ nos_social_dir }}"
   register: service_started
   retries: 5
   until: service_started is success
+
+
+- name: Setup the image updater
+  ansible.builtin.include_role:
+    name: image-update-service
+  vars:
+    service_name: nos_social
+    service_image: "{{ nip05api_image }}"
+    service_image_tag: "{{ nip05api_image_tag }}"
+    frequency: 3m
+    working_dir: "{{ nos_social_dir }}"
+
+
+- name: Setup the health check
+  ansible.builtin.include_role:
+    name: health-check
+  vars:
+    health_endpoint: "{{ nos_social_health_endpoint }}"

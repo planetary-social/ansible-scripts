@@ -3,3 +3,4 @@ dependencies:
   - role: common
   - role: digital-ocean
   - role: docker
+  - role: traefik

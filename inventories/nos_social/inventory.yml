@@ -1,15 +1,20 @@
 ---
 nos_social:
   hosts:
-    nos_social2.ansible.fun:
+    social-dev.ansible.fun:
   vars:
     admin_username: admin
     homedir: /home/{{ admin_username }}
     cert_email: zach@nos.social
     domain: '{{ inventory_hostname }}'
+    nip05api_image: cooldracula/nip05api
+    nip05api_image_tag: latest
+    nos_social_health_endpoint: https://{{ inventory_hostname }}/metrics
+    nip05api_node_env: production
+    nip05api_auth_pubkey: 6c815df9b3e7f43492c232aba075b5fa5b6a60b731ce6ccfc7c1e8bd2adcceb2
+    health_check_endpoint: https://{{ domain }}/metrics
 prod:
-  hosts:
-    nos_social2.ansible.fun: 
+  hosts: 
 dev:
   hosts:
-    nos_social2-dev.ansible.fun:
+    social-dev.ansible.fun:

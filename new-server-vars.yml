@@ -140,8 +140,8 @@
 #-----------------------------
 # Nos.social
 #-----------------------------
-# domain: nos_social2.ansible.fun
-# do_droplet_size: s-1vcpu-2gb
+# domain: social-dev.ansible.fun
+# do_droplet_size: s-2vcpu-8gb-160gb-intel
 # do_droplet_image: ubuntu-22-04-x64
 # do_droplet_region: NYC3
 # do_droplet_project: Nos

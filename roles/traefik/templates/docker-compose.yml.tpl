@@ -1,3 +1,4 @@
+---
 version: "3"
 
 services:
@@ -7,6 +8,8 @@ services:
     restart: unless-stopped
     security_opt:
       - "no-new-privileges:true"
+    env_file:
+      - ./.env
     networks:
       - proxy
     ports:
