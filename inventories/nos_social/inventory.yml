@@ -1,7 +1,8 @@
 ---
 nos_social:
   hosts:
-    social-dev.ansible.fun:
+    social-dev.ansible.fun: 
+    nos.social:
   vars:
     admin_username: admin
     homedir: /home/{{ admin_username }}
@@ -14,7 +15,9 @@ nos_social:
     nip05api_auth_pubkey: 6c815df9b3e7f43492c232aba075b5fa5b6a60b731ce6ccfc7c1e8bd2adcceb2
     health_check_endpoint: https://{{ domain }}/metrics
 prod:
-  hosts: 
+  hosts:
+    nos.social:
+      nip05api_auth_pubkey: 0d88d8ebcfeb7bd36900206388e24792a589b98af8ec782459eb4554aac6835e
 dev:
   hosts:
-    social-dev.ansible.fun:
+    social-dev.ansible.fun: 
