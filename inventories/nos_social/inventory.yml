@@ -1,7 +1,7 @@
 ---
 nos_social:
   hosts:
-    social-dev.ansible.fun: 
+    dev.ansible.fun:
     nos.social:
   vars:
     admin_username: admin
@@ -20,4 +20,4 @@ prod:
       nip05api_auth_pubkey: 0d88d8ebcfeb7bd36900206388e24792a589b98af8ec782459eb4554aac6835e
 dev:
   hosts:
-    social-dev.ansible.fun: 
+    dev.ansible.fun:
