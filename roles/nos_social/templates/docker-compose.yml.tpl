@@ -20,7 +20,7 @@ services:
      - ./.env
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.nip05api.rule=(Host(`{{ domain }}`) && (PathPrefix(`/metrics`) || PathPrefix(`/api/`) || PathPrefix(`/.well-known`))) || (HostRegexp(`{subdomain:[a-zA-Z0-9-]+}.{{ domain }}`) && !HostRegexp(`traefik.{{ domain }}`))"
+      - "traefik.http.routers.nip05api.rule=(Host(`{{ domain }}`) && (PathPrefix(`/metrics`) || PathPrefix(`/api/`) || PathPrefix(`/.well-known`))) && !HostRegexp(`{subdomain:[a-zA-Z0-9-]+}.{{ domain }}`)"
       - "traefik.http.routers.nip05api.entrypoints=websecure"
     depends_on:
       - redis
@@ -37,6 +37,7 @@ services:
       - "traefik.enable=true"
       - "traefik.http.routers.redirect-service.entrypoints=websecure"
       - "traefik.http.routers.redirect-service.rule=Host(`{{ domain }}`) && !PathPrefix(`/.well-known`)"
+      - "traefik.http.routers.redirect-service.rule=Host(`{{ domain }}`) && !PathPrefix(`/.well-known`) || (HostRegexp(`{subdomain:[a-zA-Z0-9-]+}.{{ domain }}`) && !HostRegexp(`traefik.{{ domain }}`))"
     networks:
       - proxy
 
