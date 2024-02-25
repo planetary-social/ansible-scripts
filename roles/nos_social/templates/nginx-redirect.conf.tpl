@@ -31,3 +31,12 @@ server {
         try_files /dev/null @webflow;
     }
 }
+
+# temporarily forward requests with name subdomains to their njump profile page
+server {
+    server_name "~^(?<profile>\w+)\.{{ domain }}$";
+
+    location = / {
+        return 302 https://njump.me/$profile@nos.social;
+    }
+}
