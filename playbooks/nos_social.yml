@@ -1,5 +1,5 @@
 - name: Install new server for nos.social
-  hosts: nos_social
+  hosts: nos_social:&prod
   vars:
     ansible_user: admin
     domain: "{{ inventory_hostname }}"
