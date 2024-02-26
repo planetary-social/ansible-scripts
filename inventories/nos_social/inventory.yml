@@ -13,7 +13,8 @@ nos_social:
     nos_social_health_endpoint: https://{{ inventory_hostname }}/metrics
     nip05api_node_env: production
     nip05api_auth_pubkey: 6c815df9b3e7f43492c232aba075b5fa5b6a60b731ce6ccfc7c1e8bd2adcceb2
-    health_check_endpoint: https://{{ domain }}/metrics
+    nip05api_ratelimit_average: 120
+    nip05api_ratelimit_burst: 200
     slack_webhook_url: "{{ vault_slack_webhook_url }}"
 prod:
   hosts:
