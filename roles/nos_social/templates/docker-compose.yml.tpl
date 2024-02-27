@@ -22,6 +22,8 @@ services:
       - "traefik.enable=true"
       - "traefik.http.routers.nip05api.rule=(Host(`{{ domain }}`) && (PathPrefix(`/metrics`) || PathPrefix(`/api/`) || PathPrefix(`/.well-known`))) && !HostRegexp(`{subdomain:[a-zA-Z0-9-]+}.{{ domain }}`)"
       - "traefik.http.routers.nip05api.entrypoints=websecure"
+      - "traefik.http.middlewares.nip05api.ratelimit.average={{ nip05api_ratelimit_average }}"
+      - "traefik.http.middlewares.nip05api.ratelimit.burst={{ nip05api_ratelimit_burst }}"
     depends_on:
       - redis
     networks:
