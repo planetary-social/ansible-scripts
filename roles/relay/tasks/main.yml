@@ -48,11 +48,11 @@
     mode: '0644'
 
 
-- name: Copy whitelist.js to relay dir
+- name: Copy allowed_rules.js to relay dir
   become: true
   ansible.builtin.copy:
-    src: "{{ role_path }}/files/whitelist.js"
-    dest: "{{ homedir }}/services/relay/whitelist.js"
+    src: "{{ role_path }}/files/allowed_rules.js"
+    dest: "{{ homedir }}/services/relay/allowed_rules.js"
     mode: '0755'
 
 
