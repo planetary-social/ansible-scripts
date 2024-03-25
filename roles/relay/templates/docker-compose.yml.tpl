@@ -34,7 +34,7 @@ services:
     volumes:
       - ./strfry.conf:/etc/strfry.conf
       - ./strfrydb:/app/strfry-db
-      - ./whitelist.js:/app/plugins/whitelist.js
+      - ./allowed_rules.js:/app/plugins/allowed_rules.js
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.strfry.rule=Host(`{{ domain }}`) && Headers(`Accept`, `application/nostr+json`) || HeadersRegexp(`Connection`, `(?i)Upgrade`) && HeadersRegexp(`Upgrade`, `websocket`)"
