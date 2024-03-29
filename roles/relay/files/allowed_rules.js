@@ -7,6 +7,7 @@ const ALLOWED = {
   eventKinds: [
     0, // Metadata
     3, // Contacts
+    1059, // Gift wrap messages
     10002, // Relay list metadata
   ],
 };
