@@ -1,0 +1,21 @@
+---
+reportinator_server:
+  hosts:
+    reportinator.nos.social:
+  vars:
+    admin_username: admin
+    homedir: /home/{{ admin_username }}
+    cert_email: zach@nos.social
+    domain: '{{ inventory_hostname }}'
+    reportinator_server_image: ghcr.io/planetary-social/reportinator_server
+    reportinator_server_image_tag: latest
+
+    # this will need a persistent volume mounted in /app/gcloud
+    google_application_credentials: /app/data/gcloud/application_default_credentials.json
+    relay_addresses_csv: wss://relay.nos.social
+    reportinator_server_health_endpoint: https://{{ inventory_hostname }}/
+    reportinator_secret: "{{ vault_reportinator_secret }}"
+    slack_signing_secret: "{{ vault_reportinator_slack_signing_secret }}"
+prod:
+  hosts:
+    reportinator.nos.social:

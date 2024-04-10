@@ -1,0 +1,7 @@
+- name: Install new server for reportinator_server
+  hosts: reportinator_server:&prod
+  vars:
+    ansible_user: admin
+    domain: "{{ inventory_hostname }}"
+  roles:
+    - reportinator_server
