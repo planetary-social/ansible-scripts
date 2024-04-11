@@ -15,7 +15,7 @@ reportinator_server:
     relay_addresses_csv: wss://relay.nos.social
     reportinator_server_health_endpoint: https://{{ inventory_hostname }}/
     reportinator_secret: "{{ vault_reportinator_secret }}"
-    slack_signing_secret: "{{ vault_reportinator_slack_signing_secret }}"
+    slack_signing_secret: "{{ vault_slack_signing_secret }}"
 prod:
   hosts:
     reportinator.nos.social:
