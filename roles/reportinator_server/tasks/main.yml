@@ -51,8 +51,8 @@
     name: image-update-service
   vars:
     service_name: reportinator_server
-    service_image: "{{ reportinator_server_image: }}"
-    service_image_tag: "{{ reportinator_server_image_tag: }}"
+    service_image: "{{ reportinator_server_image }}"
+    service_image_tag: "{{ reportinator_server_image_tag }}"
     frequency: 3m
     working_dir: "{{ reportinator_server_dir }}"
 
