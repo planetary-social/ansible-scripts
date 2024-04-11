@@ -184,7 +184,7 @@
 #-----------------------------
 # Reportinator Service example
 #-----------------------------
-domain: reportinator.ansible.fun
+domain: reportinator2.ansible.fun
 do_droplet_size: s-1vcpu-1gb
 do_droplet_image: ubuntu-22-04-x64
 do_droplet_region: NYC3

@@ -1,7 +1,7 @@
 ---
 reportinator_server:
   hosts:
-    reportinator.nos.social: 
+    reportinator2.ansible.fun:
   vars:
     admin_username: admin
     homedir: /home/{{ admin_username }}
@@ -9,14 +9,15 @@ reportinator_server:
     domain: '{{ inventory_hostname }}'
     reportinator_server_image: ghcr.io/planetary-social/reportinator_server
     reportinator_server_image_tag: latest
-    google_application_credentials: /app/data/gcloud/application_default_credentials.json
     relay_addresses_csv: wss://relay.nos.social
+    google_application_credentials: application_default_credentials.json
+    google_pubsub_credentials_secret_json_path: '{{inventory_dir}}/group_vars/all/vault_pubsub-credentials.json'
     reportinator_server_health_endpoint: https://{{ inventory_hostname }}/
     reportinator_secret: '{{ vault_reportinator_secret }}'
     slack_signing_secret: '{{ vault_slack_signing_secret }}'
 prod:
   hosts:
-    reportinator.nos.social: 
+    reportinator2.ansible.fun: 
 dev:
   hosts:
-    reportinator.ansible.fun:
+    reportinator2.ansible.fun:
