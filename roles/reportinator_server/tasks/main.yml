@@ -11,8 +11,8 @@
 
 - name: Copy necessary template files to reportinator_server dir
   ansible.builtin.template:
-    src: docker-compose.yml.tpl
-    dest: "{{ reportinator_server_dir }}/docker-compose.yml
+    src: "docker-compose.yml.tpl"
+    dest: "{{ reportinator_server_dir }}/docker-compose.yml"
     mode: 0644
 
 - name: UFW - Allow http/https connections
