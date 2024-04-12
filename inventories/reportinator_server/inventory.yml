@@ -5,7 +5,7 @@ reportinator_server:
   vars:
     admin_username: admin
     homedir: /home/{{ admin_username }}
-    cert_email: zach@nos.social
+    cert_email: ops@planetary.social
     domain: '{{ inventory_hostname }}'
     reportinator_server_image: ghcr.io/planetary-social/reportinator_server
     reportinator_server_image_tag: latest
