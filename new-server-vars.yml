@@ -180,3 +180,23 @@
 #   - prod
 # additional_roles:
 #   - posthog
+
+#-----------------------------
+# Reportinator Service example
+#-----------------------------
+domain: reportinator2.ansible.fun
+do_droplet_size: s-1vcpu-1gb
+do_droplet_image: ubuntu-22-04-x64
+do_droplet_region: NYC3
+do_droplet_project: Nos
+do_droplet_tags:
+ - dev
+gh_user_keys_to_add:
+ - mplorentz
+ - dcadenas
+inv:  reportinator_server
+inv_groups:
+ - reportinator_server
+ - dev
+additional_roles:
+ - reportinator_server
