@@ -117,24 +117,31 @@
 #-----------------------------
 # Relay Service example
 #-----------------------------
-#domain: relay-do.ansible.fun
-#do_droplet_size: s-2vcpu-2gb-intel
-#do_droplet_image: ubuntu-22-04-x64
-#do_droplet_region: NYC3
-#do_droplet_project: Nos
-#do_droplet_tags:
-# - dev
-#gh_user_keys_to_add:
-# - cooldracula
-# - mplorentz
-# - zachmandeville
-# - dcadenas
-#inv:  relay
-#inv_groups:
-# - relay
-# - dev
-#additional_roles:
-# - relay
+domain: db-test.ansible.fun
+do_droplet_size: s-2vcpu-2gb-intel
+do_droplet_image: ubuntu-22-04-x64
+do_droplet_region: nyc3
+do_droplet_project: Nos
+do_droplet_tags:
+- dev
+- delete
+do_droplet_add_network: true
+do_droplet_add_db: true
+do_db_name: "test database"
+do_db_engine: "pg"
+do_db_size:  "db-s-2vcpu-4gb"
+do_db_num_nodes: 1
+gh_user_keys_to_add:
+- cooldracula
+- mplorentz
+- zachmandeville
+- dcadenas
+inv:  relay
+inv_groups:
+- relay
+- dev
+additional_roles:
+- relay
 
 
 #-----------------------------
