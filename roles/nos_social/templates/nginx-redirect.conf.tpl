@@ -4,7 +4,7 @@ error_log /dev/stdout;
 access_log /dev/stdout;
 
 upstream webflow {
-    server proxy-ssl.webflow.com:443;
+    server nos-app.webflow.io:443;
 }
 
 server {
@@ -14,7 +14,7 @@ server {
 
     location @webflow {
         proxy_pass                          https://webflow;
-        proxy_set_header Host               $host;
+        proxy_set_header Host nos-app.webflow.io;
         proxy_set_header X-Forwarded-For    $remote_addr;
         proxy_set_header X_FORWARDED_PROTO  https;
         proxy_ssl_verify        off;
