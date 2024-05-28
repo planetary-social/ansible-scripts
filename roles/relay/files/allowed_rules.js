@@ -2,7 +2,7 @@
 
 const ALLOWED = {
   pubs: {
-    add5190be4673768546c18b565da3a699241f0e06a75e2dbc03f18663d1b7b27: true, // Reportinator
+    56d4b3d6310fadb7294b7f041aab469c5ffc8991b1b1b331981b96a246f6ae65: true, // Tagr
   },
   eventKinds: [
     0, // Metadata
