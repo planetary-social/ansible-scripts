@@ -39,28 +39,10 @@
     dest: "{{ homedir }}/services/relay/nginx-redirect.conf"
     mode: '0644'
 
-
-- name: Copy strfry.conf to relay dir
-  become: true
-  ansible.builtin.copy:
-    src: "{{ role_path }}/files/strfry.conf"
-    dest: "{{ homedir }}/services/relay/strfry.conf"
-    mode: '0644'
-
-
-- name: Copy allowed_rules.js to relay dir
-  become: true
-  ansible.builtin.copy:
-    src: "{{ role_path }}/files/allowed_rules.js"
-    dest: "{{ homedir }}/services/relay/allowed_rules.js"
-    mode: '0755'
-
-
 - name: ensure docker is running
   ansible.builtin.service:
     name: docker
     state: started
-
 
 - name: Start up docker services
   ansible.builtin.shell: "docker compose down && docker compose up -d"
@@ -70,6 +52,15 @@
   retries: 5
   until: service_started is success
 
+- name: Setup the image updater
+  ansible.builtin.include_role:
+    name: image-update-service
+  vars:
+    service_name: strfry
+    service_image: "{{ relay_server_image }}"
+    service_image_tag: "{{ relay_server_image_tag }}"
+    frequency: 3m
+    working_dir: "{{ homedir }}/services/relay"
 
 - name: Setup the health check
   ansible.builtin.include_role:
