@@ -17,6 +17,7 @@ services:
       - REPORTINATOR_SECRET={{ reportinator_secret }}
       - GOOGLE_APPLICATION_CREDENTIALS=/certs/{{ google_application_credentials }}
       - SLACK_SIGNING_SECRET={{ slack_signing_secret }}
+      - SLACK_CHANNEL_ID=C06SBEF40G0
       - RUST_LOG=reportinator_server=info
     networks:
       - proxy
