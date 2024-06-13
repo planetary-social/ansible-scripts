@@ -38,6 +38,8 @@ services:
       - "traefik.http.routers.strfry.rule=Host(`{{ domain }}`) && Headers(`Accept`, `application/nostr+json`) || HeadersRegexp(`Connection`, `(?i)Upgrade`) && HeadersRegexp(`Upgrade`, `websocket`)"
       - "traefik.http.routers.strfry.entrypoints=websecure"
       - "traefik.http.services.strfry.loadbalancer.server.port=7777"
+      - "traefik.http.middlewares.strfry.ratelimit.average=1"
+      - "traefik.http.middlewares.strfry.ratelimit.burst=10"
 
 
   redirect-service:
