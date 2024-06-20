@@ -1,0 +1,19 @@
+---
+- name: Create a new database assigned to project
+  community.digitalocean.digital_ocean_database:
+    state: present
+    name: "ansiblefundb"
+    oauth_token: "{{ do_oauth_token }}"
+    engine: "{{ do_db_engine }}"
+    size: "{{ do_db_size }}"
+    num_nodes: "{{ do_db_num_nodes }}"
+    project: "{{ do_droplet_project }}"
+    region: "{{ do_droplet_region }}"
+    wait: true
+    tags: "{{ do_droplet_tags }}"
+  register: new_do_db
+
+
+- name: Show Droplet info
+  ansible.builtin.debug:
+    msg: "{{ new_do_db.data }}"

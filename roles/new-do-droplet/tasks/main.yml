@@ -37,6 +37,7 @@
     tags: "{{ do_droplet_tags }}"
     monitoring: "{{ do_droplet_enable_monitoring }}"
     backups: "{{ do_droplet_enable_backups }}"
+    private_networking: "{{ do_droplet_add_network }}"
     wait_timeout: 500
     user_data: "{{ lookup('template', './cloud-config.yml.tpl') }}"
     project: "{{ do_droplet_project }}"
@@ -55,6 +56,12 @@
     ip_address: "{{ (new_do_droplet.data.droplet.networks.v4 | selectattr('type','equalto','public')).0.ip_address | default('<none>', true) }}"
 
 
+- name: Register vpc uuid
+  ansible.builtin.set_fact:
+    vpc_uuid: "{{ new_do_droplet.data.droplet.vpc_uuid }}"
+  when: do_droplet_add_network is true
+
+
 - name: Show Droplet info
   ansible.builtin.debug:
     msg: "{{ do_info | split('\n') }}"
@@ -62,6 +69,7 @@
     do_info: |
       Droplet ID is {{ new_do_droplet.data.droplet.id }}
       Public IPv4 is {{ ip_address }}
+      Private Network ID is {{ vpc_uuid }}
 
 
 - name: Grab domain url parts
@@ -82,7 +90,7 @@
     type: A
     value:  "{{ ip_address }}"
     account_email: "{{ cloudflare_email }}"
-    api_token: "{{ cloudflare_api_token }}"
+    account_api_key: "{{ cloudflare_api_key }}"
   when:
     add_cloudflare_record
   register: cloudflare_record
@@ -102,7 +110,7 @@
     type: A
     value:  "{{ ip_address }}"
     account_email: "{{ cloudflare_email }}"
-    api_token: "{{ cloudflare_api_token }}"
+    account_api_key: "{{ cloudflare_api_key }}"
   when:
     add_cloudflare_wildcard_record
   register: wildcard_record
