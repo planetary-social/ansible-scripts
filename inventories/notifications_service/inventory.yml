@@ -1,12 +1,12 @@
 ---
 notifications_service:
   hosts:
-    dev-notifications.nos.social: 
     notifications.nos.social:
   vars:
     admin_username: admin
     admin_password: '{{ vault_admin_password }}'
     homedir: /home/{{ admin_username }}
+    ansible_user: '{{ admin_username }}'
     cert_email: '{{ vault_cert_email }}'
     cloudflare_api_token: '{{ vault_cloudflare_api_token }}'
     domain: '{{ inventory_hostname }}'
@@ -18,10 +18,6 @@ notifications_service:
     notifications_apns_certificate_path: '{{inventory_dir}}/group_vars/all/{{ notifications_apns_certificate}}'
     notifications_apns_certificate_password: '{{ vault_apns_certificate_password }}'
     notifications_image: "ghcr.io/planetary-social/nos-notification-service-go"
-prod:
-  hosts:
-    notifications.nos.social:
-  vars:
     notifications_image_tag: stable
     notifications_firestore_project_id: nos-notification-service
     notifications_environment: PRODUCTION
@@ -32,14 +28,6 @@ prod:
     notifications_google_pubsub_credentials_path: '{{ inventory_dir}}/group_vars/prod/vault_pubsub-credentials.json'
     notifications_firestore_credentials_json: firestore-credentials.json
     notifications_firestore_credentials_json_path: '{{ inventory_dir}}/group_vars/prod/vault_firestore-credentials.json'
-dev:
+prod:
   hosts:
-    dev-notifications.nos.social: 
-  vars:
-    notifications_image_tag: latest
-    notifications_firestore_project_id: nos-notification-service-dev
-    notifications_environment: DEVELOPMENT
-    notifications_log_level: DEBUG
-    notifications_google_pubsub_enabled: false
-    notifications_firestore_credentials_json: firestore-credentials.json
-    notifications_firestore_credentials_json_path: '{{ inventory_dir}}/group_vars/dev/vault_firestore-credentials.json'
+    notifications.nos.social:

@@ -1,4 +1,6 @@
 ---
 letsencrypt:
+  vars:
+    ansible_user: root
   hosts:
     graphql.planetary.pub

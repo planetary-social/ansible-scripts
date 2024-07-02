@@ -5,6 +5,7 @@ rss:
   vars:
     admin_username: admin
     homedir: /home/{{ admin_username }}
+    ansible_user: '{{ admin_username }}'
     rss_health_endpoint: "https://{{ inventory_hostname }}"
     rss_image: cooldracula/rsslay
     rss_image_tag: stable

@@ -3,6 +3,7 @@ nos_event_service:
   vars:
     admin_username: admin
     homedir: /home/{{ admin_username }}
+    ansible_user: '{{ admin_username }}'
     cert_email: '{{ vault_cert_email }}'
     events_google_pubsub_project_id: '{{ vault_events_google_pubsub_project_id }}'
     events_google_pubsub_credentials_json: pubsub-credentials.json
@@ -20,10 +21,6 @@ nos_event_service:
   hosts:
     events.nos.social:
       events_pyroscope_application_name: events.nos.social
-    events-dev.ansible.fun:
 prod:
   hosts:
     events.nos.social:
-dev:
-  hosts:
-    events-dev.ansible.fun:

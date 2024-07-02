@@ -3,3 +3,5 @@ graphql:
   # used by the rooms UI
   hosts:
     graphql.planetary.pub
+  vars:
+    ansible_user: root

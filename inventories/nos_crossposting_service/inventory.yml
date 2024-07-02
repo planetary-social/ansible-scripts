@@ -2,6 +2,7 @@
 nos_crossposting_service:
   vars:
     admin_username: admin
+    ansible_user: '{{ admin_username }}'
     homedir: /home/{{ admin_username }}
     cert_email: '{{ vault_cert_email }}'
     cloudflare_api_token: '{{ vault_cloudflare_api_token }}'
@@ -18,11 +19,7 @@ nos_crossposting_service:
     connect.nos.social:
       redirects:
         - tweeter.nos.social
-    crossposting-dev.ansible.fun:
 prod:
   hosts:
     connect.nos.social:
   vars:
-dev:
-  hosts:
-    crossposting-dev.ansible.fun:
