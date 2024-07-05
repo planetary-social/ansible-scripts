@@ -1,0 +1,6 @@
+- name: Set up a host for service monitoring 
+  hosts: all
+  vars:
+    ansible_user: admin
+  roles:
+    - metrics
