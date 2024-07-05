@@ -1,0 +1,1 @@
+For the Planetary.name "hub" server which bundles a bunch of scuttlebutt services: a pub with graphql api, a room, and a custom frontend web viewer for content. See playbooks/planetary.name.yml
