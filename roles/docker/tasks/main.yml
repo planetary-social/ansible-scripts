@@ -40,7 +40,9 @@
 - name: Update apt and install docker-ce
   become: true
   ansible.builtin.apt:
-    pkg: docker-ce
+    pkg: 
+      - docker-ce
+      - python3-docker
     state: latest
     update_cache: yes
     cache_valid_time: 3600
