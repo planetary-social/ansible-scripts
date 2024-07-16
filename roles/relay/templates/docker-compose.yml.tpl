@@ -28,7 +28,7 @@ services:
 
 
   strfry:
-    image: "{{ relay_server_image }}:{{ relay_server_image_tag }}"
+    image: "{{ relay_server_image }}:{{ relay_image_tag }}"
     container_name: "strfry"
     restart: always
     volumes:

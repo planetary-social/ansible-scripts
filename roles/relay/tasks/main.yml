@@ -58,7 +58,7 @@
   vars:
     service_name: strfry
     service_image: "{{ relay_server_image }}"
-    service_image_tag: "{{ relay_server_image_tag }}"
+    service_image_tag: "{{ relay_image_tag }}"
     frequency: 3m
     working_dir: "{{ homedir }}/services/relay"
 
