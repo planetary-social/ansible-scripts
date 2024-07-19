@@ -3,6 +3,7 @@ relay:
   hosts:
     relay.nos.social:
     relay-dev.ansible.fun:
+    news.nos.social:
   vars:
     admin_username: admin
     homedir: /home/{{ admin_username }}
@@ -10,7 +11,8 @@ relay:
     domain: '{{ inventory_hostname }}'
     relay_image_tag: 0.9.4
     relay_health_check_endpoint: "https://{{ domain }}"
-    relay_health_check_command: 'curl -H "Accept: application/nostr+json" -X GET -s -L -o /dev/ -w "%{http_code}" {{ relay_health_check_endpoint }}'
+    relay_health_check_command: 'curl -H "Accept: application/nostr+json" -X GET -s
+      -L -o /dev/ -w "%{http_code}" {{ relay_health_check_endpoint }}'
     relay_server_image: ghcr.io/planetary-social/nosrelay
     relay_server_image_tag: latest
 prod:
@@ -19,3 +21,4 @@ prod:
 dev:
   hosts:
     relay-dev.ansible.fun:
+    news.nos.social:
