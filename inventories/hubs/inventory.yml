@@ -1,0 +1,13 @@
+---
+hubs:
+  hosts:
+    planetary.name:
+      # TODO: are we running this service on three different boxes? There are
+      # DO droplets named `planetary-graphql` and `room.planetary.name`.
+  vars:
+    admin_username: root # this server was built before the hardening playbook
+    ansible_user: root
+    domain: planetary.name
+    cloudflare_api_token: '{{ vault_cloudflare_api_token }}'
+    cert_email: ops@planetary.social
+    homedir: /root
