@@ -3,6 +3,7 @@ relay:
   hosts:
     relay.nos.social:
     relay-dev.ansible.fun:
+    olympics2024.nos.social:
   vars:
     admin_username: admin
     homedir: /home/{{ admin_username }}
@@ -19,3 +20,4 @@ prod:
 dev:
   hosts:
     relay-dev.ansible.fun:
+    olympics2024.nos.social:
