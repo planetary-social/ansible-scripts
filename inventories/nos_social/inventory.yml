@@ -1,11 +1,11 @@
 ---
 nos_social:
   hosts:
-    dev.ansible.fun:
     nos.social:
   vars:
     admin_username: admin
     homedir: /home/{{ admin_username }}
+    ansible_user: '{{ admin_username }}'
     cert_email: zach@nos.social
     domain: '{{ inventory_hostname }}'
     nip05api_image: ghcr.io/planetary-social/nip05api
@@ -20,6 +20,3 @@ prod:
   hosts:
     nos.social:
       nip05api_auth_pubkey: 0d88d8ebcfeb7bd36900206388e24792a589b98af8ec782459eb4554aac6835e
-dev:
-  hosts:
-    dev.ansible.fun:

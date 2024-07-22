@@ -7,6 +7,7 @@ notifications_service:
     admin_username: admin
     admin_password: '{{ vault_admin_password }}'
     homedir: /home/{{ admin_username }}
+    ansible_user: '{{ admin_username }}'
     cert_email: '{{ vault_cert_email }}'
     cloudflare_api_token: '{{ vault_cloudflare_api_token }}'
     domain: '{{ inventory_hostname }}'

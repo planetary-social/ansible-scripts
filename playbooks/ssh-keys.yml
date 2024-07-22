@@ -6,7 +6,15 @@
 - name: Remove SSH Keys
   hosts: all
   vars:
-    ansible_user: admin
+    approved_users:
+      - mplorentz
+      - rabble
+      - gergelypolonkai
+      - dcadenas
+    removed_users:
+      - boreq
+      - zachmandeville
+      - cooldracula
   tasks:
     - name: Check approved_users variable is present
       ansible.builtin.assert:
@@ -19,6 +27,7 @@
     - name: Add approved users' keys to servers
       ansible.builtin.authorized_key:
         user: "{{ ansible_user }}"
+        comment: "{{ user }}"
         state: present
         key: "https://github.com/{{ user }}.keys"
       loop: "{{ approved_users }}"

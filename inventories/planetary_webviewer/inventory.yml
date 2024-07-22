@@ -1,10 +1,12 @@
 ---
 planetary_webviewer:
   hosts:
-    cooltesting.space:
+    # cooltesting.space has been shut down.
+    #cooltesting.space:
   vars:
     admin_username: admin
     homedir: /home/{{ admin_username  }}
+    ansible_user: '{{ admin_username }}'
     frontend_docker_image: cooldracula/rooms-frontend
     frontend_docker_tag: stable
     frontend_port: 3000
@@ -24,8 +26,3 @@ planetary_webviewer:
     magic_token: '{{ vault_magic_token }}'
     cert_email: code@solarpunk.cool
     cloudflare_api_token: '{{ lookup(''env'', ''CLOUDFLARE_API_TOKEN'')}}'
-prod:
-  hosts: 
-dev:
-  hosts:
-    cooltesting.space:
