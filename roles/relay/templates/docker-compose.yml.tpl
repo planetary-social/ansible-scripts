@@ -27,12 +27,13 @@ services:
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
 
 
-  strfry:
-    image: "{{ relay_server_image }}:{{ relay_server_image_tag }}"
+  strfry: #TODO rename, this is use for both strfry and nostr-rs-relay
+    image: "{{ relay_server_image }}:{{ relay_image_tag }}"
     container_name: "strfry"
     restart: always
     volumes:
-      - ./strfrydb:/app/strfry-db
+      - ./strfrydb:/app/strfry-db # Strfry data
+      - ./data:/usr/src/app/db    # nostr-rs-relay data
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.strfry.rule=Host(`{{ domain }}`) && Headers(`Accept`, `application/nostr+json`) || HeadersRegexp(`Connection`, `(?i)Upgrade`) && HeadersRegexp(`Upgrade`, `websocket`)"
