@@ -2,6 +2,7 @@
 pubs:
   vars:
     ansible_user: root
+    admin_username: root
   hosts:
     one.planetary.pub:
     two.planetary.pub:
