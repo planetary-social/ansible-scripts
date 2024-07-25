@@ -37,6 +37,18 @@
     dest: "{{ reportinator_server_dir }}/certs/{{ google_application_credentials }}"
     mode: 0644
 
+- name: Ensure config directory exist
+  ansible.builtin.file:
+    path: "{{ reportinator_server_dir }}/config"
+    state: directory
+    mode: '0755'
+
+- name: Copy settings.yml to config dir
+  ansible.builtin.template:
+    src: settings.yml.tpl
+    dest: "{{ reportinator_server_dir }}/config/settings.yml"
+    mode: '0644'
+
 - name: ensure docker is running
   ansible.builtin.service:
     name: docker
