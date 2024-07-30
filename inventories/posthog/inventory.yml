@@ -10,6 +10,7 @@ posthog:
       - zachmandeville
       - cooldracula
       - rabble
+      - gergelypolonkai
     removed_users:
       - boreq
   hosts:
