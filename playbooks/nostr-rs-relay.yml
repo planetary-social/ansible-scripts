@@ -1,4 +1,4 @@
-- name: Install new server for the strfry relay
+- name: Set up a nostr-rs-relay on the given hosts.
   hosts: relay
   vars:
     ansible_user: admin
