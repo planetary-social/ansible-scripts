@@ -1,0 +1,22 @@
+---
+relay:
+  hosts:
+    olympics2024.nos.social:
+      relay_image_tag: olympics_latest
+    dev-olympics2024.nos.social:
+      relay_image_tag: olympics_latest
+  vars:
+    admin_username: admin
+    homedir: /home/{{ admin_username }}
+    ansible_user: '{{ admin_username }}'
+    cert_email: ops@nos.social
+    domain: '{{ inventory_hostname }}'
+    relay_health_check_endpoint: "https://{{ domain }}"
+    relay_health_check_command: 'curl -H "Accept: application/nostr+json" -X GET -s -L -o /dev/ -w "%{http_code}" {{ relay_health_check_endpoint }}'
+    relay_server_image: ghcr.io/planetary-social/nostr-rs-relay
+prod:
+  hosts:
+    olympics2024.nos.social:
+dev:
+  hosts:
+    dev-olympics2024.nos.social:

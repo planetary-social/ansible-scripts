@@ -17,7 +17,7 @@
     mode: '0755'
 
 
-- name: Ensure strfry directory exists
+- name: Ensure relay directory exists
   become: true
   ansible.builtin.file:
     path: "{{ homedir }}/services/relay/strfrydb"
@@ -25,7 +25,7 @@
     mode: '0755'
 
 
-- name: Copy docker-compose.yml to relay dir
+- name: Copy docker-compose.yml to strfry dir
   ansible.builtin.template:
     src: docker-compose.yml.tpl
     dest: "{{ homedir }}/services/relay/docker-compose.yml"
