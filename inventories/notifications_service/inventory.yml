@@ -1,7 +1,8 @@
 ---
 notifications_service:
   hosts:
-    dev-notifications.nos.social: 
+    dev-notifications.nos.social:
+      notifications_apns_certificate_password: '{{ vault_apns_certificate_password_dev }}'
     notifications.nos.social:
   vars:
     admin_username: admin
@@ -35,7 +36,7 @@ prod:
     notifications_firestore_credentials_json_path: '{{ inventory_dir}}/group_vars/prod/vault_firestore-credentials.json'
 dev:
   hosts:
-    dev-notifications.nos.social: 
+    dev-notifications.nos.social:
   vars:
     notifications_image_tag: latest
     notifications_firestore_project_id: nos-notification-service-dev
