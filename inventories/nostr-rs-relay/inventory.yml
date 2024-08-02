@@ -1,9 +1,9 @@
 ---
 relay:
   hosts:
-    olympics2024.nos.social:
-      relay_image_tag: olympics_latest
-    dev-olympics2024.nos.social:
+    # We don't have any production servers using this role right now
+    # The olympics relay should be compatible but there's a risk is not
+    104.236.4.237: # Daniel's server
       relay_image_tag: olympics_latest
   vars:
     admin_username: admin
@@ -16,7 +16,6 @@ relay:
     relay_server_image: ghcr.io/planetary-social/nostr-rs-relay
 prod:
   hosts:
-    olympics2024.nos.social:
 dev:
   hosts:
-    dev-olympics2024.nos.social:
+    104.236.4.237 # Daniel's server

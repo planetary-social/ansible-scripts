@@ -1,4 +1,4 @@
-- name: Install new server for the strfry relay
+- name: Install new server for a strfry relay
   hosts: relay
   vars:
     ansible_user: admin
