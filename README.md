@@ -75,6 +75,8 @@ export SOME_VAR=ooohsecret
 export SOME_OTHER_VAR=coolio
 ```
 
+Then run `direnv allow` from root directory of the repo.
+
 Now, when you enter the repository, direnv will put you straight into the nix
 dev shell, with ansible and other commands installed. This may take a moment hte
 first time, but is quick all subsequent times.
