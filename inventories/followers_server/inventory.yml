@@ -1,0 +1,19 @@
+---
+followers_server:
+  hosts:
+    daniel.dev.nos.social:
+  vars:
+    admin_username: admin
+    ansible_user: "{{ admin_username }}"
+    homedir: /home/{{ admin_username }}
+    cert_email: ops@planetary.social
+    domain: '{{ inventory_hostname }}'
+    followers_server_image: ghcr.io/planetary-social/nos-followers
+    followers_server_image_tag: latest
+    google_application_credentials: application_default_credentials.json
+    google_pubsub_credentials_secret_json_path: '{{inventory_dir}}/group_vars/all/vault_pubsub-credentials.json'
+    followers_server_health_endpoint: https://{{ inventory_hostname }}/
+    neo4j_password: Fzj82fa9781b1
+prod:
+  hosts:
+    daniel.dev.nos.social:

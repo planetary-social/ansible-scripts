@@ -1,0 +1,82 @@
+---
+- name: Set followers_server dir
+  ansible.builtin.set_fact:
+    followers_server_dir: "{{ homedir }}/services/followers_server"
+
+- name: Ensure services/followers_server exists
+  ansible.builtin.file:
+    path: "{{ followers_server_dir }}"
+    state: directory
+    mode: '0755'
+
+- name: Copy necessary template files to followers_server dir
+  ansible.builtin.template:
+    src: "docker-compose.yml.tpl"
+    dest: "{{ followers_server_dir }}/docker-compose.yml"
+    mode: 0644
+
+- name: UFW - Allow http/https connections
+  become: true
+  community.general.ufw:
+    rule: allow
+    port: "{{ item }}"
+    proto: tcp
+  loop:
+    - "80"
+    - "443"
+
+- name: Ensure cert directory exist
+  ansible.builtin.file:
+    path: "{{ followers_server_dir }}/certs"
+    state: directory
+    mode: '0755'
+
+- name: Copy pubsub cert to notifications dir
+  ansible.builtin.copy:
+    src: "{{ google_pubsub_credentials_secret_json_path }}"
+    dest: "{{ followers_server_dir }}/certs/{{ google_application_credentials }}"
+    mode: 0644
+
+- name: Ensure config directory exist
+  ansible.builtin.file:
+    path: "{{ followers_server_dir }}/config"
+    state: directory
+    mode: '0755'
+
+- name: Copy settings.yml to config dir
+  ansible.builtin.template:
+    src: settings.yml.tpl
+    dest: "{{ followers_server_dir }}/config/settings.yml"
+    mode: '0644'
+
+- name: ensure docker is running
+  ansible.builtin.service:
+    name: docker
+    state: started
+
+
+- name: Start up docker services
+  ansible.builtin.shell: "docker compose down && docker compose up -d"
+  args:
+    chdir: "{{ followers_server_dir }}"
+  register: service_started
+  retries: 5
+  until: service_started is success
+
+
+- name: Setup the image updater
+  ansible.builtin.include_role:
+    name: image-update-service
+  vars:
+    service_name: followers_server
+    service_image: "{{ followers_server_image }}"
+    service_image_tag: "{{ followers_server_image_tag }}"
+    frequency: 3m
+    working_dir: "{{ followers_server_dir }}"
+
+
+- name: Setup the health check
+  ansible.builtin.include_role:
+    name: health-check
+  vars:
+    health_endpoint: "{{ followers_server_health_endpoint }}"
