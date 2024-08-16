@@ -13,7 +13,7 @@ followers_server:
     google_application_credentials: application_default_credentials.json
     google_pubsub_credentials_secret_json_path: '{{inventory_dir}}/group_vars/all/vault_pubsub-credentials.json'
     followers_server_health_endpoint: https://{{ inventory_hostname }}/
-    neo4j_password: {{ vault_neo4j_password }}
+    neo4j_password: '{{ vault_neo4j_password }}'
 prod:
   hosts:
     daniel.dev.nos.social:
