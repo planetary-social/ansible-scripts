@@ -18,8 +18,6 @@ services:
       - build-cache:/app/target
       - {{ followers_server_dir }}/certs/{{ google_application_credentials }}:/certs/{{ google_application_credentials }}
       - {{ followers_server_dir }}/config/settings.yml:/app/config/settings.yml
-      - "./letsencrypt:/letsencrypt"
-      - "/var/run/docker.sock:/var/run/docker.sock:ro"
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.followers_server.rule=Host(`{{ domain }}`)"
@@ -35,31 +33,36 @@ services:
   db:
     image: neo4j:latest
     platform: linux/amd64
-    ports:
-      - 7474:7474
-      - 7687:7687
     environment:
       - NEO4J_AUTH=neo4j/{{ neo4j_password }}
       - NEO4J_apoc_export_file_enabled=true
       - NEO4J_apoc_import_file_enabled=true
       - NEO4J_apoc_import_file_use__neo4j__config=true
       - NEO4J_PLUGINS=["apoc", "graph-data-science"]
+      - NEO4J_dbms_default__advertised__address={{ domain }}
+      - NEO4J_dbms_connector_bolt_advertised__address=:443
     volumes:
       - db-data:/data
       - db-logs:/logs
       - db-import:/var/lib/neo4j/import
       - db-plugins:/plugins
-      - "./letsencrypt:/letsencrypt"
-      - "/var/run/docker.sock:/var/run/docker.sock:ro"
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.db-http.entrypoints=websecure"
-      - "traefik.http.routers.db-http.rule=Host(`{{ domain }}`) && (PathPrefix(`/db`))"
-      - "traefik.http.services.db-http.loadbalancer.server.port=7474"
-      - "traefik.tcp.routers.db-bolt.entrypoints=websecure"
-      - "traefik.http.routers.db-bolt.rule=Host(`{{ domain }}`) && (PathPrefix(`/dbbolt`))"
-      - "traefik.tcp.services.db-bolt.loadbalancer.server.port=7687"
+      - "traefik.http.routers.neo4j.entrypoints=websecure"
+      - "traefik.http.routers.neo4j.rule=Host(`{{ domain }}`) && PathPrefix(`/neo4j`)||PathPrefix(`/browser`)"
+      - "traefik.http.routers.neo4j.tls=true"
+      - "traefik.http.routers.neo4j.service=neo4j"
+      - "traefik.http.routers.neo4j.middlewares=neo4j_strip"
+      - "traefik.http.middlewares.neo4j_strip.stripprefix.prefixes=/neo4j"
+      - "traefik.http.services.neo4j.loadbalancer.server.port=7474"
 
+      - "traefik.http.routers.neo4jdb.entrypoints=websecure"
+      - "traefik.http.routers.neo4jdb.rule=Host(`{{ domain }}`) && PathPrefix(`/neo4jdb`)"
+      - "traefik.http.routers.neo4j.middlewares=neo4jdb_strip"
+      - "traefik.http.middlewares.neo4jdb_strip.stripprefix.prefixes=/neo4jdb"
+      - "traefik.http.routers.neo4jdb.tls=true"
+      - "traefik.http.routers.neo4jdb.service=neo4jdb"
+      - "traefik.http.services.neo4jdb.loadbalancer.server.port=7687"
 
     healthcheck:
       test: wget http://localhost:7474 || exit 1
