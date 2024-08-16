@@ -18,10 +18,13 @@ services:
       - build-cache:/app/target
       - {{ followers_server_dir }}/certs/{{ google_application_credentials }}:/certs/{{ google_application_credentials }}
       - {{ followers_server_dir }}/config/settings.yml:/app/config/settings.yml
+      - "./letsencrypt:/letsencrypt"
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.followers_server.rule=Host(`{{ domain }}`)"
       - "traefik.http.routers.followers_server.entrypoints=websecure"
+      - "traefik.http.services.followers_server.loadbalancer.server.port=3000"
     depends_on:
       db:
         condition: service_healthy
@@ -34,8 +37,7 @@ services:
     platform: linux/amd64
     ports:
       - 7474:7474
-    expose:
-      - 7687  # Expose the Bolt protocol internally only
+      - 7687:7687
     environment:
       - NEO4J_AUTH=neo4j/{{ neo4j_password }}
       - NEO4J_apoc_export_file_enabled=true
@@ -47,13 +49,17 @@ services:
       - db-logs:/logs
       - db-import:/var/lib/neo4j/import
       - db-plugins:/plugins
+      - "./letsencrypt:/letsencrypt"
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.db.entrypoints=websecure"
-      - "traefik.http.routers.db.rule=Host(`daniel.dev.nos.social`) && PathPrefix(`/db`)"
-      - "traefik.http.middlewares.db-strip.stripprefix.prefixes=/db"
-      - "traefik.http.routers.db.middlewares=db-strip"
-      - "traefik.http.services.db.loadbalancer.server.port=7474"
+      - "traefik.http.routers.db-http.entrypoints=websecure"
+      - "traefik.http.routers.db-http.rule=Host(`{{ domain }}`) && (PathPrefix(`/db`))"
+      - "traefik.http.services.db-http.loadbalancer.server.port=7474"
+      - "traefik.tcp.routers.db-bolt.entrypoints=websecure"
+      - "traefik.http.routers.db-bolt.rule=Host(`{{ domain }}`) && (PathPrefix(`/dbbolt`))"
+      - "traefik.tcp.services.db-bolt.loadbalancer.server.port=7687"
+
 
     healthcheck:
       test: wget http://localhost:7474 || exit 1
