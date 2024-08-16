@@ -34,7 +34,8 @@ services:
     platform: linux/amd64
     ports:
       - 7474:7474
-      - 7687:7687
+    expose:
+      - 7687  # Expose the Bolt protocol internally only
     environment:
       - NEO4J_AUTH=neo4j/{{ neo4j_password }}
       - NEO4J_apoc_export_file_enabled=true
@@ -46,12 +47,23 @@ services:
       - db-logs:/logs
       - db-import:/var/lib/neo4j/import
       - db-plugins:/plugins
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.db.entrypoints=websecure"
+      - "traefik.http.routers.db.rule=Host(`daniel.dev.nos.social`) && PathPrefix(`/db`)"
+      - "traefik.http.middlewares.db-strip.stripprefix.prefixes=/db"
+      - "traefik.http.routers.db.middlewares=db-strip"
+      - "traefik.http.services.db.loadbalancer.server.port=7474"
+
     healthcheck:
       test: wget http://localhost:7474 || exit 1
       interval: 10s
       timeout: 10s
       retries: 10
       start_period: 60s
+    networks:
+      - proxy
+
 
 volumes:
   db-data:
