@@ -31,7 +31,7 @@ services:
       - proxy
 
   db:
-    image: neo4j:latest
+    image: neo4j:5.22 # 5.23 has no graph-data-science plugin yet
     platform: linux/amd64
     environment:
       - NEO4J_AUTH=neo4j/{{ neo4j_password }}
