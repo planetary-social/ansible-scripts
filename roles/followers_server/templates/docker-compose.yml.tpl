@@ -6,9 +6,7 @@ services:
     image: "{{ followers_server_image }}:{{ followers_server_image_tag }}"
     container_name: "followers_server"
     environment:
-      - APP__NEO4J_URI=db:7687
-      - APP__NEO4J_USER=neo4j
-      - APP__NEO4J_PASSWORD={{ neo4j_password }}
+      - APP__followers__neo4j_password={{ neo4j_password }}
       - APP__ENVIRONMENT=production
       - GOOGLE_APPLICATION_CREDENTIALS=/certs/{{ google_application_credentials }}
       - RUST_LOG=nos_followers=info
