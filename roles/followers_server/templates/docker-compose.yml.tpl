@@ -9,6 +9,7 @@ services:
       - APP__NEO4J_URI=db:7687
       - APP__NEO4J_USER=neo4j
       - APP__NEO4J_PASSWORD={{ neo4j_password }}
+      - APP__ENVIRONMENT=production
       - GOOGLE_APPLICATION_CREDENTIALS=/certs/{{ google_application_credentials }}
       - RUST_LOG=nos_followers=info
       - RUST_BACKTRACE=1
