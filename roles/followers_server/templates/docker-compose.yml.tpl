@@ -18,7 +18,7 @@ services:
       - cargo-git:/usr/local/cargo/git/db
       - build-cache:/app/target
       - {{ followers_server_dir }}/certs/{{ google_application_credentials }}:/certs/{{ google_application_credentials }}
-      - {{ followers_server_dir }}/config/settings.yml:/app/config/settings.yml
+      - {{ followers_server_dir }}/config/settings.production.yml:/app/config/settings.production.yml
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.followers_server.rule=Host(`{{ domain }}`)"
