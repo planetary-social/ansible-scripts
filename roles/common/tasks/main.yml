@@ -1,18 +1,29 @@
+# This are leftovers from an old method of installing the Digital Ocean metrics agent, and they are causing
+# problems now.
+- name: Delete old Digital Ocean Metrics agent files 
+  become: true
+  ansible.builtin.file:
+    path: '{{ item }}'
+    state: absent
+  with_items:
+     - /usr/share/keyrings/digitalocean-agent-keyring.gpg
+     - /etc/apt/sources.list.d/droplet-agent.list.save
+     - /etc/apt/sources.list.d/droplet-agent.list
+     - /etc/apt/sources.list.d/digitalocean-agent.list
+     - /etc/apt/sources.list.d/repos_insights_digitalocean_com_apt_do_agent.list
+
+
 - name: Perform a dist-upgrade.
   become: true
   ansible.builtin.apt:
     upgrade: dist
-  register: dist_upgraded
-  retries: 10
-  delay: 5
-  until: dist_upgraded is success
+    update_cache: yes
+    cache_valid_time: 3600
 
 
 - name: update cache
   become: true
   ansible.builtin.apt:
-    update_cache: yes
-    cache_valid_time: 3600
 
 
 - name: Remove dependencies that are no longer required.
@@ -62,6 +73,7 @@
       - jq
       - tmux
       - mosh
+      - gnupg
     state: latest
   register: pkgs_added
   retries: 10
