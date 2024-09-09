@@ -20,6 +20,18 @@ entryPoints:
           - main: "{{ domain }}"
             sans: "{{ '*.' + domain }}"
 
+  tcp-3000:
+    address: ":3000"
+  tcp-3001:
+    address: ":3001"
+  tcp-7687:
+    address: ":7687"
+  tcp-7474:
+    address: ":7474"
+  tcp-6362:
+    address: ":6362"
+
+
 providers:
   docker:
     endpoint: "unix:///var/run/docker.sock"

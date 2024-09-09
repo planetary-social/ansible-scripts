@@ -2,7 +2,7 @@
 relay:
   hosts:
     relay.nos.social:
-      relay_image_tag: latest
+      relay_image_tag: stable
     news.nos.social:
       relay_image_tag: news_b9903e9
     olympics2024.nos.social:
