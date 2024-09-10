@@ -27,18 +27,6 @@ services:
       - "traefik.http.routers.followers_server.entrypoints=websecure"
       - "traefik.http.services.followers_server.loadbalancer.server.port=3000"
 
-      # TCP routing to port 3001
-      - "traefik.tcp.routers.tcp_followers_server.rule=HostSNI(`{{ domain }}`)"
-      - "traefik.tcp.routers.tcp_followers_server.entrypoints=tcp-3001"
-      #- "traefik.tcp.routers.tcp_followers_server.tls=true"
-      - "traefik.tcp.services.tcp_followers_server.loadbalancer.server.port=3001"
-
-      # Whitelist only IP of relay.nos.social. This was not working when the
-      # 3001 port was exposed, don't know why
-      - "traefik.tcp.middlewares.tcp_ipwhitelist.ipwhitelist.sourcerange=104.236.196.139/32"
-      - "traefik.tcp.routers.tcp_followers_server.middlewares=tcp_ipwhitelist"
-
-
     depends_on:
       db:
         condition: service_healthy
@@ -56,8 +44,7 @@ services:
       - NEO4J_apoc_import_file_enabled=true
       - NEO4J_apoc_import_file_use__neo4j__config=true
       - NEO4J_PLUGINS=["apoc", "graph-data-science"]
-      - NEO4J_dbms_default__advertised__address={{ domain }}
-      - NEO4J_dbms_connector_bolt_advertised__address=:443
+      - NEO4J_dbms_default__advertised__address=bolt.{{ domain }}
     volumes:
       - db-data:/data
       - db-logs:/logs
@@ -66,21 +53,21 @@ services:
     labels:
       - "traefik.enable=true"
 
-      # HTTP routing for Neo4j Browser (port 7474)
+      # Browser
+      - "traefik.http.routers.neo4j.rule=Host(`{{ domain }}`) && PathPrefix(`/browser`)"
       - "traefik.http.routers.neo4j.entrypoints=websecure"
-      - "traefik.http.routers.neo4j.rule=Host(`{{ domain }}`) && ((PathPrefix(`/neo4j`) || PathPrefix(`/browser`)))"
+      - "traefik.http.routers.neo4j.service=neo4j"
       - "traefik.http.routers.neo4j.tls=true"
       - "traefik.http.routers.neo4j.middlewares=neo4j_strip"
       - "traefik.http.middlewares.neo4j_strip.stripprefix.prefixes=/neo4j"
       - "traefik.http.services.neo4j.loadbalancer.server.port=7474"
 
-      # TCP routing for Neo4j Bolt (port 7687). TLS is not working for this
-      # port, I think that's the reason the conection from the browser is not
-      # working
-      - "traefik.tcp.routers.neo4jdb.entrypoints=tcp-7687"
-      - "traefik.tcp.routers.neo4jdb.rule=HostSNI(`{{ domain }}`)"
-      - "traefik.tcp.routers.neo4jdb.tls=true"
-      - "traefik.tcp.services.neo4jdb.loadbalancer.server.port=7687"
+      # Bolt
+      - "traefik.http.routers.neo4jbolt.rule=Host(`bolt.{{ domain }}`)"
+      - "traefik.http.routers.neo4jbolt.entrypoints=websecure"
+      - "traefik.http.routers.neo4jbolt.service=neo4jbolt"
+      - "traefik.http.routers.neo4jbolt.tls=true"
+      - "traefik.http.services.neo4jbolt.loadbalancer.server.port=7687"
 
     healthcheck:
       test: wget http://localhost:7474 || exit 1
