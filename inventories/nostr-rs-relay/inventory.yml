@@ -3,7 +3,7 @@ relay:
   hosts:
     # We don't have any production servers using this role right now
     # The olympics relay should be compatible but there's a risk is not
-    104.236.4.237: # Daniel's server
+    123.123.123.123: # Used to be daniel's server, now followers server
       relay_image_tag: olympics_latest
   vars:
     admin_username: admin
@@ -18,4 +18,4 @@ prod:
   hosts:
 dev:
   hosts:
-    104.236.4.237 # Daniel's server
+    123.123.123.123

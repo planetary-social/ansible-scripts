@@ -1,7 +1,7 @@
 ---
 followers_server:
   hosts:
-    daniel.dev.nos.social:
+    followers.nos.social:
   vars:
     admin_username: admin
     ansible_user: "{{ admin_username }}"
@@ -16,4 +16,4 @@ followers_server:
     neo4j_password: '{{ vault_neo4j_password }}'
 prod:
   hosts:
-    daniel.dev.nos.social:
+    followers.nos.social:

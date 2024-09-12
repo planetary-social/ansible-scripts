@@ -44,7 +44,7 @@ services:
       - NEO4J_apoc_import_file_enabled=true
       - NEO4J_apoc_import_file_use__neo4j__config=true
       - NEO4J_PLUGINS=["apoc", "graph-data-science"]
-      - NEO4J_dbms_default__advertised__address=bolt.{{ domain }}
+      - NEO4J_server_default__advertised__address=neo4j.{{ domain }}
     volumes:
       - db-data:/data
       - db-logs:/logs
@@ -54,16 +54,14 @@ services:
       - "traefik.enable=true"
 
       # Browser
-      - "traefik.http.routers.neo4j.rule=Host(`{{ domain }}`) && PathPrefix(`/browser`)"
+      - "traefik.http.routers.neo4j.rule=Host(`neo4jbrowser.{{ domain }}`)"
       - "traefik.http.routers.neo4j.entrypoints=websecure"
       - "traefik.http.routers.neo4j.service=neo4j"
       - "traefik.http.routers.neo4j.tls=true"
-      - "traefik.http.routers.neo4j.middlewares=neo4j_strip"
-      - "traefik.http.middlewares.neo4j_strip.stripprefix.prefixes=/neo4j"
       - "traefik.http.services.neo4j.loadbalancer.server.port=7474"
 
       # Bolt
-      - "traefik.http.routers.neo4jbolt.rule=Host(`bolt.{{ domain }}`)"
+      - "traefik.http.routers.neo4jbolt.rule=Host(`neo4j.{{ domain }}`)"
       - "traefik.http.routers.neo4jbolt.entrypoints=websecure"
       - "traefik.http.routers.neo4jbolt.service=neo4jbolt"
       - "traefik.http.routers.neo4jbolt.tls=true"
