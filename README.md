@@ -83,3 +83,30 @@ first time, but is quick all subsequent times.
 
 If you are using nix and direnv, you can scaffold out new inventories or new
 roles with the commands `new-inventory $inventoryname` and `new-role $rolename`
+
+# Terraform
+
+Infrastructure building blocks are managed by Terraform.
+
+For now you will need to install Terraform manually from the [Terraform
+site](https://developer.hashicorp.com/terraform/install).
+
+Terraform state is NOT stored in this repository as it may contain secret keys and passwords in plain text.  To access
+it, you will need access to the Digitalocean Spaces bucket `nos-social-infra-state`. For that create a key pair at the
+[DigitalOcean dashboard](https://cloud.digitalocean.com/account/api/spaces?i=803615) and save it in the environment
+variables `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY`.  To manage droplets you also need a DigitalOcean access token
+(can also be generated on the [DigitalOcean dashboard](https://cloud.digitalocean.com/account/api/tokens/new?i=803615);
+setting scopes to Full Access is recommended for now) and save it to the `DIGITALOCEAN_TOKEN` environment variable.
+
+To check if Terraform is working as expected:
+
+```
+cd terraform
+terraform plan
+```
+
+If you modify Terraform files and want to make it the new reality, use
+
+```
+terraform apply
+```
