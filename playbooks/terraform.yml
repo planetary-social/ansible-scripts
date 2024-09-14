@@ -1,0 +1,4 @@
+- name: Apply Terraform configuration
+  hosts: localhost
+  roles:
+    - terraform

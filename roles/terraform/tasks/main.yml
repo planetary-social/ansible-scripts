@@ -1,0 +1,7 @@
+- name: Terraform our environment
+  community.general.terraform:
+    project_path: "../terraform"
+    state: present
+  register: terraform_output
+- debug:
+    var: terraform_output.outputs
