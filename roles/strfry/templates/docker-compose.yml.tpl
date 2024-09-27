@@ -35,7 +35,7 @@ services:
       - ./strfrydb:/app/strfry-db # Strfry data
       - ./data:/usr/src/app/db    # nostr-rs-relay data for the olympics relay, there's now a specific role for this: nostr-rs-relay
     environment:
-      - DOMAIN={{ domain }}
+      - RELAY_URL=wss://{{ domain }}
       - REDIS_URL={{ redis_url }}
     labels:
       - "traefik.enable=true"
