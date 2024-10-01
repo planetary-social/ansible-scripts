@@ -1,0 +1,7 @@
+- name: Install new server for followers_server
+  hosts: followers_server:&prod
+  vars:
+    ansible_user: admin
+    domain: "{{ inventory_hostname }}"
+  roles:
+    - followers_server

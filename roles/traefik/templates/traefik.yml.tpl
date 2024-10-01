@@ -18,7 +18,10 @@ entryPoints:
         certResolver: letsencrypt
         domains:
           - main: "{{ domain }}"
-            sans: "{{ '*.' + domain }}"
+            sans: "*.{{ domain }}"
+
+  tcp-3001:
+    address: ":3001"
 
 providers:
   docker:
