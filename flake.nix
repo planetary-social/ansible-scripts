@@ -10,6 +10,7 @@
   outputs = { self, nixpkgs, flake-utils, devshell }:
     flake-utils.lib.eachDefaultSystem (system:
     let pkgs = import nixpkgs {
+          config.allowUnfree = true;
           inherit system;
           overlays = [
             devshell.overlays.default
@@ -24,6 +25,7 @@
               pkgs.netcat
               pkgs.tree
               pkgs.doctl
+              pkgs.terraform
             ];
             commands = [
               {
