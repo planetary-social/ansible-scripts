@@ -3,8 +3,10 @@ relay:
   hosts:
     relay.nos.social:
       relay_image_tag: latest
+    dwebcamp.nos.social:
+      relay_image_tag: latest
     news.nos.social:
-      relay_image_tag: news_b9903e9
+      relay_image_tag: news
   vars:
     admin_username: admin
     homedir: /home/{{ admin_username }}
@@ -19,3 +21,4 @@ prod:
   hosts:
     relay.nos.social:
     news.nos.social:
+    dwebcamp.nos.social:
