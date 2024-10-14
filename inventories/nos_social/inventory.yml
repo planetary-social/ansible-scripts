@@ -16,6 +16,7 @@ nos_social:
     nip05api_ratelimit_average: 120
     nip05api_ratelimit_burst: 200
     slack_webhook_url: "{{ vault_slack_webhook_url }}"
+    redis_url: rediss://default:{{ vault_redis_password }}@nos-social-prod-do-user-5049766-0.m.db.ondigitalocean.com:25061
 prod:
   hosts:
     nos.social:
