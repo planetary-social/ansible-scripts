@@ -34,6 +34,9 @@ services:
     volumes:
       - ./strfrydb:/app/strfry-db # Strfry data
       - ./data:/usr/src/app/db    # nostr-rs-relay data for the olympics relay, there's now a specific role for this: nostr-rs-relay
+    environment:
+      - RELAY_URL=wss://{{ domain }}
+      - REDIS_URL={{ redis_url }}
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.strfry.rule=Host(`{{ domain }}`) && Headers(`Accept`, `application/nostr+json`) || HeadersRegexp(`Connection`, `(?i)Upgrade`) && HeadersRegexp(`Upgrade`, `websocket`)"
