@@ -15,6 +15,7 @@ nos_crossposting_service:
     crossposting_twitter_key_secret: '{{ vault_crossposting_twitter_key_secret }}'
     crossposting_image: ghcr.io/planetary-social/nos-crossposting-service
     crossposting_image_tag: latest
+    redis_url: rediss://default:{{ vault_redis_password }}@nos-social-prod-do-user-5049766-0.m.db.ondigitalocean.com:25061
   hosts:
     connect.nos.social:
       redirects:
