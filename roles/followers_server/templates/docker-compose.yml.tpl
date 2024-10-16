@@ -8,12 +8,10 @@ services:
     ports:
      - "127.0.0.1:3001:3001" # 127.0.0.1 ensures it's only open locally, not exposed to the network
     environment:
-      - APP__followers__neo4j_password={{ neo4j_password }}
       - APP__ENVIRONMENT=production
       - GOOGLE_APPLICATION_CREDENTIALS=/certs/{{ google_application_credentials }}
       - RUST_LOG=nos_followers=info
       - RUST_BACKTRACE=1
-      - REDIS_URL={{ redis_url }}
     volumes:
       - cargo-registry:/usr/local/cargo/registry
       - cargo-git:/usr/local/cargo/git/db
