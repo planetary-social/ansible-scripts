@@ -16,8 +16,6 @@ notifications_service:
     notifications_health_endpoint: "https://{{inventory_hostname }}/_health"
     notifications_apns_topic: com.verse.Nos
     notifications_apns_certificate: certificate_apns.p12
-    notifications_apns_certificate_path: '{{inventory_dir}}/group_vars/all/{{ notifications_apns_certificate}}'
-    notifications_apns_certificate_password: '{{ vault_apns_certificate_password }}'
     notifications_image: "ghcr.io/planetary-social/nos-notification-service-go"
     redis_url: rediss://default:{{ vault_redis_password }}@nos-social-prod-do-user-5049766-0.m.db.ondigitalocean.com:25061
 prod:
@@ -34,6 +32,8 @@ prod:
     notifications_google_pubsub_credentials_path: '{{ inventory_dir}}/group_vars/prod/vault_pubsub-credentials.json'
     notifications_firestore_credentials_json: firestore-credentials.json
     notifications_firestore_credentials_json_path: '{{ inventory_dir}}/group_vars/prod/vault_firestore-credentials.json'
+    notifications_apns_certificate_path: '{{inventory_dir}}/group_vars/prod/{{ notifications_apns_certificate}}'
+    notifications_apns_certificate_password: '{{ vault_apns_certificate_password }}'
 dev:
   hosts:
     dev-notifications.nos.social:
@@ -45,3 +45,5 @@ dev:
     notifications_google_pubsub_enabled: false
     notifications_firestore_credentials_json: firestore-credentials.json
     notifications_firestore_credentials_json_path: '{{ inventory_dir}}/group_vars/dev/vault_firestore-credentials.json'
+    notifications_apns_certificate_path: '{{inventory_dir}}/group_vars/dev/{{ notifications_apns_certificate}}'
+    notifications_apns_certificate_password: '{{ vault_apns_certificate_password }}'
