@@ -23,12 +23,3 @@
   ansible.builtin.apt_repository:
     repo: deb https://repos.insights.digitalocean.com/apt/do-agent/ main main
     state: present
-
-
-- name: Install Metrics Agent
-  become: true
-  ansible.builtin.apt:
-    name: do-agent
-    state: present
-    update_cache: yes
-    cache_valid_time: 3600

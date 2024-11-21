@@ -1,0 +1,11 @@
+---
+# Prints the number of people a pub is following
+# Usage: ansible-playbook pub-follow-count.yml -i {inventory} 
+- name: Pub Follow Count
+  hosts: pubs
+  tasks:
+    - name: Get follow count
+      shell: "./sbot friends.hops | grep \": 1\" | wc -l"
+      register: follow_count
+    - debug:
+        msg: "follow count: {{ follow_count.stdout }}"
