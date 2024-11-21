@@ -1,0 +1,30 @@
+# A playbook to deploy Planetary.name which is an SSB room server with a custom frontend and graphql backend.
+#
+# ansible-playbook playbooks/planetary.name.yml -i inventories/hubs/inventory.yml
+- name: Planetary.name
+  hosts: hubs
+  gather_facts: no
+  pre_tasks:
+    # SSH Host key checking
+    # https://stackoverflow.com/a/54735937/982195
+    - name: Check known_hosts for {{ inventory_hostname }}
+      local_action: shell ssh-keygen -F {{ inventory_hostname }}
+      register: has_entry_in_known_hosts_file
+      failed_when: false
+      changed_when: false
+      ignore_errors: yes
+    - name: Ignore host key for {{ inventory_hostname }} on first run
+      when: has_entry_in_known_hosts_file.rc == 1
+      set_fact:
+        ansible_ssh_common_args: '-o StrictHostKeyChecking=no'
+    - name: Gather Facts
+      setup:
+  
+  roles: 
+    - common
+    - digital-ocean
+    - docker
+    - certbot-cloudflare
+    - planetary-graphql
+    - ssb-room
+    - rooms-frontend
