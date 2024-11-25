@@ -16,11 +16,10 @@
     do_droplet_tags:
       - development
     gh_user_keys_to_add:
-      - cooldracula
-      - zachmandeville
       - mplorentz
       - dcadenas
-      - gergelypolonkai
+      - rabble
+      - nbenmoody
     admin_username: admin
     # these are inv examples, will be overwritten by any var passed in at runtime
     inv:  relay
