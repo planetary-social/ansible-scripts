@@ -10,10 +10,14 @@ posthog:
       - zachmandeville
       - cooldracula
       - rabble
+      - gergelypolonkai
     removed_users:
       - boreq
   hosts:
-    posthog.planetary.tools:
+    # This server is currently still running at 24.199.88.124 but DNS has been redirected posthog.com
+    # leaving this inventory here as documentation until 
+    # https://github.com/planetary-social/infrastructure/issues/110 is closed
+    #posthog.planetary.tools:
 prod:
   hosts:
-    posthog.planetary.tools:
+    #posthog.planetary.tools:

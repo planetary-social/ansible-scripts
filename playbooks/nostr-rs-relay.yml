@@ -1,0 +1,7 @@
+- name: Set up a nostr-rs-relay on the given hosts.
+  hosts: relay
+  vars:
+    ansible_user: admin
+    domain: "{{ inventory_hostname }}"
+  roles:
+    - nostr-rs-relay

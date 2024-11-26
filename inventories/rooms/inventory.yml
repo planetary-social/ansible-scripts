@@ -1,5 +1,0 @@
----
-rooms:
-  hosts:
-    civic.love:
-    # planetary.name: STill up, but is running graphql,the room server, and the webviewer all on a single host.

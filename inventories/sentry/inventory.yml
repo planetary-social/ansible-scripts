@@ -7,15 +7,17 @@ sentry:
     # cloudflare_api_token: '{{ vault_cloudflare_api_token }}'
     admin_username: admin
     homedir: /home/{{ admin_username }}
+    ansible_user: '{{ admin_username }}'
     sentry_admin_email: ops@nos.social
     sentry_admin_password: '{{ vault_sentry_admin_password }}'
     sentry_port: 9000
     approved_users:
       - mplorentz
-      - zachmandeville
-      - cooldracula
       - rabble
+      - nbenmoody
+      - dcadenas
     removed_users:
       - boreq
+      - gergelypolonkai
 prod:
   sentry.nos.social:
