@@ -17,6 +17,7 @@
   loop_control:
     loop_var: envfile
 
+
 - name: Add Slack API url to alertmanager config
   ansible.builtin.lineinfile:
     path: /home/{{admin_username}}/metrics/configs/alertmanager/alertmanager.yml
@@ -26,7 +27,7 @@
 
 
 - name: Start up docker services
-  community.docker.docker_compose:
+  community.docker.docker_compose_v2:
     project_src: /home/{{ admin_username }}/metrics
     build: true
   register: output

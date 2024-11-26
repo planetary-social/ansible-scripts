@@ -1,21 +1,20 @@
 all:
   vars:
-    admin_username: admin
-    admin_password: {{ vault_admin_password }}
-    admin_ssh_pubkey: /Users/matt/.ssh/id_ed25519.pub
-    ansible_user: '{{ admin_username }}'
-    homedir: /home/{{ admin_username }}
+    admin_username: '{{ vault_admin_username }}'
+    admin_password: '{{ vault_admin_password }}'
+    admin_ssh_pubkey: /Users/matt/.ssh/id_ed25519.pub # TODO: Where/why is this used? I don't see it anywhere.
+    home_dir: '/home/{{ vault_admin_username }}'
     cert_email: ops@planetary.social
     cloudflare_api_token: '{{ vault_cloudflare_api_token }}'
-    gf_admin: matt
+    gf_admin: '{{ vault_gf_admin_user }}'
     gf_admin_pass: '{{ vault_gf_admin_pass }}'
   hosts:
-    ansible.fun:
+    planetary.tools:
       domains:
-        - prometheus.ansible.fun
-        - grafana.ansible.fun
-        - alertmanager.ansible.fun
-      gf_domain: grafana.ansible.fun
-      am_domain: alertmanager.ansible.fun
-      prom_domain: prometheus.ansible.fun
+        - prometheus.planetary.tools
+        - grafana.planetary.tools
+        - alertmanager.planetary.tools
+      gf_domain: grafana.planetary.tools
+      am_domain: alertmanager.planetary.tools 
+      prom_domain: prometheus.planetary.tools 
       am_slack_url: '{{ vault_slack_url }}'
