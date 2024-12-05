@@ -1,0 +1,6 @@
+- name: Configure the nostr-sync server
+  hosts: nostr-sync
+  vars:
+    ansible_user: admin
+  roles:
+    - nostr_sync

@@ -1,0 +1,6 @@
+---
+nostr_sync:
+  vars:
+    ansible_user: admin
+  hosts:
+    sync.nos.social:
