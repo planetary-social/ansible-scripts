@@ -1,16 +1,15 @@
-# Setup our metrics services via docker-compose
-
 - name: Clone our metrics repo
   ansible.builtin.git:
     repo: https://github.com/planetary-social/metrics.git
-    dest: /home/{{ admin_username }}/metrics
+    dest: '{{ homedir }}/metrics'
+    version: 'canon'
 
 
 - name: Setup correct env vars
   ansible.builtin.template:
-    src: "{{envfile + '.tpl'}}"
-    dest: /home/{{ admin_username }}/metrics/.{{ envfile }}
-    mode: 0600
+    src: "{{ envfile + '.tpl' }}"
+    dest: '{{ homedir }}/metrics/.{{ envfile }}'
+    mode: '0600'
   loop:
     - "env.grafana"
     - "env.alertmanager"
@@ -20,7 +19,7 @@
 
 - name: Add Slack API url to alertmanager config
   ansible.builtin.lineinfile:
-    path: /home/{{admin_username}}/metrics/configs/alertmanager/alertmanager.yml
+    path: '{{ homedir }}/metrics/configs/alertmanager/alertmanager.yml'
     state: present
     regex: "^  slack_api_url: SLACK_API_URL"
     line: "  slack_api_url: {{ am_slack_url }}"
@@ -28,8 +27,8 @@
 
 - name: Start up docker services
   community.docker.docker_compose_v2:
-    project_src: /home/{{ admin_username }}/metrics
-    build: true
+    project_src: '{{ homedir }}/metrics'
+    build: "always"
   register: output
 
 
@@ -43,7 +42,7 @@
   ansible.builtin.template:
     src: nginx.conf
     dest: /etc/nginx/sites-available/{{ service.domain }}
-    mode: 0644
+    mode: '0644'
   loop:
     - name: "grafana"
       domain: "{{ gf_domain }}"

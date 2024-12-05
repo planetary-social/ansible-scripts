@@ -6,3 +6,5 @@ feeds
 .envrc
 .direnv
 .vscode
+
+local/
