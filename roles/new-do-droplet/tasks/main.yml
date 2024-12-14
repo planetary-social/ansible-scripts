@@ -46,7 +46,7 @@
 - name: Delete ssh temp file
   ansible.builtin.file:
     state: absent
-    path:  "{{ sshkeys_tempfile.path }}"
+    path: "{{ sshkeys_tempfile.path }}"
   when: sshkeys_tempfile.path is defined
 
 
@@ -80,7 +80,7 @@
     zone: "{{ zone }}"
     record: "{{ record }}"
     type: A
-    value:  "{{ ip_address }}"
+    value: "{{ ip_address }}"
     account_email: "{{ cloudflare_email }}"
     api_token: "{{ cloudflare_api_token }}"
   when:
@@ -100,7 +100,7 @@
     zone: "{{ zone }}"
     record: "{{ '*.' + record }}"
     type: A
-    value:  "{{ ip_address }}"
+    value: "{{ ip_address }}"
     account_email: "{{ cloudflare_email }}"
     api_token: "{{ cloudflare_api_token }}"
   when:
@@ -120,24 +120,24 @@
     inv_file: "{{ base + '/inventories/' + inv + '/inventory.yml' }}"
 
 
-- name: backup inventory file
+- name: Backup inventory file
   ansible.builtin.copy:
     src: "{{ inv_file }}"
-    dest: "{{ inv_file + '.bkup_' + now(fmt='%y-%m-%d_%H:%M')}}"
+    dest: "{{ inv_file + '.bkup_' + now(fmt='%y-%m-%d_%H:%M') }}"
 
 
-- name: slurp inventory yaml for modifying
+- name: Slurp inventory yaml for modifying
   ansible.builtin.slurp:
     path: "{{ inv_file }}"
   register: slurped_inv
 
 
-- name: extract inv data
+- name: Extract inv data
   ansible.builtin.set_fact:
     inv_data: "{{ slurped_inv['content'] | b64decode | from_yaml }}"
 
 
-- name: build new_hosts dict
+- name: Build new_hosts dict
   ansible.builtin.set_fact:
     new_hosts: "{{ new_hosts | default({}) | combine({group:{'hosts': {domain:{}  }}})}}"
   loop: "{{ inv_groups }}"
@@ -145,12 +145,12 @@
     loop_var: group
 
 
-- name: add new_hosts to inventory
+- name: Add new_hosts to inventory
   ansible.builtin.set_fact:
     modified_inv: "{{ inv_data | combine(new_hosts, recursive=true) }}"
 
 
-- name: write  modified inv to file
+- name: Write modified inv to file
   ansible.builtin.copy:
     content: "{{ '---\n' + inv_yaml }}"
     dest: "{{ inv_file }}"

@@ -34,8 +34,8 @@ var named `DO_API_TOKEN` on your local system and uses its value for the role.
 |                     variable |                                                                 purpose |                                              default |
 |-----------------------------:|------------------------------------------------------------------------:|-----------------------------------------------------:|
 |              do_droplet_size |      ram/storage of droplet (see [do slugs](https://slugs.do-api.dev/)) |                                          s-1vcpu-1gb |
-|            do_droplet_region |          datacenter location (see [do slugs](https://slugs.do-api.dev)) |                                                 SFO3 |
-|             do_droplet_image |                                              iso image and architecture |                                     ubuntu-22-10-x64 |
+|            do_droplet_region |          datacenter location (see [do slugs](https://slugs.do-api.dev)) |                                                 NYC3 |
+|             do_droplet_image |                                              iso image and architecture |                                     ubuntu-24-04-x64 |
 | do_droplet_enable_monitoring |                                 whether to enable do's monitoring(free) |                                                 true |
 |    do_droplet_enable_backups |                                whether to enable regular backups (paid) |                                                false |
 |              do_droplet_name |                            often the domain of the service we're making | "{{do_droplet_image + '.' ansible_date_time.date }}" |
