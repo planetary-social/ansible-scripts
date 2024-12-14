@@ -1,0 +1,51 @@
+---
+- name: Update cache
+  ansible.builtin.apt:
+    update_cache: true
+
+- name: Ensure Python and pip are installed
+  ansible.builtin.package:
+    name:
+      - python3
+      - python3-pip
+      - python3-venv
+    state: present
+
+- name: Create venv
+  ansible.builtin.shell:
+    cmd: "python3 -m venv {{ venv_path }}"
+
+- name: Upgrade pip
+  ansible.builtin.command:
+    cmd: "{{ venv_path }}/bin/python -m pip install --upgrade pip"
+    creates: "{{ venv_path }}/bin/pip"
+
+- name: Clone our Repo
+  ansible.builtin.git:
+    repo: https://github.com/verse-pbc/nostr-sync-scripts
+    dest: /home/{{ admin_username }}/nostr-sync-scripts
+    version: 'main'
+
+- name: Install requirements in the virtual environment
+  ansible.builtin.command:
+    cmd: "{{ venv_path }}/bin/pip install -r /home{{ admin_username }}/nostr-sync-scripts/requirements.txt"
+    creates: "{{ venv_path }}/bin/activate"
+
+- name: Add grow_fedi_nhex Sync to Crontab
+  ansible.builtin.cron:
+    name: "grow_fedi_nhex"
+    hour: 1
+    minute: 45
+    job: "{{ venv_path }}/bin/activate && {{ venv_path }}/bin/python /home/{{ admin_username }}/nostr-sysnc-scripts/grow_fedi_nhex.py"
+
+- name: Add fedi_sync to Crontab
+  ansible.builtin.cron:
+    name: "fedi_sync"
+    hour: 2
+    job: "{{ venv_path }}/bin/activate && {{ venv_path }}/bin/python /home/{{ admin_username }}/nostr-sysnc-scripts/fedi_sync.py"
+
+- name: Add news_sync to Crontab
+  ansible.builtin.cron:
+    name: "news_sync"
+    hour: 3
+    job: "{{ venv_path }}/bin/activate && {{ venv_path }}/bin/python /home/{{ admin_username }}/nostr-sysnc-scripts/news_sync.py"
