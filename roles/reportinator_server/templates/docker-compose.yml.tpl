@@ -17,7 +17,6 @@ services:
       - RELAY_ADDRESSES_CSV={{ relay_addresses_csv }}
       - GOOGLE_APPLICATION_CREDENTIALS=/certs/{{ google_application_credentials }}
       - RUST_LOG=reportinator_server=info
-      - RUST_LOG=reportinator_server=info
     networks:
       - proxy
 

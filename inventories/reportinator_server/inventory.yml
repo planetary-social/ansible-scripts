@@ -1,7 +1,7 @@
 ---
 reportinator_server:
   hosts:
-    reportinator2.ansible.fun:
+    tagr.nos.social:
   vars:
     admin_username: admin
     ansible_user: "{{ admin_username }}"
@@ -19,7 +19,7 @@ reportinator_server:
     slack_token: '{{ vault_slack_token }}'
 prod:
   hosts:
-    reportinator2.ansible.fun:
+    tagr.nos.social:
 dev:
   hosts:
-    reportinator2.ansible.fun:
+    tagr.nos.social:
