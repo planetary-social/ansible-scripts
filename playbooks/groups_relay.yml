@@ -1,0 +1,8 @@
+- name: Install new server for groups_relay
+  hosts: groups_relay:&prod
+  vars:
+    ansible_user: admin
+    domain: "{{ inventory_hostname }}"
+  roles:
+    - groups_relay
+
