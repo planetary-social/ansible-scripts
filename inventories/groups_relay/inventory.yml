@@ -1,0 +1,16 @@
+---
+groups_relay:
+  hosts:
+    communities.nos.social:
+  vars:
+    admin_username: admin
+    ansible_user: '{{ admin_username }}'
+    homedir: /home/{{ admin_username }}
+    cert_email: ops@planetary.social
+    domain: '{{ inventory_hostname }}'
+    groups_relay_image: ghcr.io/verse-pbc/groups_relay
+    groups_relay_image_tag: stable
+    groups_relay_health_endpoint: https://{{ inventory_hostname }}/health
+prod:
+  hosts:
+    communities.nos.social:
