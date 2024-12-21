@@ -15,7 +15,7 @@
     dest: "{{ groups_relay_dir }}/docker-compose.yml"
     mode: 0644
 
-- name: UFW - Allow http/https connections
+- name: UFW - Allow http/https/strfry connections
   become: true
   community.general.ufw:
     rule: allow
@@ -24,6 +24,7 @@
   loop:
     - "80"
     - "443"
+    - "7777"
 
 - name: Ensure cert directory exist
   ansible.builtin.file:

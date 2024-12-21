@@ -224,7 +224,7 @@
 # Groups Relay example
 # ansible-playbook -i inventories/groups_relay/inventory.yml playbooks/new-do-droplet.yml -e '@new-server-vars.yml'
 #-----------------------------
-domain: communities.nos.social
+domain: communities2.nos.social
 do_droplet_size: s-1vcpu-1gb
 do_droplet_image: ubuntu-22-04-x64
 do_droplet_region: NYC3
