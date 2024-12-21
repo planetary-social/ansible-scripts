@@ -1,0 +1,86 @@
+---
+- name: Set groups_relay dir
+  ansible.builtin.set_fact:
+    groups_relay_dir: "{{ homedir }}/services/groups_relay"
+
+- name: Ensure services/groups_relay exists
+  ansible.builtin.file:
+    path: "{{ groups_relay_dir }}"
+    state: directory
+    mode: '0755'
+
+- name: Copy necessary template files to groups_relay dir
+  ansible.builtin.template:
+    src: "docker-compose.yml.tpl"
+    dest: "{{ groups_relay_dir }}/docker-compose.yml"
+    mode: 0644
+
+- name: UFW - Allow http/https/strfry connections
+  become: true
+  community.general.ufw:
+    rule: allow
+    port: "{{ item }}"
+    proto: tcp
+  loop:
+    - "80"
+    - "443"
+    - "7777"
+
+- name: Ensure cert directory exist
+  ansible.builtin.file:
+    path: "{{ groups_relay_dir }}/certs"
+    state: directory
+    mode: '0755'
+
+- name: Ensure config directory exist
+  ansible.builtin.file:
+    path: "{{ groups_relay_dir }}/config"
+    state: directory
+    mode: '0755'
+
+- name: Copy settings.production.yml to config dir
+  ansible.builtin.template:
+    src: settings.production.yml.tpl
+    dest: "{{ groups_relay_dir }}/config/settings.production.yml"
+    mode: '0644'
+
+- name: Copy strfry.conf to config dir
+  ansible.builtin.copy:
+    src: strfry.conf
+    dest: "{{ groups_relay_dir }}/config/strfry.conf"
+    mode: '0644'
+
+- name: Copy settings.yml to config dir
+  ansible.builtin.copy:
+    src: settings.yml
+    dest: "{{ groups_relay_dir }}/config/settings.yml"
+    mode: '0644'
+
+- name: ensure docker is running
+  ansible.builtin.service:
+    name: docker
+    state: started
+
+- name: Start up docker services
+  ansible.builtin.shell: "docker compose down && docker compose up -d"
+  args:
+    chdir: "{{ groups_relay_dir }}"
+  register: service_started
+  retries: 5
+  until: service_started is success
+
+- name: Setup the image updater
+  ansible.builtin.include_role:
+    name: image-update-service
+  vars:
+    service_name: groups_relay
+    service_image: "{{ groups_relay_image }}"
+    service_image_tag: "{{ groups_relay_image_tag }}"
+    frequency: 3m
+    working_dir: "{{ groups_relay_dir }}"
+
+- name: Setup the health check
+  ansible.builtin.include_role:
+    name: health-check
+  vars:
+    health_endpoint: "{{ groups_relay_health_endpoint }}"

@@ -219,3 +219,25 @@
 # inv:  relay
 # inv_groups:
 # - relay
+
+#-----------------------------
+# Groups Relay example
+# ansible-playbook -i inventories/groups_relay/inventory.yml playbooks/new-do-droplet.yml -e '@new-server-vars.yml'
+#-----------------------------
+domain: communities2.nos.social
+do_droplet_size: s-1vcpu-1gb
+do_droplet_image: ubuntu-22-04-x64
+do_droplet_region: NYC3
+do_droplet_project: Nos
+do_droplet_tags:
+- prod
+gh_user_keys_to_add:
+- mplorentz
+- dcadenas
+- nbenmoody
+inv: groups_relay
+inv_groups:
+- groups_relay
+- prod
+additional_roles:
+- groups_relay
