@@ -9,9 +9,10 @@
     approved_users:
       - mplorentz
       - rabble
-      - gergelypolonkai
       - dcadenas
+      - nbenmoody
     removed_users:
+      - gergelypolonkai
       - boreq
       - zachmandeville
       - cooldracula
