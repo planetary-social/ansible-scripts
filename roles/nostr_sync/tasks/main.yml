@@ -31,6 +31,7 @@
     repo: https://github.com/verse-pbc/nostr-sync-scripts
     dest: /home/{{ admin_username }}/nostr-sync-scripts
     version: 'main'
+    force: yes
 
 - name: Install requirements in the virtual environment
   ansible.builtin.command:
