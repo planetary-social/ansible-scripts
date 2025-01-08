@@ -7,6 +7,7 @@ services:
   traefik:
     image: "traefik:v2.10"
     container_name: "traefik"
+    network_mode: "host" # Let's strfry get the real ip in x-forwarded-for instead of the internal docker ip
     command:
       - "--providers.docker=true"
       - "--providers.docker.exposedbydefault=false"
