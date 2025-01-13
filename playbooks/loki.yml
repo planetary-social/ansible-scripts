@@ -1,10 +1,6 @@
-- name: Set up a host as a Loki log aggregator
+- name: Deploy and Configure Loki
   hosts: all
   vars:
-    ansible_user: admin
+    placeholder: placeholder
   roles:
-    - common
-    - ssh-config-and-harden
-    - docker
-    - traefik
     - loki
