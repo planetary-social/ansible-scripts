@@ -1,0 +1,10 @@
+- name: Set up a host as a Loki log aggregator
+  hosts: all
+  vars:
+    ansible_user: admin
+  roles:
+    - common
+    - harden
+    - docker
+    - traefik
+    - loki
