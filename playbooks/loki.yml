@@ -4,7 +4,7 @@
     ansible_user: admin
   roles:
     - common
-    - harden
+    - ssh-config-and-harden
     - docker
     - traefik
     - loki
