@@ -1,6 +1,8 @@
 - name: Deploy and Configure Loki
   hosts: all
-  vars:
-    placeholder: placeholder
   roles:
     - loki
+
+# Deployment: ansible-playbook -i inventories/loki playbooks/loki.yml
+
+

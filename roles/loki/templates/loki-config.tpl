@@ -1,3 +1,6 @@
+# Recommended config pulled from Digital Ocean: 
+# https://www.digitalocean.com/community/developer-center/how-to-install-loki-stack-in-doks-cluster#step-5-setting-persistent-storage-for-loki
+
 auth_enabled: false  # TODO: We'll want auth of some sort here.
 
 server:

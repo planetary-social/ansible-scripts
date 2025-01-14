@@ -1,0 +1,10 @@
+all:
+  vars:
+    do_spaces_bucket_name: loki-storage
+    do_spaces_bucket_endpoint: {{ do_spaces_bucket_endpoint }}
+    do_spaces_bucket_region: nyc-1
+    do_spaces_access_key: {{ do_spaces_access_key }}
+    do_spaces_secret_key: {{ do_spaces_secret_key }}
+    loki_password: {{ loki_password }}
+  hosts:
+    loki.planetary.tools:
