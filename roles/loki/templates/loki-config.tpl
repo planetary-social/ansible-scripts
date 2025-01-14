@@ -27,10 +27,10 @@ storage_config:
     cache_location: /data/loki/boltdb-shipper-cache
     cache_ttl: 24h
     shared_store: aws
-  aws:                                             # TODO: This bucket needs to be created in DO.
-    bucketnames: <YOUR_DO_SPACES_BUCKET_NAME_HERE> # TODO: These need to be properly templated, and defined as vars in the inventory/vault files.
-    endpoint: <YOUR_DO_SPACES_BUCKET_ENDPOINT_HERE>
-    region: <YOUR_DO_SPACES_BUCKET_REGION_HERE>
-    access_key_id: <YOUR_DO_SPACES_ACCESS_KEY_HERE>
-    secret_access_key: <YOURDO_SPACES_SECRET_KEY_HERE>
+  aws:
+    bucketnames: {{ do_spaces_bucket_name }}
+    endpoint: {{ do_spaces_bucket_endpoint }}
+    region: {{ do_spaces_bucket_region }}
+    access_key_id: {{ do_spaces_access_key }}
+    secret_access_key: {{ do_spaces_secret_key }}
     s3forcepathstyle: true

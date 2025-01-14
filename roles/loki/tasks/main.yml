@@ -1,0 +1,55 @@
+- name: Create a user for Loki
+  become: true
+  ansible.builtin.user:
+    name: loki
+    home: /home/loki
+    create_home: yes
+    group: admin
+
+- name: Create directory for Loki
+  become: true
+  ansible.builtin.file:
+    path: "/home/loki/loki"
+    state: directory
+    mode: '0755'
+
+- name: Clone the Loki repo
+  become_user: loki
+  ansible.builtin.git:
+    repo: https://github.com/grafana/loki.git
+    dest: "/home/loki/loki"
+    version: v3.0.0
+
+- name: Interpolate Loki Configuration File
+  become_user: loki
+  ansible.builtin.template:
+    src: "loki-config.tpl"
+    dest: '/home/loki/loki/loki-config.yaml'
+    mode: '0600'
+
+- name: Copy the docker-compose.yaml
+  become_user: loki
+  ansible.builtin.copy:
+    src: /files/docker-compose.yaml
+    dest: /home/loki/loki
+    mode: '0600'
+
+- name: Pull down old Loki
+  community.docker.docker_compose_v2:
+    project_src: /home/loki/loki
+    state: absent
+
+- name: Start new Loki
+  community.docker.docker_compose_v2:
+    project_src: /home/loki/loki
+    wait: true
+    wait_timeout: 180
+  register: output
+
+- name: Check that Loki is running
+  ansible.builtin.assert:
+    that:
+      - loki_container.State == 'running'
+  vars:
+    web_container: >-
+      {{ output.containers | selectattr("Service", "equalto", "loki") | first }}
