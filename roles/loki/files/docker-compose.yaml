@@ -15,8 +15,8 @@ services:
       - "traefik.http.routers.loki.rule=Host(`loki.planetary.tools`)"
       - "traefik.http.routers.loki.entrypoints=websecure"
       - "traefik.http.routers.loki.tls.certresolver=nosresolver"
-      - "traefik.http.middlewares.webapp-auth.basicauth.users=verse:temp"
-      - "traefik.http.routers.loki.middlewares=webapp-auth"
+      - "traefik.http.middlewares.loki-auth.basicauth.users=verse:temp"
+      - "traefik.http.routers.loki.middlewares=loki-auth"
     resources:
       limits:
         cpus: '2'
