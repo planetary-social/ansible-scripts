@@ -3,6 +3,6 @@
   roles:
     - loki
 
-# Deployment: ansible-playbook -i inventories/loki playbooks/loki.yml
+# Deployment: ansible-playbook -i inventories/loki playbooks/loki.yml --private-key /path/to/default-root-ssh-key
 
 
