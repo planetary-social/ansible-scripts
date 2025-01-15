@@ -68,12 +68,15 @@
     state: present
 
 
-- name: Add admin user to Docker
+- name: Add all users to Docker
   become: true
   ansible.builtin.user:
-    name: "{{ admin_username }}"
+    name: "{{ username }}"
     groups: docker
     append: true
+  loop: "{{ gh_user_keys_to_add }}"
+  loop_control:
+    loop_var: username
 
 
 - name: Download compose plugin
