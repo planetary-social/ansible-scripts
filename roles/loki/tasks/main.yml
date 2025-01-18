@@ -43,19 +43,10 @@
     wait_timeout: 180
   register: output
 
-# BUG: This isn't currently working. Encounters some sort of error with the selectattr
-# - name: Check if Loki container is running
-#   become: true
-#   ansible.builtin.assert:
-#     that:
-#       - (output.containers | selectattr("Name", "equalto", "loki") | first).State == 'running'
-#     fail_msg: "Loki container is not running"
-
-
-# - name: Check that Loki is running
-#   ansible.builtin.assert:
-#     that:
-#       - loki_container.State == 'running'
-#   vars:
-#     loki_container: >-
-#       {{ output.containers | selectattr("Service", "equalto", "loki") | first }}
+- name: Check if Loki container is running
+  community.docker.docker_container_info:
+    name: "loki"
+  until: "container_info.container.State.Status == 'running'"
+  register: container_info
+  retries: 15
+  delay: 10
