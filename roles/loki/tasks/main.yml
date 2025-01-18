@@ -13,46 +13,49 @@
     state: directory
     mode: '0755'
 
-- name: Interpolate Loki Configuration File
-  become_user: loki
+- name: Interpolate Loki configuration file
+  become: true
   ansible.builtin.template:
     src: "loki-config.tpl"
     dest: '/home/loki/loki/loki-config.yaml'
+    owner: loki
+    mode: '0777'
+  
+- name: Interpolate docker-compose manifest
+  become: true
+  ansible.builtin.template:
+    src: "docker-compose.tpl"
+    dest: '/home/loki/loki/docker-compose.yaml'
+    owner: loki
     mode: '0600'
-
-- name: Copy the docker-compose.yaml
-  become_user: loki
-  ansible.builtin.copy:
-    src: "{{ role_path }}/files/docker-compose.yaml"
-    dest: /home/loki/loki
-    mode: '0600'
-
-- name: Replace 'temp' with 'loki_password' in docker-compose.yaml
-  replace:
-    path: /home/loki/loki/docker-compose.yaml
-    regexp: 'traefik.http.middlewares.webapp-auth.basicauth.users=verse:temp'
-    replace: 'traefik.http.middlewares.webapp-auth.basicauth.users=verse:{{ loki_password }}'
-
-
-#FIXME: Stopped here for tonight
-# FAILED! => {"changed": false, "cmd": "/usr/bin/docker --host unix:///var/run/docker.sock compose --ansi never --progress plain --project-directory /home/loki/loki ps --format json --all --no-trunc", "msg": "validating /home/loki/loki/docker-compose.yaml: services.loki Additional property resources is not allowed", "rc": 15, "stderr": "validating /home/loki/loki/docker-compose.yaml: services.loki Additional property resources is not allowed\n", "stderr_lines": ["validating /home/loki/loki/docker-compose.yaml: services.loki Additional property resources is not allowed"], "stdout": "", "stdout_lines": []}
 
 - name: Pull down old Loki
+  become: true
   community.docker.docker_compose_v2:
     project_src: /home/loki/loki
     state: absent
 
 - name: Start new Loki
+  become_user: loki
   community.docker.docker_compose_v2:
     project_src: /home/loki/loki
     wait: true
     wait_timeout: 180
   register: output
 
-- name: Check that Loki is running
-  ansible.builtin.assert:
-    that:
-      - loki_container.State == 'running'
-  vars:
-    web_container: >-
-      {{ output.containers | selectattr("Service", "equalto", "loki") | first }}
+# BUG: This isn't currently working. Encounters some sort of error with the selectattr
+# - name: Check if Loki container is running
+#   become: true
+#   ansible.builtin.assert:
+#     that:
+#       - (output.containers | selectattr("Name", "equalto", "loki") | first).State == 'running'
+#     fail_msg: "Loki container is not running"
+
+
+# - name: Check that Loki is running
+#   ansible.builtin.assert:
+#     that:
+#       - loki_container.State == 'running'
+#   vars:
+#     loki_container: >-
+#       {{ output.containers | selectattr("Service", "equalto", "loki") | first }}

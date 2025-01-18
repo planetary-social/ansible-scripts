@@ -1,7 +1,7 @@
 # Recommended config pulled from Digital Ocean: 
 # https://www.digitalocean.com/community/developer-center/how-to-install-loki-stack-in-doks-cluster#step-5-setting-persistent-storage-for-loki
 
-auth_enabled: false  # TODO: We'll want auth of some sort here.
+auth_enabled: false
 
 server:
   http_listen_port: 3100
@@ -16,20 +16,18 @@ common:
 
 schema_config:
   configs:
-  - from: '2020-10-24'
-    store: boltdb-shipper
-    object_store: aws
-    schema: v11
+  - from: 2020-05-15
+    store: tsdb
+    object_store: s3
+    schema: v13
     index:
       prefix: index_
       period: 24h
 
 storage_config:
-  boltdb_shipper:
-    active_index_directory: /data/loki/boltdb-shipper-active
-    cache_location: /data/loki/boltdb-shipper-cache
-    cache_ttl: 24h
-    shared_store: aws
+  tsdb_shipper:
+    active_index_directory: /loki/index
+    cache_location: /loki/index_cache
   aws:
     bucketnames: {{ do_spaces_bucket_name }}
     endpoint: {{ do_spaces_bucket_endpoint }}
