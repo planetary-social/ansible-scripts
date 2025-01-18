@@ -10,6 +10,11 @@ published here in case they are useful for other scuttlebutt/nostr users.
 1. Install Ansible and Ansible Galaxy
 2. Run `ansible-galaxy install -r requirements.yml`
 
+# Running ansible against Droplets created under the `terraform` repository
+All new droplets created using the [terraform repo](https://github.com/verse-pbc/terraform) will require the use of the [ansible_ssh_key](./ansible_ssh_key).
+This key is encrypted with ansible-vault, and can be decrypted with a call to `ansible-vault decrypt ./ansible_ssh_key`, so you can use it locally while executing
+playbooks. Just remember to always re-encrypt it before pushing to Github.
+
 # Repo structure
 
 Ansible is structured around running playbooks against an inventory of servers.  Our repo is mainly structured, around our
