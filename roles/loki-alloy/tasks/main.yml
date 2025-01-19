@@ -1,0 +1,70 @@
+- name: Create a user for Alloy
+  become: true
+  ansible.builtin.user:
+    name: alloy
+    home: /home/alloy
+    create_home: yes
+    group: admin
+
+- name: Create directory for Alloy
+  become: true
+  ansible.builtin.file:
+    path: "/home/alloy/grafana_alloy"
+    state: directory
+    mode: '0744'
+
+- name: Ensure gpg is installed
+  become: true
+  ansible.builtin.apt:
+    pkg:
+      - gpg
+    state: present
+
+- name: Import Alloy GPG Key
+  become: true
+  ansible.builtin.command:
+    cmd: |
+      mkdir -p /etc/apt/keyrings/ && \
+      wget -q -O - https://apt.grafana.com/gpg.key | gpg --dearmor | sudo tee /etc/apt/keyrings/grafana.gpg > /dev/null && \
+      echo "deb [signed-by=/etc/apt/keyrings/grafana.gpg] https://apt.grafana.com stable main" | sudo tee /etc/apt/sources.list.d/grafana.list
+
+- name: Update apt cache
+  become: true
+  ansible.builtin.apt:
+    update_cache: true
+
+- name: Install Alloy
+  become: true
+  ansible.builtin.apt:
+    pkg:
+      - alloy
+    state: present
+    autoremove: true
+
+- name: Interpolate Alloy configuration file
+  become: true
+  ansible.builtin.template:
+    src: "config.alloy.tpl"
+    dest: '/etc/alloy/config.alloy'
+    owner: alloy
+    mode: '0600'
+
+- name: Enable and start Alloy
+  become: true
+  ansible.builtin.systemd_service:
+    name: alloy
+    state: started
+    enabled: true
+
+- name: Wait for Alloy to start
+  become: true
+  ansible.builtin.command:
+    cmd: systemctl status alloy
+  register: result
+  until:
+    - "'Active: active (running)' in result.stdout"
+  retries: 10
+  delay: 5
+  failed_when:
+    - "'Active: active (running)' not in result.stdout"
+  changed_when: false

@@ -1,0 +1,6 @@
+- name: Deploy and Configure the Grafana Alloy Agent
+  hosts: all
+  roles:
+    - loki-alloy
+
+# Deployment: ansible-playbook -i inventories/loki-alloy playbooks/loki-alloy.yml
