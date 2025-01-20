@@ -6,8 +6,8 @@ loki.source.docker "all_containers" {
   host       = "unix:///var/run/docker.sock"
   targets    = discovery.docker.linux_host.targets
   labels     = {
-    "source" = "docker"
-    "host" = "{{ inventory_hostname }}"
+    "source" = "docker",
+    "host" = "{{ inventory_hostname }}",
   }
   forward_to = [loki.write.verse_loki_endpoint.receiver]
 }
