@@ -6,7 +6,7 @@ services:
     mem_limit: 6g
     cpus: 2.0
     ports:
-      - "0.0.0.0:3100:3100"
+      - "3100:3100"
     volumes:
       - "./loki-config.yaml:/etc/loki/local-config.yaml"
     networks:
@@ -16,9 +16,9 @@ services:
       - "traefik.enable=true"
       - "traefik.http.routers.loki.rule=Host(`loki.planetary.tools`)"
       - "traefik.http.routers.loki.entrypoints=websecure"
-      - "traefik.http.routers.loki.tls.certresolver=nosresolver"
-      - "traefik.http.middlewares.loki-auth.basicauth.users=verse:{{ loki_password_hashed_escaped }}"
-      - "traefik.http.routers.loki.middlewares=loki-auth"
+      - "traefik.http.routers.loki.tls.certresolver=letsencrypt"
+      - "traefik.http.middlewares.user-auth.basicauth.users={{ vault_traefik_user }}:{{ vault_traefik_password | password_hash(hashtype='md5') }}"
+      - "traefik.http.services.loki.loadbalancer.server.port=3100"
 networks:
   proxy:
     external: true
