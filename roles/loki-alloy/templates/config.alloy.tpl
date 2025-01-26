@@ -1,42 +1,30 @@
-discovery.docker "linux_host" {
-  host = "unix:///var/run/docker.sock"
+discovery.docker "docker_containers" {
+    host = "unix:///var/run/docker.sock"
 }
 
-discovery.relabel "logs_integrations_docker" {
-            targets = []
+discovery.relabel "docker_containers" {
+    targets = discovery.docker.docker_containers.targets
 
-
-            rule {
-                target_label = "job"
-                replacement = "integrations/docker"
-            }
-
-
-            rule {
-                target_label = "instance"
-                replacement = constants.hostname
-            }
-
-
-            rule {
-                source_labels = ["__meta_docker_container_name"]
-                regex = "/(.*)"
-                target_label = "container"
-            }
-
-
-            rule {
-                source_labels = ["__meta_docker_container_log_stream"]
-                target_label = "stream"
-            }
+    rule {
+        source_labels = ["__meta_docker_container_name"]
+        target_label  = "container"
+    }
 }
 
-loki.source.docker "all_containers" {
-  host = "unix:///var/run/docker.sock"
-  targets = discovery.docker.linux_host.targets
-  relabel_rules = discovery.relabel.logs_integrations_docker.rules
-  refresh_interval = "5s"
-  forward_to = [loki.write.verse_loki_endpoint.receiver]
+loki.source.docker "docker_logs" {
+    host    = "unix:///var/run/docker.sock"
+    targets = discovery.relabel.docker_containers.output
+    forward_to = [loki.process.process_logs.receiver]
+}
+
+loki.process "process_logs" {
+    stage.docker { }
+    stage.static_labels {
+      values = {
+        hostname = "{{ inventory_hostname }}",
+      }
+    }
+    forward_to = [loki.write.verse_loki_endpoint.receiver]
 }
 
 loki.write "verse_loki_endpoint" {

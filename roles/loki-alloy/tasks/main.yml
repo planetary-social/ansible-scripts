@@ -44,6 +44,15 @@
     groups: docker
     append: true
 
+- name: Stop the alloy systemd service if it exists
+  become: true
+  ansible.builtin.systemd_service:
+    name: alloy
+    state: stopped
+    enabled: false
+    daemon_reload: true
+  ignore_errors: true
+
 - name: Enable and start Alloy
   become: true
   ansible.builtin.systemd_service:
