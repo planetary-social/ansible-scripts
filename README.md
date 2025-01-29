@@ -11,9 +11,12 @@ published here in case they are useful for other scuttlebutt/nostr users.
 2. Run `ansible-galaxy install -r requirements.yml`
 
 # Running ansible against Droplets created under the `terraform` repository
-All new droplets created using the [terraform repo](https://github.com/verse-pbc/terraform) will require the use of the [ansible_ssh_key](./ansible_ssh_key).
-This key is encrypted with ansible-vault, and can be decrypted with a call to `ansible-vault decrypt ./ansible_ssh_key`, so you can use it locally while executing
-playbooks. Just remember to always re-encrypt it before pushing to Github.
+All new droplets created using the [terraform repo](https://github.com/verse-pbc/terraform) will begin with only `DEFAULT_DROPLET_ROOT_SSH_KEY`, which is 
+securely stored in DigitalOcean. Individual admin users are created on a Droplet, and have their SSH keys added, through
+the [ssh-config-and-harden](./roles/ssh-config-and-harden) role. In the next few week, this playbook will be automatically
+executed against new Droplets upon creation, so user SSH access for running Ansible scripts against new Droplets will
+be available for those configured during Droplet-creation. In the short-term, though, you can message Ben, and he can
+execute the `ssh-config-and-harden` role against the new Droplet to grant access.
 
 # Repo structure
 
