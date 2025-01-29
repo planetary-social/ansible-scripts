@@ -1,0 +1,79 @@
+- name: Ensure gpg is installed
+  become: true
+  ansible.builtin.apt:
+    pkg:
+      - gpg
+    state: present
+
+- name: Import Alloy GPG Key
+  become: true
+  ansible.builtin.shell: |
+    mkdir -p /etc/apt/keyrings/ && 
+    wget -q -O - https://apt.grafana.com/gpg.key | gpg --dearmor | tee /etc/apt/keyrings/grafana.gpg > /dev/null && 
+    echo "deb [signed-by=/etc/apt/keyrings/grafana.gpg] https://apt.grafana.com stable main" | tee /etc/apt/sources.list.d/grafana.list
+  register: result
+  changed_when: result.rc != 0
+  failed_when: result.rc != 0
+
+- name: Update apt cache
+  become: true
+  ansible.builtin.apt:
+    update_cache: true
+
+- name: Install Alloy
+  become: true
+  ansible.builtin.apt:
+    pkg:
+      - alloy
+    state: present
+    autoremove: true
+
+- name: Interpolate Alloy configuration file
+  become: true
+  ansible.builtin.template:
+    src: "config.alloy.tpl"
+    dest: '/etc/alloy/config.alloy'
+    mode: '0640'
+    owner: alloy
+    group: alloy
+
+- name: Add the alloy user to the docker group
+  become: true
+  ansible.builtin.user:
+    name: alloy
+    groups: docker
+    append: true
+
+- name: Stop the alloy systemd service if it exists
+  become: true
+  ansible.builtin.systemd_service:
+    name: alloy
+    state: stopped
+    enabled: false
+    daemon_reload: true
+  ignore_errors: true
+
+- name: Enable and start Alloy
+  become: true
+  ansible.builtin.systemd_service:
+    name: alloy
+    state: started
+    enabled: true
+    daemon_reload: true
+
+- name: Wait for 10 seconds before checking Alloy status
+  pause:
+    seconds: 10
+
+- name: Wait for Alloy to start
+  become: true
+  ansible.builtin.command:
+    cmd: systemctl status alloy
+  register: result
+  until:
+    - "'Active: active (running)' in result.stdout"
+  retries: 3
+  delay: 5
+  failed_when:
+    - "'Active: active (running)' not in result.stdout"
+  changed_when: false

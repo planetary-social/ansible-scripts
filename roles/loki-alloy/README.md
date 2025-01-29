@@ -1,0 +1,2 @@
+# Loki Alloy
+Verse uses the Grafana Alloy agent (Grafana Labs's distribution of the Open Telemetry Collector), to collect logs from target hosts and ship them to our Loki instance, which itself is configured as a datasource in our Grafana instance, for use there. This role installs the Alloy agent on the target host and configures it to push logs to our Loki instance for docker containers.

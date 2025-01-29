@@ -1,0 +1,18 @@
+all:
+  vars:
+    do_spaces_bucket_name: verse-loki-storage
+    do_spaces_bucket_endpoint: "{{ do_spaces_bucket_endpoint }}"
+    do_spaces_bucket_region: nyc-3
+    do_spaces_access_key: "{{ do_spaces_access_key }}"
+    do_spaces_secret_key: "{{ do_spaces_secret_key }}"
+    loki_password: "{{ loki_password }}"
+    loki_password_hashed_escaped: "{{ loki_password_hashed_escaped }}"
+    homedir: loki
+    domain: loki.planetary.tools
+    gh_user_keys_to_add:
+      - nbenmoody
+      - mplorentz
+      - dcadenas
+  hosts:
+    loki.planetary.tools:
+      ansible_user: root

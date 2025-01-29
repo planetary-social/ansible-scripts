@@ -1,0 +1,6 @@
+- name: Deploy and Configure Loki
+  hosts: all
+  roles:
+    - loki
+
+# Deployment: ansible-playbook -i inventories/loki playbooks/loki.yml
