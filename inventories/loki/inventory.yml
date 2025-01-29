@@ -6,6 +6,7 @@ all:
     do_spaces_access_key: "{{ do_spaces_access_key }}"
     do_spaces_secret_key: "{{ do_spaces_secret_key }}"
     loki_password: "{{ loki_password }}"
+    loki_password_hashed_escaped: "{{ loki_password_hashed_escaped }}"
     homedir: loki
     domain: loki.planetary.tools
     gh_user_keys_to_add:
