@@ -1,0 +1,2 @@
+# Loki
+Verse uses Loki for log aggregation, configured with grafana. This role will take a newly-created Droplet (created using the terraform repo) and configure it to host a running Loki server, that uses DigitalOcean Spaces as the block storage location.

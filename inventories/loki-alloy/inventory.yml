@@ -1,0 +1,8 @@
+all:
+  vars:
+    loki_password_hashed_escaped: "{{ loki_password_hashed_escaped }}"
+  hosts:
+    relay.nos.social:
+      ansible_user: admin
+    loki.planetary.tools:
+      ansible_user: root
