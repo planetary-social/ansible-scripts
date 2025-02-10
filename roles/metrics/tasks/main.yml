@@ -17,10 +17,6 @@
     loop_var: envfile
 
 
-# Snag the current version of this file:
-#   1. Swap out sensitive values for variables √
-#   2. Add the required varaibles to the vault.yml for the metrics inventory. HEREIAM:
-#   3. Configure Google SSO in the process: https://grafana.com/docs/grafana/latest/setup-grafana/configure-security/configure-authentication/google/#configure-google-authentication-client-using-the-grafana-configuration-file
 - name: Interpolate the Grafana.ini file
   ansible.builtin.template:
     src: "grafana.ini.tpl"
