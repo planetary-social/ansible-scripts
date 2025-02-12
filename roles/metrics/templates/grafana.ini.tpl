@@ -570,8 +570,9 @@ auth_url = https://accounts.google.com/o/oauth2/auth
 token_url = https://accounts.google.com/o/oauth2/token
 api_url = https://www.googleapis.com/oauth2/v1/userinfo
 allowed_domains = verse.app nos.social planetary.social
-hosted_domain = verse.app nos.social planetary.social
+;hosted_domain =
 skip_org_role_sync = false
+validate_hd = false
 
 #################################### Grafana.com Auth ####################
 [auth.grafana_com]
