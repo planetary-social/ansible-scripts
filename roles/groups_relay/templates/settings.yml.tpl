@@ -15,4 +15,4 @@ relay:
     # Uses humantime format (e.g., "1h", "30m", "24h")
     max_connection_time: "5m"
     # Maximum number of concurrent connections (optional)
-    max_connections: 300
+    max_connections: 65000
