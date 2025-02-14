@@ -99,7 +99,7 @@
   become: true
   ansible.builtin.stat:
     path: /var/run/reboot-required
-    get_md5: no
+    get_checksum: false
   register: reboot_required_file
 
 

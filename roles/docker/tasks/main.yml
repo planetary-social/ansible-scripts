@@ -7,7 +7,7 @@
       - docker.io
       - containerd
       - runc
-    state: absent    
+    state: absent
 
 
 - name: Install required system packages
@@ -23,11 +23,18 @@
     cache_valid_time: 3600
 
 
-- name: Add Docker GPG apt Key
+- name: Add Docker gpg key
   become: true
-  ansible.builtin.apt_key:
+  ansible.builtin.get_url:
     url: https://download.docker.com/linux/{{ ansible_distribution | lower }}/gpg
-    state: present
+    dest: /etc/apt/trusted.gpg.d/docker.asc
+    mode: '0644'
+
+
+- name: Update apt cache
+  become: true
+  ansible.builtin.apt:
+    update_cache: true
 
 
 - name: Add Docker Repository
@@ -44,7 +51,7 @@
       - docker-ce
       - python3-docker
     state: latest
-    update_cache: yes
+    update_cache: true
     cache_valid_time: 3600
 
 
@@ -63,12 +70,15 @@
     state: present
 
 
-- name: Add admin user to Docker
+- name: Add all users to Docker
   become: true
   ansible.builtin.user:
-    name: "{{ admin_username }}"
+    name: "{{ username }}"
     groups: docker
-    append: yes
+    append: true
+  loop: "{{ gh_user_keys_to_add }}"
+  loop_control:
+    loop_var: username
 
 
 - name: Download compose plugin
@@ -90,17 +100,17 @@
   register: compose_version
 
 
-- name: print version
+- name: Print version
   ansible.builtin.debug:
     msg: "{{ compose_version }}"
 
 
-- name: add daemon.json config
+- name: Add daemon.json config
   become: true
   ansible.builtin.copy:
     src: daemon.json
     dest: /etc/docker/daemon.json
-    mode: 0755
+    mode: '0755'
 
 
 - name: Restart docker so config changes take effect

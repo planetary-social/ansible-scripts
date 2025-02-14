@@ -30,7 +30,6 @@
     force: false
     mode: 0600
 
-
 - name: Copy necessary template files to traefik dir
   ansible.builtin.template:
     src: "{{ item.src }}"

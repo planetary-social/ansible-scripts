@@ -13,9 +13,15 @@
 
 - name: Add Digital Ocean Repo Key
   become: true
-  ansible.builtin.apt_key:
+  ansible.builtin.get_url:
     url: https://repos.insights.digitalocean.com/sonar-agent.asc
-    state: present
+    dest: /etc/apt/trusted.gpg.d/sonar-agent.asc
+    mode: '0644'
+
+- name: Update apt cache
+  become: true
+  ansible.builtin.apt:
+    update_cache: true
 
 
 - name: Add Digital Ocean Repository
@@ -23,3 +29,12 @@
   ansible.builtin.apt_repository:
     repo: deb https://repos.insights.digitalocean.com/apt/do-agent/ main main
     state: present
+
+
+- name: Install Metrics Agent
+  become: true
+  ansible.builtin.apt:
+    name: do-agent
+    state: present
+    update_cache: true
+    cache_valid_time: 3600

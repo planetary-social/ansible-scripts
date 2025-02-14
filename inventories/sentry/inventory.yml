@@ -13,10 +13,11 @@ sentry:
     sentry_port: 9000
     approved_users:
       - mplorentz
-      - zachmandeville
-      - cooldracula
       - rabble
+      - nbenmoody
+      - dcadenas
     removed_users:
       - boreq
+      - gergelypolonkai
 prod:
   sentry.nos.social:

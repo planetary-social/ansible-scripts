@@ -1,0 +1,20 @@
+all:
+  vars:
+    admin_username: '{{ vault_admin_username }}'
+    admin_password: '{{ vault_admin_password }}'
+    admin_ssh_pubkey: /Users/nathanielmoody/Creds/ben_verse_key.pub # This is your ssh key for the target servers
+    homedir: '/home/{{ vault_admin_username }}'
+    cert_email: ops@planetary.social
+    cloudflare_api_token: '{{ vault_cloudflare_api_token }}'
+    gf_admin: '{{ vault_gf_admin_user }}'
+    gf_admin_pass: '{{ vault_gf_admin_pass }}'
+  hosts:
+    grafana.planetary.tools:
+      domains:
+        - prometheus.planetary.tools
+        - grafana.planetary.tools
+        - alertmanager.planetary.tools
+      gf_domain: grafana.planetary.tools
+      am_domain: alertmanager.planetary.tools 
+      prom_domain: prometheus.planetary.tools 
+      am_slack_url: '{{ vault_slack_url }}'

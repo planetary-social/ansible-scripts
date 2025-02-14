@@ -1,0 +1,52 @@
+- name: Create a user for Loki
+  become: true
+  ansible.builtin.user:
+    name: loki
+    home: /home/loki
+    create_home: yes
+    group: admin
+
+- name: Create directory for Loki
+  become: true
+  ansible.builtin.file:
+    path: "/home/loki/loki"
+    state: directory
+    mode: '0755'
+
+- name: Interpolate Loki configuration file
+  become: true
+  ansible.builtin.template:
+    src: "loki-config.tpl"
+    dest: '/home/loki/loki/loki-config.yaml'
+    owner: loki
+    mode: '0777'
+  
+- name: Interpolate docker-compose manifest
+  become: true
+  ansible.builtin.template:
+    src: "docker-compose.tpl"
+    dest: '/home/loki/loki/docker-compose.yaml'
+    owner: loki
+    mode: '0600'
+
+- name: Pull down old Loki
+  become: true
+  community.docker.docker_compose_v2:
+    project_src: /home/loki/loki
+    state: absent
+
+- name: Start new Loki
+  become_user: loki
+  community.docker.docker_compose_v2:
+    project_src: /home/loki/loki
+    wait: true
+    wait_timeout: 180
+  register: output
+
+- name: Check if Loki container is running
+  community.docker.docker_container_info:
+    name: "loki"
+  until: "container_info.container.State.Status == 'running'"
+  register: container_info
+  retries: 15
+  delay: 10

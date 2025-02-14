@@ -9,12 +9,14 @@
     approved_users:
       - mplorentz
       - rabble
-      - gergelypolonkai
       - dcadenas
+      - nbenmoody
     removed_users:
+      - gergelypolonkai
       - boreq
       - zachmandeville
       - cooldracula
+      - gergelypolonkai
   tasks:
     - name: Check approved_users variable is present
       ansible.builtin.assert:

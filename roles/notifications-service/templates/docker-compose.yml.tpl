@@ -5,9 +5,9 @@ services:
     image: {{ notifications_image }}:{{notifications_image_tag }}
     container_name: notifications
     env_file:
-     - ./.env
+      - ./.env
     volumes:
-     - "./certs:/certs"
+      - "./certs:/certs"
     ports:
       - "0.0.0.0:{{ notifications_nostr_listen_address }}:{{ notifications_nostr_listen_address }}"
       - "0.0.0.0:{{ notifications_metrics_listen_address }}:{{ notifications_metrics_listen_address }}"

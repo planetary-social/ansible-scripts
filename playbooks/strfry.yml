@@ -1,0 +1,7 @@
+- name: Install new server for a strfry relay
+  hosts: relay
+  vars:
+    ansible_user: admin
+    domain: "{{ inventory_hostname }}"
+  roles:
+    - strfry
