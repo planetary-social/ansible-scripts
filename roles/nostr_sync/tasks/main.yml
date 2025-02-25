@@ -1,0 +1,73 @@
+---
+- name: Update cache
+  ansible.builtin.apt:
+    update_cache: true
+
+- name: Ensure required packages are installed
+  ansible.builtin.package:
+    name:
+      - python3
+      - python3-pip
+      - python3-venv
+      - pkg-config
+      - util-linux # for flock
+    state: present
+
+- name: Create venv
+  ansible.builtin.shell:
+    cmd: "python3 -m venv {{ venv_path }}"
+
+- name: Make venv activate script executable
+  ansible.builtin.file:
+    path: "{{ venv_path }}/bin/activate"
+    mode: '0755'
+
+- name: Upgrade pip
+  ansible.builtin.command:
+    cmd: "{{ venv_path }}/bin/python -m pip install --upgrade pip"
+    creates: "{{ venv_path }}/bin/pip"
+
+- name: Clone our Repo
+  ansible.builtin.git:
+    repo: https://github.com/verse-pbc/nostr-sync-scripts
+    dest: /home/{{ admin_username }}/nostr-sync-scripts
+    version: 'main'
+    force: yes
+
+- name: Clean up old .pyc files and __pycache__ directories
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: absent
+  with_fileglob:
+    - "/home/{{ admin_username }}/nostr-sync-scripts/**/*.pyc"
+    - "/home/{{ admin_username }}/nostr-sync-scripts/**/__pycache__"
+
+- name: Create lock directory
+  ansible.builtin.file:
+    path: /var/lock/nostr-sync
+    state: directory
+    mode: '0755'
+    owner: "{{ admin_username }}"
+    group: "{{ admin_username }}"
+
+- name: Install requirements in the virtual environment
+  ansible.builtin.command:
+    cmd: "{{ venv_path }}/bin/pip install -r /home/{{ admin_username }}/nostr-sync-scripts/requirements.txt"
+
+- name: Add grow_fedi_nhex Sync to Crontab
+  ansible.builtin.cron:
+    name: "grow_fedi_nhex"
+    minute: 0
+    job: "cd /home/{{ admin_username }}/nostr-sync-scripts && flock -n /var/lock/nostr-sync/grow_fedi_nhex.lock {{ venv_path }}/bin/python grow_fedi_nhex.py 2>&1 | logger -t grow_fedi_nhex"
+
+- name: Add fedi_sync to Crontab
+  ansible.builtin.cron:
+    name: "fedi_sync"
+    minute: 30
+    job: "cd /home/{{ admin_username }}/nostr-sync-scripts && flock -n /var/lock/nostr-sync/fedi_sync.lock {{ venv_path }}/bin/python fedi_sync.py 2>&1 | logger -t fedi_sync"
+
+- name: Add news_sync to Crontab
+  ansible.builtin.cron:
+    name: "news_sync"
+    minute: 45
+    job: "cd /home/{{ admin_username }}/nostr-sync-scripts && flock -n /var/lock/nostr-sync/news_sync.lock {{ venv_path }}/bin/python news_sync.py 2>&1 | logger -t news_sync"

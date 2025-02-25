@@ -1,0 +1,9 @@
+---
+nostr_sync:
+  vars:
+    ansible_user: admin
+    ansible_become: true
+    admin_username: admin
+    venv_path: "/home/{{ admin_username }}/sync_venv"
+  hosts:
+    sync.nos.social:
