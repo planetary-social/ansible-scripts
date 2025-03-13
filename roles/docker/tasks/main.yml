@@ -47,7 +47,9 @@
 - name: Update apt and install docker-ce
   become: true
   ansible.builtin.apt:
-    pkg: docker-ce
+    pkg: 
+      - docker-ce
+      - python3-docker
     state: latest
     update_cache: true
     cache_valid_time: 3600
@@ -68,12 +70,15 @@
     state: present
 
 
-- name: Add admin user to Docker
+- name: Add all users to Docker
   become: true
   ansible.builtin.user:
-    name: "{{ admin_username }}"
+    name: "{{ username }}"
     groups: docker
     append: true
+  loop: "{{ gh_user_keys_to_add }}"
+  loop_control:
+    loop_var: username
 
 
 - name: Download compose plugin
