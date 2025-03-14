@@ -9,11 +9,11 @@
     state: directory
     mode: '0755'
 
-- name: Copy necessary template files to groups_relay dir
+- name: Copy docker-compose file
   ansible.builtin.template:
-    src: "docker-compose.yml.tpl"
+    src: docker-compose.yml.tpl
     dest: "{{ groups_relay_dir }}/docker-compose.yml"
-    mode: 0644
+    mode: '0644'
 
 - name: UFW - Allow http/https/strfry connections
   become: true
@@ -38,21 +38,15 @@
     state: directory
     mode: '0755'
 
-- name: Copy settings.production.yml to config dir
-  ansible.builtin.template:
-    src: settings.production.yml.tpl
-    dest: "{{ groups_relay_dir }}/config/settings.production.yml"
-    mode: '0644'
-
 - name: Copy strfry.conf to config dir
   ansible.builtin.copy:
     src: strfry.conf
     dest: "{{ groups_relay_dir }}/config/strfry.conf"
     mode: '0644'
 
-- name: Copy settings.yml to config dir
-  ansible.builtin.copy:
-    src: settings.yml
+- name: Copy settings file to config dir
+  ansible.builtin.template:
+    src: settings.yml.tpl
     dest: "{{ groups_relay_dir }}/config/settings.yml"
     mode: '0644'
 
