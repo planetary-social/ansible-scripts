@@ -9,3 +9,4 @@ feeds
 .idea
 
 local/
+.venv

@@ -16,11 +16,11 @@ groups_relay:
     groups_relay_image: ghcr.io/verse-pbc/groups_relay
     groups_relay_health_endpoint: https://{{ inventory_hostname }}/health
     gh_user_keys_to_add:
-      - nbenmoody
-      - dcadenas
-      - rabble
+    - nbenmoody
+    - dcadenas
+    - rabble
 prod:
   hosts:
-    communities.nos.social:
-    communities2.nos.social:
+    communities.nos.social: 
+    communities2.nos.social: 
     hol.is:

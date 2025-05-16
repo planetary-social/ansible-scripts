@@ -1,0 +1,29 @@
+---
+# tasks file for processing a single SSH key (called by main.yml loop)
+
+- name: "Fetch SSH keys for GitHub user {{ gh_username }}"
+  ansible.builtin.uri:
+    url: "https://github.com/{{ gh_username }}.keys"
+    return_content: yes
+    validate_certs: no  # Temporary workaround for SSL issues in Nix env
+  register: github_user_key_content # Note: singular for one user's keys
+  check_mode: no # Always run this to fetch keys
+
+- name: "Ensure SSH key for {{ gh_username }} ({{ do_droplet_name }}) is in DigitalOcean"
+  community.digitalocean.digital_ocean_sshkey:  # Note: using the legacy module name
+    state: present
+    name: "{{ do_droplet_name }}-{{ gh_username }}"
+    ssh_pub_key: "{{ github_user_key_content.content }}"  # Note: changed parameter name
+    oauth_token: "{{ do_oauth_token }}"
+  register: registered_do_key
+  when: github_user_key_content.content is defined and github_user_key_content.content | length > 0
+
+- name: Debug registered key structure
+  ansible.builtin.debug:
+    var: registered_do_key
+    verbosity: 0
+
+- name: "Add registered DO SSH key ID for {{ gh_username }} to list"
+  ansible.builtin.set_fact:
+    do_actual_ssh_key_ids: "{{ do_actual_ssh_key_ids + [registered_do_key.data.ssh_key.id] }}"
+  when: registered_do_key.changed or (registered_do_key.data is defined and registered_do_key.data.ssh_key.id is defined)

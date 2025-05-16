@@ -1,0 +1,233 @@
+---
+- name: Create temporary file to store ssh keys
+  ansible.builtin.tempfile:
+    state: file
+    suffix: temp
+  register: sshkeys_tempfile
+  check_mode: no  # Ensure it runs even in check mode
+
+- name: Set permissions on temp file
+  ansible.builtin.file:
+    path: "{{ sshkeys_tempfile.path }}"
+    mode: '0600'
+  when: sshkeys_tempfile.path is defined
+
+
+- name: Pull down ssh keys for chosen github users
+  ansible.builtin.shell: curl https://github.com/{{ username }}.keys >> {{ sshkeys_tempfile.path }}
+  loop: "{{ gh_user_keys_to_add }}"
+  loop_control:
+    loop_var: username
+  check_mode: no  # Ensure it runs even in check mode
+
+
+- name: Read ssh keys from temp file
+  ansible.builtin.command: "cat {{ sshkeys_tempfile.path }}"
+  register: ssh_keys_content
+  check_mode: no
+  changed_when: false
+
+- name: Set ssh keys as var for use in template
+  ansible.builtin.set_fact:
+    do_ssh_keys: "{{ ssh_keys_content.stdout_lines }}"
+
+
+# Initialize the list of SSH key IDs for DigitalOcean
+- name: Initialize ssh key IDs list
+  ansible.builtin.set_fact:
+    do_actual_ssh_key_ids: []
+
+
+# Process each GitHub user's SSH key and register it with DigitalOcean
+- name: Process SSH keys for each GitHub user
+  ansible.builtin.include_tasks: process_ssh_key.yml
+  loop: "{{ gh_user_keys_to_add }}"
+  loop_control:
+    loop_var: gh_username
+
+
+- name: Create a new Droplet assigned to project
+  community.digitalocean.digital_ocean_droplet:
+    state: present
+    oauth_token: "{{ do_oauth_token }}"
+    name: "{{ do_droplet_name }}"
+    size: "{{ do_droplet_size }}"
+    region: "{{ do_droplet_region }}"
+    image: "{{ do_droplet_image }}"
+    wait: true
+    ssh_keys: "{{ do_actual_ssh_key_ids }}"
+    tags: "{{ do_droplet_tags }}"
+    monitoring: "{{ do_droplet_enable_monitoring }}"
+    backups: "{{ do_droplet_enable_backups }}"
+    wait_timeout: 500
+    user_data: "{{ lookup('template', './cloud-config.yml.tpl') }}"
+    project: "{{ do_droplet_project }}"
+  register: new_do_droplet
+
+
+- name: Delete ssh temp file
+  ansible.builtin.file:
+    state: absent
+    path: "{{ sshkeys_tempfile.path }}"
+  when: sshkeys_tempfile.path is defined
+
+
+- name: Register ip_address
+  ansible.builtin.set_fact:
+    ip_address: >-
+      {{
+        (new_do_droplet.data.droplet.networks.v4 | selectattr('type','equalto','public')).0.ip_address | default('<none>', true)
+        if not ansible_check_mode
+        else '0.0.0.0'
+      }}
+
+
+- name: Show Droplet info
+  ansible.builtin.debug:
+    msg: "{{ do_info | split('\n') }}"
+  vars:
+    do_info: >-
+      {%- if not ansible_check_mode -%}
+      Droplet ID is {{ new_do_droplet.data.droplet.id }}
+      Public IPv4 is {{ ip_address }}
+      {%- else -%}
+      Check mode - Droplet would be created
+      Public IPv4 would be {{ ip_address }}
+      {%- endif -%}
+
+
+- name: Grab domain url parts
+  ansible.builtin.set_fact:
+    url_parts: "{{ domain | split('.') }}"
+
+
+- name: Establish zone and record of domain
+  ansible.builtin.set_fact:
+    zone: "{{ domain if url_parts|length == 2 else url_parts[1:]|join('.')}}"
+    record: "{{ '@' if url_parts|length == 2 else url_parts[0] }}"
+
+
+- name: Add new A record pointing to IP
+  community.general.cloudflare_dns:
+    zone: "{{ zone }}"
+    record: "{{ record }}"
+    type: A
+    value: "{{ ip_address }}"
+    account_email: "{{ cloudflare_email }}"
+    api_token: "{{ cloudflare_api_token }}"
+  when:
+    - add_cloudflare_record | default(false)
+    - not ansible_check_mode  # Skip in check mode
+  register: cloudflare_record
+  ignore_errors: true  # Continue even if DNS update fails
+
+
+- name: Show record result or error
+  ansible.builtin.debug:
+    msg: >-
+      {%- if ansible_check_mode -%}
+      Would add A record for {{ domain }} pointing to {{ ip_address }}
+      {%- else -%}
+      {% if cloudflare_record.failed | default(false) %}
+      Warning: Could not update DNS for {{ domain }}. Manual DNS update may be required.
+      {% else %}
+      {{ cloudflare_record }}
+      {% endif %}
+      {%- endif -%}
+  when:
+    add_cloudflare_record | default(false)
+
+
+- name: Add new wildcard record pointing to IP
+  community.general.cloudflare_dns:
+    zone: "{{ zone }}"
+    record: "{{ '*.' + record }}"
+    type: A
+    value: "{{ ip_address }}"
+    account_email: "{{ cloudflare_email }}"
+    api_token: "{{ cloudflare_api_token }}"
+  when:
+    - add_cloudflare_wildcard_record | default(false)
+    - not ansible_check_mode  # Skip in check mode
+  register: wildcard_record
+  ignore_errors: true  # Continue even if DNS update fails
+
+
+- name: Show wildcard record result or error
+  ansible.builtin.debug:
+    msg: >-
+      {%- if ansible_check_mode -%}
+      Would add wildcard A record for *.{{ domain }} pointing to {{ ip_address }}
+      {%- else -%}
+      {% if wildcard_record.failed | default(false) %}
+      Warning: Could not update wildcard DNS for *.{{ domain }}. Manual DNS update may be required.
+      {% else %}
+      {{ wildcard_record }}
+      {% endif %}
+      {%- endif -%}
+  when:
+    add_cloudflare_wildcard_record | default(false)
+
+
+- name: Set inventory file
+  ansible.builtin.set_fact:
+    inv_file: "{{ base + '/inventories/' + inv + '/inventory.yml' }}"
+
+
+- name: Backup inventory file
+  ansible.builtin.copy:
+    src: "{{ inv_file }}"
+    dest: "{{ inv_file + '.bkup_' + now(fmt='%y-%m-%d_%H:%M') }}"
+  when: not ansible_check_mode
+
+- name: Slurp inventory yaml for modifying
+  ansible.builtin.slurp:
+    path: "{{ inv_file }}"
+  register: slurped_inv
+  when: not ansible_check_mode
+
+- name: Set dummy inventory data for check mode
+  ansible.builtin.set_fact:
+    inv_data: {}
+  when: ansible_check_mode
+
+- name: Extract inv data
+  ansible.builtin.set_fact:
+    inv_data: "{{ slurped_inv['content'] | b64decode | from_yaml }}"
+  when: not ansible_check_mode
+
+
+- name: Build new_hosts dict
+  ansible.builtin.set_fact:
+    new_hosts: "{{ new_hosts | default({}) | combine({group:{'hosts': {domain:{}  }}})}}"
+  loop: "{{ inv_groups }}"
+  loop_control:
+    loop_var: group
+
+
+- name: Add new_hosts to inventory
+  ansible.builtin.set_fact:
+    modified_inv: "{{ inv_data | combine(new_hosts, recursive=true) }}"
+
+
+- name: Write modified inv to file
+  ansible.builtin.copy:
+    content: "{{ '---\n' + inv_yaml }}"
+    dest: "{{ inv_file }}"
+  vars:
+    inv_yaml: "{{ modified_inv | to_nice_yaml(sort_keys=false,indent=2) | regex_replace('null','')  | regex_replace(' {}','') }}"
+  when: not ansible_check_mode
+
+- name: Show inventory changes (check mode)
+  ansible.builtin.debug:
+    msg: |
+      Would add to inventory file {{ inv_file }}:
+      Host: {{ domain }}
+      Groups: {{ inv_groups | join(', ') }}
+  when: ansible_check_mode
+
+
+- name: Add droplet to new_do_droplet group for further plays
+  ansible.builtin.add_host:
+    name: "{{ domain }}"
+    groups: new_do_droplet

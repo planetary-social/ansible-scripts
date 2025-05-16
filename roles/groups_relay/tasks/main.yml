@@ -33,10 +33,13 @@
     mode: '0755'
 
 - name: Ensure config directory exist
+  become: true
   ansible.builtin.file:
     path: "{{ groups_relay_dir }}/config"
     state: directory
     mode: '0755'
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
 
 - name: Copy strfry.conf to config dir
   ansible.builtin.copy:

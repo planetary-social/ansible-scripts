@@ -81,6 +81,14 @@
     loop_var: username
 
 
+- name: Add admin user to Docker group
+  become: true
+  ansible.builtin.user:
+    name: "{{ admin_username }}"
+    groups: docker
+    append: true
+
+
 - name: Download compose plugin
   become: true
   ansible.builtin.get_url:
