@@ -11,7 +11,6 @@ services:
     {% if groups_relay_rust_backtrace_enabled is defined and groups_relay_rust_backtrace_enabled %}
       RUST_BACKTRACE: full
     {% endif %}
-      RUST_BACKTRACE: 1
       NIP29__ENVIRONMENT: production
     ports:
       - "8080:8080"
