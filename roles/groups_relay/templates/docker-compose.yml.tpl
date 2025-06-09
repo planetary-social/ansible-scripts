@@ -7,11 +7,11 @@ services:
       - ./config:/app/config:ro
       - db-data:/db/data
     environment:
-      RUST_LOG: {{ groups_relay_log_level }}
-    {% if groups_relay_rust_backtrace_enabled is defined and groups_relay_rust_backtrace_enabled %}
-      RUST_BACKTRACE: full
-    {% endif %}
-      NIP29__ENVIRONMENT: production
+      - RUST_LOG={{ groups_relay_log_level }}
+{% if groups_relay_rust_backtrace_enabled is defined and groups_relay_rust_backtrace_enabled %}
+      - RUST_BACKTRACE=full
+{% endif %}
+      - NIP29__ENVIRONMENT=production
     ports:
       - "8080:8080"
     labels:
