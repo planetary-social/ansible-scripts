@@ -35,10 +35,10 @@
     port: "{{ item.1 }}"
     proto: tcp
   with_nested:
-    - "{{ (cloudflare_ips_v4.content.split('\n') | select | list) + (cloudflare_ips_v6.content.split('\n') | select | list) }}"
+    - "{{ (cloudflare_ips_v4.content.split('\n') | reject('equalto', '') | list) + (cloudflare_ips_v6.content.split('\n') | reject('equalto', '') | list) }}"
     - ["80", "443"]
 
-- name: UFW - Also allow HTTP/HTTPS from anywhere (for non-proxied subdomains)
+- name: UFW - Allow HTTP/HTTPS from anywhere (for non-proxied subdomains)
   become: true
   community.general.ufw:
     rule: allow
@@ -47,6 +47,7 @@
   loop:
     - "80"
     - "443"
+  when: not (all_domains_proxied_through_cloudflare | default(false))
 
 - name: Ensure cert directory exist
   ansible.builtin.file:

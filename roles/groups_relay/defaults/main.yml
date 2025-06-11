@@ -1,0 +1,12 @@
+---
+# Declares whether all domains/subdomains are proxied through Cloudflare
+# This should match your Cloudflare dashboard configuration
+# When true:
+#   - Only Cloudflare IPs can connect (firewall enforced)
+#   - Traefik trusts forwarded headers
+#   - Real client IPs appear in logs
+# When false:
+#   - Direct access allowed for non-proxied subdomains
+#   - Traefik doesn't trust forwarded headers
+#   - Only Cloudflare IPs appear in logs (secure but less useful)
+all_domains_proxied_through_cloudflare: false

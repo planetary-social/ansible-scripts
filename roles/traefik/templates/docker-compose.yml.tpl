@@ -12,10 +12,13 @@ services:
       - ./.env
     networks:
       - proxy
+{% if all_domains_proxied_through_cloudflare | default(false) %}
     command:
-      # Enable insecure forwarded headers (safe because firewall only allows Cloudflare)
+      # Trust forwarded headers because only Cloudflare can connect
+      # This is SECURE because firewall blocks all non-Cloudflare traffic
       - "--entrypoints.web.forwardedHeaders.insecure=true"
       - "--entrypoints.websecure.forwardedHeaders.insecure=true"
+{% endif %}
     ports:
       - "80:80"
       - "443:443"
