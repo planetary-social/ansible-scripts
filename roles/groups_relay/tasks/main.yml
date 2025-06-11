@@ -15,7 +15,30 @@
     dest: "{{ groups_relay_dir }}/docker-compose.yml"
     mode: '0644'
 
-- name: UFW - Allow http/https/strfry connections
+- name: Get Cloudflare IPv4 addresses
+  ansible.builtin.uri:
+    url: https://www.cloudflare.com/ips-v4
+    return_content: yes
+  register: cloudflare_ips_v4
+
+- name: Get Cloudflare IPv6 addresses
+  ansible.builtin.uri:
+    url: https://www.cloudflare.com/ips-v6
+    return_content: yes
+  register: cloudflare_ips_v6
+
+- name: UFW - Allow HTTP/HTTPS from Cloudflare IPs only
+  become: true
+  community.general.ufw:
+    rule: allow
+    from_ip: "{{ item.0 }}"
+    port: "{{ item.1 }}"
+    proto: tcp
+  with_nested:
+    - "{{ (cloudflare_ips_v4.content.split('\n') | select | list) + (cloudflare_ips_v6.content.split('\n') | select | list) }}"
+    - ["80", "443"]
+
+- name: UFW - Also allow HTTP/HTTPS from anywhere (for non-proxied subdomains)
   become: true
   community.general.ufw:
     rule: allow
@@ -24,7 +47,6 @@
   loop:
     - "80"
     - "443"
-    - "7777"
 
 - name: Ensure cert directory exist
   ansible.builtin.file:
@@ -40,12 +62,6 @@
     mode: '0755'
     owner: "{{ ansible_user }}"
     group: "{{ ansible_user }}"
-
-- name: Copy strfry.conf to config dir
-  ansible.builtin.copy:
-    src: strfry.conf
-    dest: "{{ groups_relay_dir }}/config/strfry.conf"
-    mode: '0644'
 
 - name: Copy settings file to config dir
   ansible.builtin.template:

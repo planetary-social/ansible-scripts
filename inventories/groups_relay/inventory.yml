@@ -4,12 +4,15 @@ groups_relay:
     communities.nos.social:
       groups_relay_image_tag: stable
       groups_relay_log_level: info
+      ansible_host: 68.183.49.99 // using ip to be able to ssh bypassing cloudflare
     communities2.nos.social:
       groups_relay_image_tag: latest
       groups_relay_rust_backtrace_enabled: true
+      ansible_host: 138.197.28.51
     hol.is:
       groups_relay_image_tag: latest
       groups_relay_log_level: info
+      ansible_host: 164.90.132.182
   vars:
     groups_relay_log_level: debug
     admin_username: admin

@@ -12,6 +12,10 @@ services:
       - ./.env
     networks:
       - proxy
+    command:
+      # Enable insecure forwarded headers (safe because firewall only allows Cloudflare)
+      - "--entrypoints.web.forwardedHeaders.insecure=true"
+      - "--entrypoints.websecure.forwardedHeaders.insecure=true"
     ports:
       - "80:80"
       - "443:443"

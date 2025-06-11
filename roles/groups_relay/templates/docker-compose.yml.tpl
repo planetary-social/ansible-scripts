@@ -18,6 +18,7 @@ services:
       - "traefik.enable=true"
       - "traefik.http.routers.groups_relay.rule=Host(`{{ domain }}`) || HostRegexp(`{subdomain:[a-z0-9-]+}.{{ domain }}`)"
       - "traefik.http.routers.groups_relay.entrypoints=websecure"
+      - "traefik.http.routers.groups_relay.service=groups_relay"
       - "traefik.http.services.groups_relay.loadbalancer.server.port=8080"
     restart: always
     networks:
