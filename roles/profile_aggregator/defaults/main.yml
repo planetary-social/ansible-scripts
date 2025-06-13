@@ -1,0 +1,3 @@
+---
+# UFW firewall configuration
+all_domains_proxied_through_cloudflare: false

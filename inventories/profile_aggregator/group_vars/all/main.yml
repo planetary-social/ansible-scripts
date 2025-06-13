@@ -1,0 +1,19 @@
+---
+# Profile Aggregator Configuration
+profile_aggregator_relay_url: wss://{{ inventory_hostname }}
+profile_aggregator_relay_contact: daniel@nos.social
+profile_aggregator_discovery_relay_url: "{{ discovery_relay_url }}"
+profile_aggregator_bind_addr: "0.0.0.0:8080"
+profile_aggregator_page_size: 500
+profile_aggregator_initial_backoff_secs: 60
+profile_aggregator_max_backoff_secs: 3600
+profile_aggregator_worker_threads: 4
+profile_aggregator_database_path: /data/profile_aggregator.db
+profile_aggregator_state_file: /data/state.json
+
+# Health check endpoint
+profile_aggregator_health_endpoint: https://{{ inventory_hostname }}/health
+
+# Logging
+profile_aggregator_log_level: profile_aggregator=info,nostr_relay_builder=info
+profile_aggregator_rust_backtrace_enabled: false

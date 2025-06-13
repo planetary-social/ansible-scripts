@@ -1,0 +1,5 @@
+---
+- name: restart profile_aggregator
+  ansible.builtin.shell: "docker compose down && docker compose up -d"
+  args:
+    chdir: "{{ ansible_env.HOME }}/services/profile_aggregator"

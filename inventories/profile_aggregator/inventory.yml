@@ -1,0 +1,23 @@
+---
+all:
+  children:
+    profile_aggregator:
+      hosts:
+        relay.yestr.social:
+          ansible_host: 167.71.83.211
+          ansible_user: admin
+          profile_aggregator_image_tag: latest
+          profile_aggregator_log_level: profile_aggregator=info,nostr_relay_builder=info
+          all_domains_proxied_through_cloudflare: false
+  vars:
+    profile_aggregator_image: ghcr.io/verse-pbc/profile_aggregator
+    profile_aggregator_health_endpoint: https://{{ inventory_hostname }}/health
+    discovery_relay_url: wss://relay.nos.social
+    admin_username: admin
+    ansible_user: '{{ admin_username }}'
+    homedir: /home/{{ admin_username }}
+    cert_email: daniel@nos.social
+    domain: '{{ inventory_hostname }}'
+    gh_user_keys_to_add:
+      - dcadenas
+      - rabble

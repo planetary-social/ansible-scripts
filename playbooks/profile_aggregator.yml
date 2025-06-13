@@ -1,0 +1,6 @@
+---
+- name: Deploy Profile Aggregator Relay
+  hosts: profile_aggregator
+  become: no
+  roles:
+    - profile_aggregator
