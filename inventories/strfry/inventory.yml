@@ -5,6 +5,10 @@ relay:
       relay_image_tag: stable
     dwebcamp.nos.social:
       relay_image_tag: stable
+    relay1.openvine.co:
+      relay_image_tag: openvine
+      ansible_host: 167.71.106.206
+      all_domains_proxied_through_cloudflare: true
     news.nos.social:
       relay_image_tag: news
   vars:
@@ -13,8 +17,9 @@ relay:
     ansible_user: '{{ admin_username }}'
     cert_email: ops@nos.social
     domain: '{{ inventory_hostname }}'
-    relay_health_check_endpoint: "https://{{ domain }}"
-    relay_health_check_command: 'curl -H "Accept: application/nostr+json" -X GET -s -L -o /dev/ -w "%{http_code}" {{ relay_health_check_endpoint }}'
+    relay_health_check_endpoint: https://{{ domain }}
+    relay_health_check_command: 'curl -H "Accept: application/nostr+json" -X GET -s
+      -L -o /dev/ -w "%{http_code}" {{ relay_health_check_endpoint }}'
     relay_server_image: ghcr.io/planetary-social/nosrelay
     redis_url: rediss://default:{{ vault_redis_password }}@nos-social-prod-do-user-5049766-0.m.db.ondigitalocean.com:25061
 prod:
@@ -22,3 +27,4 @@ prod:
     relay.nos.social:
     news.nos.social:
     dwebcamp.nos.social:
+    relay1.openvine.co:

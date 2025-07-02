@@ -242,11 +242,33 @@
 # additional_roles:
 # - groups_relay
 
+# #-----------------------------
+# # Profile Aggregator Relay example
+# # ansible-playbook playbooks/new-do-droplet.yml -e '@new-server-vars.yml'
+# #-----------------------------
+# domain: relay.yestr.social
+# do_droplet_size: s-2vcpu-4gb
+# do_droplet_image: ubuntu-22-04-x64
+# do_droplet_region: NYC3
+# do_droplet_project: Nos
+# do_droplet_tags:
+# - prod
+# gh_user_keys_to_add:
+# - dcadenas
+# - rabble
+# inv: profile_aggregator
+# inv_groups:
+# - profile_aggregator
+# additional_roles:
+# - profile_aggregator
+# add_cloudflare_record: false
+# add_cloudflare_wildcard_record: false
+
 #-----------------------------
-# Profile Aggregator Relay example
-# ansible-playbook playbooks/new-do-droplet.yml -e '@new-server-vars.yml'
+# Strfry Relay example
+# ansible-playbook -i inventories/strfry/inventory.yml playbooks/new-do-droplet.yml -e '@new-server-vars.yml'
 #-----------------------------
-domain: relay.yestr.social
+domain: relay1.openvine.co
 do_droplet_size: s-2vcpu-4gb
 do_droplet_image: ubuntu-22-04-x64
 do_droplet_region: NYC3
@@ -256,10 +278,10 @@ do_droplet_tags:
 gh_user_keys_to_add:
 - dcadenas
 - rabble
-inv: profile_aggregator
+inv: strfry
 inv_groups:
-- profile_aggregator
+- relay
 additional_roles:
-- profile_aggregator
+- strfry
 add_cloudflare_record: false
 add_cloudflare_wildcard_record: false
