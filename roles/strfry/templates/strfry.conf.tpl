@@ -24,7 +24,7 @@ relay {
     nofiles = 1000000
 
     # HTTP header that contains the client's real IP, before reverse proxying (ie x-real-ip) (MUST be all lower-case)
-    realIpHeader = "CF-Connecting-IP"
+    realIpHeader = "cf-connecting-ip"
 
     info {
         # NIP-11: Name of this server. Short/descriptive (< 30 characters)
