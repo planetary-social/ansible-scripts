@@ -1,5 +1,29 @@
 ---
-- name: UFW - Allow http/https connections
+- name: Get Cloudflare IPv4 addresses
+  ansible.builtin.uri:
+    url: https://www.cloudflare.com/ips-v4
+    return_content: yes
+  register: cloudflare_ips_v4
+
+- name: Get Cloudflare IPv6 addresses
+  ansible.builtin.uri:
+    url: https://www.cloudflare.com/ips-v6
+    return_content: yes
+  register: cloudflare_ips_v6
+
+- name: UFW - Allow HTTP/HTTPS from Cloudflare IPs only
+  become: true
+  community.general.ufw:
+    rule: allow
+    from_ip: "{{ item.0 }}"
+    port: "{{ item.1 }}"
+    proto: tcp
+  with_nested:
+    - "{{ (cloudflare_ips_v4.content.split('\n') | reject('equalto', '') | list) + (cloudflare_ips_v6.content.split('\n') | reject('equalto', '') | list) }}"
+    - ["80", "443"]
+  when: all_domains_proxied_through_cloudflare | default(false)
+
+- name: UFW - Allow HTTP/HTTPS from anywhere (for non-proxied domains)
   become: true
   community.general.ufw:
     rule: allow
@@ -8,6 +32,17 @@
   loop:
     - "80"
     - "443"
+  when: not (all_domains_proxied_through_cloudflare | default(false))
+
+- name: UFW - Allow relay sync port from relay peers
+  become: true
+  community.general.ufw:
+    rule: allow
+    from_ip: "{{ item }}"
+    port: "7777"
+    proto: tcp
+  loop: "{{ relay_sync_peers }}"
+  when: relay_sync_peers is defined
 
 
 - name: Ensure services/relay exists
