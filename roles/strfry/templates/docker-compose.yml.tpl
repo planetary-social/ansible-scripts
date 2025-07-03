@@ -43,6 +43,7 @@ services:
     environment:
       - RELAY_URL=wss://{{ domain }}
       - REDIS_URL={{ redis_url }}
+      - WHITELIST_IPS={{ relay_sync_peers | default([]) | join(',') }}
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.strfry.rule=Host(`{{ domain }}`) && Headers(`Accept`, `application/nostr+json`) || HeadersRegexp(`Connection`, `(?i)Upgrade`) && HeadersRegexp(`Upgrade`, `websocket`)"

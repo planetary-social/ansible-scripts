@@ -4,7 +4,7 @@ streams {
         dir = "both"
         urls = [
 {% for peer in relay_sync_peers %}
-            "{{ peer }}"{{ "," if not loop.last else "" }}
+            "ws://{{ peer }}:7777"{{ "," if not loop.last else "" }}
 {% endfor %}
         ]
     }
