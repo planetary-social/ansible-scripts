@@ -9,6 +9,14 @@ relay:
       relay_image_tag: openvine
       ansible_host: 167.71.106.206
       all_domains_proxied_through_cloudflare: true
+      relay_sync_peers:
+        - ws://167.71.95.63:7777
+    relay2.openvine.co:
+      relay_image_tag: openvine
+      ansible_host: 167.71.95.63
+      all_domains_proxied_through_cloudflare: true
+      relay_sync_peers:
+        - ws://167.71.106.206:7777
     news.nos.social:
       relay_image_tag: news
   vars:
@@ -28,3 +36,4 @@ prod:
     news.nos.social:
     dwebcamp.nos.social:
     relay1.openvine.co:
+    relay2.openvine.co:

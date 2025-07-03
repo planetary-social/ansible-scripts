@@ -39,6 +39,20 @@
     dest: "{{ homedir }}/services/relay/nginx-redirect.conf"
     mode: '0644'
 
+
+- name: Copy strfry.conf to relay dir
+  ansible.builtin.template:
+    src: strfry.conf.tpl
+    dest: "{{ homedir }}/services/relay/strfry.conf"
+    mode: '0644'
+
+
+- name: Copy strfry-router.conf to relay dir
+  ansible.builtin.template:
+    src: strfry-router.conf.tpl
+    dest: "{{ homedir }}/services/relay/strfry-router.conf"
+    mode: '0644'
+
 - name: ensure docker is running
   ansible.builtin.service:
     name: docker

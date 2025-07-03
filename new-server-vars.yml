@@ -268,7 +268,7 @@
 # Strfry Relay example
 # ansible-playbook -i inventories/strfry/inventory.yml playbooks/new-do-droplet.yml -e '@new-server-vars.yml'
 #-----------------------------
-domain: relay1.openvine.co
+domain: relay2.openvine.co
 do_droplet_size: s-2vcpu-4gb
 do_droplet_image: ubuntu-22-04-x64
 do_droplet_region: NYC3
@@ -283,5 +283,3 @@ inv_groups:
 - relay
 additional_roles:
 - strfry
-add_cloudflare_record: false
-add_cloudflare_wildcard_record: false

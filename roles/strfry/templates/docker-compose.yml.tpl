@@ -31,9 +31,15 @@ services:
     image: "{{ relay_server_image }}:{{ relay_image_tag }}"
     container_name: "strfry"
     restart: always
+{% if relay_sync_peers is defined %}
+    ports:
+      - "7777:7777"  # Expose for relay-to-relay sync
+{% endif %}
     volumes:
       - ./strfrydb:/app/strfry-db # Strfry data
       - ./data:/usr/src/app/db    # nostr-rs-relay data for the olympics relay, there's now a specific role for this: nostr-rs-relay
+      - ./strfry.conf:/etc/strfry.conf:ro
+      - ./strfry-router.conf:/etc/strfry-router.conf:ro
     environment:
       - RELAY_URL=wss://{{ domain }}
       - REDIS_URL={{ redis_url }}
