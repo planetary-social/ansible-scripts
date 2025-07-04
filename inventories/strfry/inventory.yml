@@ -30,6 +30,9 @@ relay:
       -L -o /dev/ -w "%{http_code}" {{ relay_health_check_endpoint }}'
     relay_server_image: ghcr.io/planetary-social/nosrelay
     redis_url: rediss://default:{{ vault_redis_password }}@nos-social-prod-do-user-5049766-0.m.db.ondigitalocean.com:25061
+    gh_user_keys_to_add:
+      - dcadenas
+      - rabble
 prod:
   hosts:
     relay.nos.social:
