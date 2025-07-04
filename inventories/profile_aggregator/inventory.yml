@@ -7,7 +7,7 @@ all:
           ansible_host: 167.71.83.211
           ansible_user: admin
           profile_aggregator_image_tag: latest
-          profile_aggregator_log_level: warn,profile_aggregator=info,nostr_relay_builder=info
+          profile_aggregator_log_level: "warn,profile_aggregator=info,nostr_relay_builder=info,nostr_relay_pool::relay::inner=off"
           all_domains_proxied_through_cloudflare: false
   vars:
     profile_aggregator_image: ghcr.io/verse-pbc/profile_aggregator
