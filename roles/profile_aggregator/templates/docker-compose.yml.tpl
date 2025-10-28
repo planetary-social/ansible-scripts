@@ -22,6 +22,7 @@ services:
       - WORKER_THREADS={{ profile_aggregator_worker_threads }}
       - DATABASE_PATH={{ profile_aggregator_database_path }}
       - STATE_FILE={{ profile_aggregator_state_file }}
+      - IMAGE_PROXY_SECRET={{ image_proxy_secret }}
     volumes:
       - ./data:/data
     ports:
