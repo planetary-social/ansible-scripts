@@ -7,10 +7,11 @@ db = "./strfry-db/"
 
 dbParams {
     # Maximum number of threads/processes that can simultaneously have LMDB transactions open (restart required)
-    maxreaders = 2024
+    maxreaders = 512
 
     # Size of mmap() to use when loading LMDB (default is 10TB, does *not* correspond to disk-space used) (restart required)
     mapsize = 10995116277760
+    noReadAhead = true
 }
 
 relay {
@@ -24,7 +25,7 @@ relay {
     nofiles = 1000000
 
     # HTTP header that contains the client's real IP, before reverse proxying (ie x-real-ip) (MUST be all lower-case)
-    realIpHeader = "cf-connecting-ip"
+    realIpHeader = "x-forwarded-for"
 
     info {
         # NIP-11: Name of this server. Short/descriptive (< 30 characters)
