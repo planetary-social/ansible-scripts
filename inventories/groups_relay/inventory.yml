@@ -3,7 +3,7 @@ groups_relay:
   hosts:
     communities.nos.social:
       groups_relay_image_tag: stable
-      groups_relay_log_level: warn,groups_relay=info,nostr_relay_builder=info
+      groups_relay_log_level: warn,groups_relay=info,relay_builder=info
       ansible_host: 68.183.49.99 # using ip to be able to ssh bypassing cloudflare
     communities2.nos.social:
       groups_relay_image_tag: latest
