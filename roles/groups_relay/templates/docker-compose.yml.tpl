@@ -14,6 +14,13 @@ services:
       - NIP29__ENVIRONMENT=production
     ports:
       - "8080:8080"
+      - "6669:6669"
+    # healthcheck:
+    #   test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+    #   interval: 60s
+    #   timeout: 10s
+    #   retries: 3
+    #   start_period: 10s
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.groups_relay.rule=Host(`{{ domain }}`) || HostRegexp(`{subdomain:[a-z0-9-]+}.{{ domain }}`)"
