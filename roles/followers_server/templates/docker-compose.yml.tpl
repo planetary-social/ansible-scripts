@@ -67,9 +67,9 @@ services:
       - "traefik.http.services.neo4jbolt.loadbalancer.server.port=7687"
 
     healthcheck:
-      test: wget http://localhost:7474 || exit 1
-      interval: 10s
-      timeout: 10s
+      test: wget --spider http://localhost:7474 || exit 1
+      interval: 20s
+      timeout: 30s
       retries: 10
       start_period: 60s
     networks:
