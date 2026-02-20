@@ -47,10 +47,10 @@
 - name: Update apt and install docker-ce
   become: true
   ansible.builtin.apt:
-    pkg: 
+    pkg:
       - docker-ce
       - python3-docker
-    state: latest
+    state: present
     update_cache: true
     cache_valid_time: 3600
 
@@ -92,7 +92,7 @@
 - name: Download compose plugin
   become: true
   ansible.builtin.get_url:
-    url: https://github.com/docker/compose/releases/download/v2.23.0/docker-compose-linux-x86_64
+    url: https://github.com/docker/compose/releases/download/v2.32.4/docker-compose-linux-x86_64
     dest: /usr/local/lib/docker/cli-plugins/docker-compose
 
 
